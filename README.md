@@ -1,2 +1,2 @@
 # sontaran
-javascript number, string, boolean, object validator
+Javascript number, string, boolean, object validator
