@@ -11,30 +11,47 @@ describe('Validator / types / Boolean', () => {
   });
 
   it('Throws a TypeError if given value is undefined', () => {
-    expect(BooleanValidator).to.throw(TypeError);
+    const createValidator = () => {
+      return new BooleanValidator();
+    }
+
+    expect(createValidator).to.throw(TypeError);
   });
 
   it('Throws a TypeError if given value is null', () => {
     const value = null;
-    expect(BooleanValidator.bind(null, value)).to.throw(TypeError);
+    const createValidator = () => {
+      return new BooleanValidator(value);
+    }
+
+    expect(createValidator).to.throw(TypeError);
   });
 
   it('Throws a TypeError if given type is number', () => {
     const value = 42;
+    const createValidator = () => {
+      return new BooleanValidator(value);
+    }
 
-    expect(BooleanValidator.bind(null, value)).to.throw(TypeError);
+    expect(createValidator).to.throw(TypeError);
   });
 
   it('Throws a TypeError if given type is object', () => {
     const value = {};
+    const createValidator = () => {
+      return new BooleanValidator(value);
+    }
 
-    expect(BooleanValidator.bind(null, value)).to.throw(TypeError);
+    expect(createValidator).to.throw(TypeError);
   });
 
   it('Throws a TypeError if given type is string', () => {
     const value = 'Sonic Screwdriver';
+    const createValidator = () => {
+      return new BooleanValidator(value);
+    }
 
-    expect(BooleanValidator.bind(null, value)).to.throw(TypeError);
+    expect(createValidator).to.throw(TypeError);
   });
 
   describe('false', () => {

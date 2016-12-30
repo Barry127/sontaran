@@ -12,31 +12,48 @@ describe('Validator / types / Number', () => {
   });
 
   it('Throws a TypeError if given value is undefined', () => {
-    expect(NumberValidator).to.throw(TypeError);
+    const createValidator = () => {
+      return new NumberValidator();
+    }
+
+    expect(createValidator).to.throw(TypeError);
   });
 
   it('Throws a TypeError if given value is null', () => {
     const value = null;
+    const createValidator = () => {
+      return new NumberValidator(value);
+    }
 
-    expect(NumberValidator.bind(null, value)).to.throw(TypeError);
+    expect(createValidator).to.throw(TypeError);
   });
 
   it('Throws a TypeError if given type is boolean', () => {
     const value = false;
+    const createValidator = () => {
+      return new NumberValidator(value);
+    }
 
-    expect(NumberValidator.bind(null, value)).to.throw(TypeError);
+    expect(createValidator).to.throw(TypeError);
   });
 
   it('Throws a TypeError if given type is object', () => {
     const value = {};
+    const createValidator = () => {
+      return new NumberValidator(value);
+    }
 
-    expect(NumberValidator.bind(null, value)).to.throw(TypeError);
+    expect(createValidator).to.throw(TypeError);
   });
 
   it('Throws a TypeError if given type is string', () => {
     const value = '3';
 
-    expect(NumberValidator.bind(null, value)).to.throw(TypeError);
+    const createValidator = () => {
+      return new NumberValidator(value);
+    }
+
+    expect(createValidator).to.throw(TypeError);
   });
 
   describe('between', () => {
