@@ -1,6 +1,7 @@
 const { expect }        = require('chai');
 const { spy }           = require('sinon');
 const BooleanValidator  = require('./types/Boolean');
+const NumberValidator   = require('./types/Number');
 const Validator         = require('./Validator');
 
 describe('Validator / Validator', () => {
@@ -27,5 +28,13 @@ describe('Validator / Validator', () => {
     });
 
   });
+
+  describe('number', () => {
+    const validator = new Validator(42);
+
+    it('Returns an instance of NumberValidator', () => {
+      expect(validator.number()).to.be.an.instanceof(NumberValidator);
+    });
+  })
 
 });

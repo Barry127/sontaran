@@ -1,4 +1,5 @@
 const BooleanValidator  = require('./types/Boolean');
+const NumberValidator   = require('./types/Number');
 
 class Validator {
 
@@ -12,6 +13,10 @@ class Validator {
 
   boolean () {
     return new BooleanValidator(this.value);
+  }
+
+  number () {
+    return new NumberValidator(this.value);
   }
 
 }
