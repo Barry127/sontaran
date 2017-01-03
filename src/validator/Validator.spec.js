@@ -1,5 +1,6 @@
 const { expect }        = require('chai');
 const { spy }           = require('sinon');
+const ArrayValidator    = require('./types/Array');
 const BooleanValidator  = require('./types/Boolean');
 const NumberValidator   = require('./types/Number');
 const StringValidator   = require('./types/String');
@@ -13,6 +14,14 @@ describe('Validator / Validator', () => {
 
     expect(validator.value).to.equal('Hello World!');
   });
+
+  describe('array', () => {
+    const validator = new Validator([]);
+
+    it('Returns an instance of ArrayValidator', () => {
+      expect(validator.array()).to.be.an.instanceof(ArrayValidator);
+    });
+  })
 
   describe('boolean', () => {
     const validator = new Validator(true);

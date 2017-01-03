@@ -1,3 +1,4 @@
+const ArrayValidator    = require('.//types/Array');
 const BooleanValidator  = require('./types/Boolean');
 const NumberValidator   = require('./types/Number');
 const StringValidator   = require('./types/String');
@@ -6,6 +7,10 @@ class Validator {
 
   constructor (value) {
     this.value = value;
+  }
+
+  array () {
+    return new ArrayValidator(this.value);
   }
 
   bool () {

@@ -190,7 +190,7 @@ module.exports = {
     "prefer-arrow-callback": "warn",
     "prefer-const": "off",
     "prefer-numeric-literals": "warn",
-    "prefer-reflect": "warn",
+    "prefer-reflect": "off",
     "prefer-rest-params": "warn",
     "prefer-spread": "warn",
     "prefer-template": "warn",
