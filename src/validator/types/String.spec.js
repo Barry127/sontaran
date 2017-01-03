@@ -6,7 +6,7 @@ const nonAscii = '♠♣♥♦';
 const ascii = `!"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\`abcdefghijklmnopqrstuvwxyz{|}~`;
 const extendedAscii = `${ascii} ¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ`;
 
-describe.only('Validator / types / String', () => {
+describe('Validator / types / String', () => {
 
   it('Returns itself is given value type is string', () => {
     const value = 'Hello World!';
