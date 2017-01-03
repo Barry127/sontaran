@@ -1,11 +1,12 @@
 const { expect }      = require('chai');
+const { spy }         = require('sinon');
 const StringValidator = require('./String');
 
 const nonAscii = '♠♣♥♦';
 const ascii = `!"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\`abcdefghijklmnopqrstuvwxyz{|}~`;
 const extendedAscii = `${ascii} ¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ`;
 
-describe('Validator / types / String', () => {
+describe.only('Validator / types / String', () => {
 
   it('Returns itself is given value type is string', () => {
     const value = 'Hello World!';
@@ -213,6 +214,24 @@ describe('Validator / types / String', () => {
 
   });
 
+  describe('empty', () => {
+
+    it('Returns itself if the value is empty', () => {
+      const value = '';
+      const validator = new StringValidator(value);
+
+      expect(validator.empty()).to.be.an.instanceof(StringValidator);
+    });
+
+    it('Throws an Error if the value is not empty', () => {
+      const value = 'not empty';
+      const validator = new StringValidator(value);
+
+      expect(validator.empty.bind(validator)).to.throw(Error);
+    });
+
+  });
+
   describe('endsWith', () => {
 
     const validator = new StringValidator('The richest man is not he who has the most, but he who needs the least.');
@@ -311,6 +330,140 @@ describe('Validator / types / String', () => {
 
   });
 
+  describe('hexColor', () => {
+
+    it('Returns itself if value is a valid hex color', () => {
+      const value = '#CC0000';
+      const validator = new StringValidator(value);
+
+      expect(validator.hexColor()).to.be.an.instanceof(StringValidator);
+    });
+
+    it('Returns itself if value is a valid hex color and contains lower and uppercase letters', () => {
+      const value = '#cC0000';
+      const validator = new StringValidator(value);
+
+      expect(validator.hexColor()).to.be.an.instanceof(StringValidator);
+    });
+
+    it('Returns itself if value contains shorthand hex color', () => {
+      const value = '#C00';
+      const validator = new StringValidator(value);
+
+      expect(validator.hexColor()).to.be.an.instanceof(StringValidator);
+    });
+
+    it('Throws an Error if hashtag is omitted', () => {
+      const value = 'CC0000';
+      const validator = new StringValidator(value);
+
+      expect(validator.hexColor.bind(validator)).to.throw(Error);
+    });
+
+    it('Throws an Error if value is not a valid hex color', () => {
+      const value = 'fg0000';
+      const validator = new StringValidator(value);
+
+      expect(validator.hexColor.bind(validator)).to.throw(Error);
+    });
+
+  });
+
+  describe('JSON', () => {
+
+    it('Returns itself if the value is valid JSON', () => {
+      const value = '{"title":"My Title", "slug": "my-title"}';
+      const validator = new StringValidator(value);
+
+      expect(validator.JSON()).to.be.an.instanceof(StringValidator);
+    });
+
+    it('Throws an Error if the value is not valid JSON', () => {
+      const value = '{"title":"wrong", }';
+      const validator = new StringValidator(value);
+
+      expect(validator.JSON.bind(validator)).to.throw(Error);
+    });
+
+    it('json is a shortcut for JSON', () => {
+      const value = '{"title":"My Title", "slug": "my-title"}';
+      const validator = new StringValidator(value);
+      validator.JSON = spy();
+      validator.json();
+
+      expect(validator.JSON.calledOnce).to.be.ok;
+    });
+
+  });
+
+  describe('length', () => {
+
+    const value = 'FooBar';
+    const validator = new StringValidator(value);
+
+    it('Throws a TypeError if length is not of type number', () => {
+      expect(validator.length.bind(validator, '6')).to.throw(TypeError);
+    });
+
+    it('Throws an Error if length is no integer', () => {
+      expect(validator.length.bind(validator, 6.2)).to.throw(Error);
+    });
+
+    it('Returns itself if the length of the value is exactly length', () => {
+      expect(validator.length(6)).to.be.an.instanceof(StringValidator);
+    });
+
+    it('Throws an Error if the length of the value is less than length', () => {
+      expect(validator.length.bind(validator, 7)).to.throw(Error);
+    });
+
+    it('Throws an Error if the length of the value is greater than length', () => {
+      expect(validator.length.bind(validator, 5)).to.throw(Error);
+    });
+
+  });
+
+  describe('lowercase', () => {
+
+    it('Returns itself if the value is lowercase', () => {
+      const value = 'lowercase';
+      const validator = new StringValidator(value);
+
+      expect(validator.lowercase()).to.be.an.instanceof(StringValidator);
+    });
+
+    it('Returns itself if the value is lowercase mixed with numbers and characters', () => {
+      const value = 'l0w3rc@se';
+      const validator = new StringValidator(value);
+
+      expect(validator.lowercase()).to.be.an.instanceof(StringValidator);
+    });
+
+    it('Returns itself if the value contains no letters', () => {
+      const value = '4\\/\\/50/\\/\\3';
+      const validator = new StringValidator(value);
+
+      expect(validator.lowercase()).to.be.an.instanceof(StringValidator);
+    });
+
+    it('Throws an Error if the value contains uppercase letters', () => {
+      const value = 'B@dAsS?!';
+      const validator = new StringValidator(value);
+
+      expect(validator.lowercase.bind(validator)).to.throw(Error);
+    });
+
+    it('lowerCase is a shortcut for lowercase', () => {
+      const value = 'lowercase';
+      const validator = new StringValidator(value);
+      validator.lowercase = spy();
+      validator.lowerCase();
+
+      expect(validator.lowercase.calledOnce).to.be.ok;
+    });
+
+  });
+
   describe('max', () => {
 
     const validator = new StringValidator('FooBar');
@@ -396,6 +549,47 @@ describe('Validator / types / String', () => {
 
     it('Throws an Error if the value does not end with query and caseSensitive is false', () => {
       expect(validator.startsWith.bind(validator, 'These', false)).to.throw(Error);
+    });
+
+  });
+
+  describe('uppercase', () => {
+
+    it('Returns itself if the value is uppercase', () => {
+      const value = 'UPPERCASE';
+      const validator = new StringValidator(value);
+
+      expect(validator.uppercase()).to.be.an.instanceof(StringValidator);
+    });
+
+    it('Returns itself if the value is uppercase mixed with numbers and characters', () => {
+      const value = 'UPP3RC@S3';
+      const validator = new StringValidator(value);
+
+      expect(validator.uppercase()).to.be.an.instanceof(StringValidator);
+    });
+
+    it('Returns itself if the value contains no letters', () => {
+      const value = '|-|3`/';
+      const validator = new StringValidator(value);
+
+      expect(validator.uppercase()).to.be.an.instanceof(StringValidator);
+    });
+
+    it('Throws an Error if the value contains lowercase letters', () => {
+      const value = 'UpPeRcAsE';
+      const validator = new StringValidator(value);
+
+      expect(validator.uppercase.bind(validator)).to.throw(Error);
+    });
+
+    it('upperCase is a shortcut for uppercase', () => {
+      const value = 'UPPERCASE';
+      const validator = new StringValidator(value);
+      validator.uppercase = spy();
+      validator.upperCase();
+
+      expect(validator.uppercase.calledOnce).to.be.ok;
     });
 
   });

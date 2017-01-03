@@ -90,6 +90,18 @@ class StringValidator extends BaseValidator {
   }
 
   /**
+   * Check if value is empty string
+   * @return {Object} StringValidator
+   */
+  empty () {
+    if (this.value.length > 0) {
+      throw new Error(`Expected ${this.value} to be an empty string`);
+    }
+
+    return this;
+  }
+
+  /**
    * Check if value ends with CheckValue
    * @param  {[type]}  query         value to check for
    * @param  {Boolean} caseSensitive should the check be case sensitive
@@ -158,6 +170,75 @@ class StringValidator extends BaseValidator {
   }
 
   /**
+   * Check if value is a hexcolor
+   * @return {Object} StringValidator
+   */
+  hexColor () {
+    const hexRegex = /^#([0-9A-F]{3}|[0-9A-F]{6})$/i;
+
+    if (!hexRegex.test(this.value)) {
+      throw new Error(`Expected ${this.value} to be a hex color`);
+    }
+
+    return this;
+  }
+
+  /**
+   * Check if value is JSON
+   * @return {Object} StringValidator
+   */
+  JSON () {
+    const jsonError = `Expected ${this.value} to be valid JSON`;
+
+    try {
+      const data = JSON.parse(this.value);
+
+      if (typeof data !== 'object') {
+        throw new Error(jsonError);
+      }
+    } catch (e) {
+      throw new Error(jsonError);
+    }
+
+    return this;
+  }
+
+  json () {
+    return this.JSON(); // eslint-disable-line
+  }
+
+  /**
+   * Check if length of value is exactly length
+   * @param  {Number} length length the value should be
+   * @return {Object}        StringValidator
+   */
+  length (length) {
+    new NumberValidator(length).integer();
+
+    if (this.value.length !== length) {
+      throw new Error(`Expected length of ${this.value} to be exactly ${length}`);
+    }
+
+    return this;
+  }
+
+  /**
+   * Check if value is lowercase
+   * @return {Object} StringValidator
+   */
+  lowercase () {
+    if (this.value.toLowerCase() !== this.value) {
+      throw new Error(`Expected ${this.value} to be lowercase`);
+    }
+
+    return this;
+  }
+
+  lowerCase () {
+    return this.lowercase();
+  }
+
+  /**
    * Check if length of value is not greater than maxLength
    * @param  {Number} maxLength maximum length for value
    * @return {Object}           StringValidator
@@ -210,6 +291,22 @@ class StringValidator extends BaseValidator {
     }
 
     return this;
+  }
+
+  /**
+   * Check if value is uppercase
+   * @return {Object} StringValidator
+   */
+  uppercase () {
+    if (this.value.toUpperCase() !== this.value) {
+      throw new Error(`Expected ${this.value} to be uppercase`);
+    }
+
+    return this;
+  }
+
+  upperCase () {
+    return this.uppercase();
   }
 
 }
