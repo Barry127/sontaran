@@ -142,7 +142,7 @@ describe('Validator / types / String', () => {
       expect(validator.between.bind(validator, 2.5, 7)).to.throw(Error);
     });
 
-    it('Throws a TypeError if maxnLength is not of type number', () => {
+    it('Throws a TypeError if maxLength is not of type number', () => {
       expect(validator.between.bind(validator, 2, '7')).to.throw(TypeError);
     });
 
@@ -460,6 +460,81 @@ describe('Validator / types / String', () => {
       validator.lowerCase();
 
       expect(validator.lowercase.calledOnce).to.be.ok;
+    });
+
+  });
+
+  describe('oneOf', () => {
+    const value = 'baz';
+    const validator = new StringValidator(value);
+
+    it('Throws a TypeError if list is not of type array', () => {
+      const list = {};
+
+      expect(validator.oneOf.bind(validator, list)).to.throw(TypeError);
+    });
+
+    it('Throws a TypeError if list is not an array of string values', () => {
+      const list = [ 'foo', 'bar', true ];
+
+      expect(validator.oneOf.bind(validator, list)).to.throw(TypeError);
+    });
+
+    it('Returns itself if the value is in list', () => {
+      const list = [ 'foo', 'bar', 'baz' ];
+
+      expect(validator.oneOf(list)).to.be.an.instanceof(StringValidator);
+    });
+
+    it('Throws an Error if the value is not in list', () => {
+      const list = [ 'foo', 'bar' ];
+
+      expect(validator.oneOf.bind(validator, list)).to.throw(Error);
+    });
+
+    it('enum is a shortcut for oneOf', () => {
+      const list = [ 'foo', 'bar', 'baz' ];
+      validator.oneOf = spy();
+      validator.enum(list);
+
+      expect(validator.oneOf.calledOnce).to.be.ok;
+      expect(validator.oneOf.calledWithExactly(list)).to.be.ok;
+    });
+
+  });
+
+  describe('match', () => {
+
+    it('Throws a TypeError if pattern is not of type RegExp', () => {
+      const value = 'abc';
+      const validator = new StringValidator(value);
+
+      expect(validator.match.bind(validator, 'abc')).to.throw(TypeError);
+    });
+
+    it('Returns itself if the value matches pattern', () => {
+      const value = 'abc';
+      const validator = new StringValidator(value);
+
+      expect(validator.match(/[a-z]/)).to.be.an.instanceof(StringValidator);
+    });
+
+    it('Throws an Error if the value does not match pattern', () => {
+      const value = 'ABC';
+      const validator = new StringValidator(value);
+
+      expect(validator.match.bind(validator, /[a-z]/)).to.throw(Error);
+    });
+
+    it('regExp is a shortcut for match', () => {
+      const value = 'abc';
+      const validator = new StringValidator(value);
+      validator.match = spy();
+      var pattern = /[a-z]/;
+      validator.regExp(pattern);
+
+      expect(validator.match.calledOnce).to.be.ok;
+      expect(validator.match.calledWithExactly(pattern)).to.be.ok;
     });
 
   });

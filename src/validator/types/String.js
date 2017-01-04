@@ -132,6 +132,10 @@ class StringValidator extends BaseValidator {
     return this;
   }
 
+  enum (list) {
+    return this.oneOf(list);
+  }
+
   /**
    * Check if value equals checkValue
    * @param  {String}  checkValue    value to equal to
@@ -239,6 +243,23 @@ class StringValidator extends BaseValidator {
   }
 
   /**
+   * Check if string matches regular expression pattern
+   * @param  {Object} pattern RegExp
+   * @return {Object}         StringValidator
+   */
+  match (pattern) {
+    if (!(pattern instanceof RegExp)) {
+      throw new TypeError('Expected pattern to be of type RegExp');
+    }
+
+    if (!pattern.test(this.value)) {
+      throw new Error(`Expected ${this.value} to match pattern ${pattern.toString()}`);
+    }
+
+    return this;
+  }
+
+  /**
    * Check if length of value is not greater than maxLength
    * @param  {Number} maxLength maximum length for value
    * @return {Object}           StringValidator
@@ -266,6 +287,33 @@ class StringValidator extends BaseValidator {
     }
 
     return this;
+  }
+
+  /**
+   * Check if value is one of the items in list
+   * @param  {Array}  list  List of possible values for value
+   * @return {Object}       StringValidator
+   */
+  oneOf (list) {
+    if (!Array.isArray(list)) {
+      const type = typeof list;
+
+      throw new TypeError(`Expected ${type} list to be an Array`);
+    }
+
+    list.forEach((element) => {
+      this._checkType.call({ value: element }, 'string');
+    });
+
+    if (list.indexOf(this.value) === -1) {
+      throw new Error(`Expected ${this.value} to be one of [${list.toString()}]`);
+    }
+
+    return this;
+  }
+
+  regExp (pattern) {
+    return this.match(pattern);
   }
 
   /**
