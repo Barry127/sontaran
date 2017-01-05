@@ -4,7 +4,7 @@
   "description": "Javascript number, string, boolean, object validator",
   "main": "dist/index.js",
   "scripts": {
-    "build": "babel index.js --out-dir dist --ignore spec.js --ignore dist/*.js",
+    "build": "rm -rf dist && babel src --out-dir dist",
     "lint": "clear && eslint .",
     "lint:watch": "onchange \"**/*.js\" -- npm run lint",
     "prepublish": "npm run build",
