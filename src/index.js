@@ -1,4 +1,4 @@
-const Validator = require('./src/validator/Validator');
+const Validator = require('./validator/Validator');
 
 const validate = function validate (value) {
   return new Validator(value);
