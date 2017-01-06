@@ -102,7 +102,7 @@ class EmailValidator extends StringValidator {
       return this.email.domain.split('.').slice(index).join('.'); // eslint-disable-line
     });
 
-    if (subjects.some((domain) => throwAwayDomains.indexOf(domain) > -1)) {
+    if (subjects.some(domain => throwAwayDomains.indexOf(domain) > -1)) {
       throw new Error(`Expected ${this.value} not to be a throw away email account`);
     }
 
