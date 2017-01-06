@@ -1,9 +1,9 @@
 module.exports = {
   "extends": "airbnb-base",
   "rules": {
-    "no-multi-spaces": "off",
-    "no-underscore-dangle": "off",
-    "space-before-function-paren": ["error", "always"],
-    "comma-dangle": ["error", "never"],
+    "no-multi-spaces": 0,
+    "no-underscore-dangle": 0,
+    "space-before-function-paren": [2, "always"],
+    "comma-dangle": [2, "never"],
   }
 };
