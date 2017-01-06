@@ -13,6 +13,12 @@ class BaseValidator {
 
     return this;
   }
+
+  _checkRegExp (check) { // eslint-disable-line
+    if (!(check instanceof RegExp)) {
+      throw new TypeError(`Expected ${check} to be RegExp`);
+    }
+  }
 }
 
 module.exports = BaseValidator;

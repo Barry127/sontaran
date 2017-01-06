@@ -248,9 +248,7 @@ class StringValidator extends BaseValidator {
    * @return {Object}         StringValidator
    */
   match (pattern) {
-    if (!(pattern instanceof RegExp)) {
-      throw new TypeError('Expected pattern to be of type RegExp');
-    }
+    this._checkRegExp(pattern);
 
     if (!pattern.test(this.value)) {
       throw new Error(`Expected ${this.value} to match pattern ${pattern.toString()}`);

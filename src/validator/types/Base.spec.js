@@ -53,4 +53,22 @@ describe('Validator / types / Base', () => {
 
   });
 
+  describe('_checkRegExp', () => {
+    const validator = new BaseValidator();
+
+    it('Throws a Type Error if check is no instance of Regex', () => {
+      expect(validator._checkRegExp.bind(validator, 'string')).to.Throw(TypeError);
+      expect(validator._checkRegExp.bind(validator, 42)).to.Throw(TypeError);
+    });
+
+    it('Returns void if check is a regular expression literal', () => {
+      expect(validator._checkRegExp(/[a-z]/)).to.be.undefined;
+    });
+
+    it('Returns void if check is a regular expression object', () => {
+      expect(validator._checkRegExp(new RegExp('[a-z]'))).to.be.undefined;
+    });
+
+  });
+
 });
