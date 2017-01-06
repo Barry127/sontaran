@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "rm -rf dist && babel src --out-dir dist",
-    "lint": "clear && eslint .",
+    "lint": "clear && eslint . || true",
     "lint:watch": "onchange \"**/*.js\" -- npm run lint",
     "prepublish": "npm run build",
     "test": "mocha --recursive \"**/*.spec.js\"",

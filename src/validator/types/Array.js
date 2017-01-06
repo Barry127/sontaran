@@ -119,31 +119,31 @@ class ArrayValidator extends BaseValidator {
 
     switch (type.toLowerCase()) {
 
-      case 'bool':
-      case 'boolean':
-      case 'number':
-      case 'object':
-      case 'string':
-        this.value.forEach((element) => {
-          if (type === 'bool') {
-            type = 'boolean'; // eslint-disable-line
-          }
-          this._checkType.call({ value: element }, type.toLowerCase());
-        });
-        break;
+    case 'bool':
+    case 'boolean':
+    case 'number':
+    case 'object':
+    case 'string':
+      this.value.forEach((element) => {
+        if (type === 'bool') {
+          type = 'boolean'; // eslint-disable-line
+        }
+        this._checkType.call({ value: element }, type.toLowerCase());
+      });
+      break;
 
-      case 'array':
-        this.value.forEach((element) => {
-          if (!Array.isArray(element)) {
-            const elementType = typeof element;
+    case 'array':
+      this.value.forEach((element) => {
+        if (!Array.isArray(element)) {
+          const elementType = typeof element;
 
-            throw new TypeError(`Expected ${elementType} to be an Array`);
-          }
-        });
-        break;
+          throw new TypeError(`Expected ${elementType} to be an Array`);
+        }
+      });
+      break;
 
-      default:
-        throw new Error(`could not determine how to check [${this.value.toString()}] for type ${type}`);
+    default:
+      throw new Error(`could not determine how to check [${this.value.toString()}] for type ${type}`);
 
     }
 
