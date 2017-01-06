@@ -2,6 +2,7 @@ const { expect }        = require('chai');
 const { spy }           = require('sinon');
 const ArrayValidator    = require('./types/Array');
 const BooleanValidator  = require('./types/Boolean');
+const EmailValidator    = require('./types/Email');
 const NumberValidator   = require('./types/Number');
 const StringValidator   = require('./types/String');
 const Validator         = require('./Validator');
@@ -35,6 +36,16 @@ describe('Validator / Validator', () => {
       validator.bool();
 
       expect(validator.boolean.calledOnce).to.be.ok;
+    });
+
+  });
+
+  describe('email', () => {
+
+    const validator = new Validator('john.doe@example.com');
+
+    it('Returns an instance of EmailValidator', () => {
+      expect(validator.email()).to.be.an.instanceof(EmailValidator);
     });
 
   });
