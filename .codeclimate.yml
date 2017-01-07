@@ -21,3 +21,5 @@ ratings:
   - "**.php"
   - "**.py"
   - "**.rb"
+  exlude_paths:
+  - "*.spec.js"
