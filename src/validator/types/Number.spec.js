@@ -2,7 +2,7 @@ const { expect }      = require('chai');
 const { spy }         = require('sinon');
 const NumberValidator = require('./Number');
 
-describe.only('Validator / types / Number', () => {
+describe('Validator / types / Number', () => {
 
   it('Is valid if given value is of type number', () => {
     const value = 42;

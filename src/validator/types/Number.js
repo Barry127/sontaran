@@ -1,6 +1,11 @@
 const BaseValidator     = require('./Base');
 const BooleanValidator  = require('./Boolean');
 
+function checkValidNumber (number, errorMessage) {
+  // eslint-disable-next-line no-use-before-define
+  new NumberValidator(number).notNaN().throw(errorMessage);
+}
+
 class NumberValidator extends BaseValidator {
 
   constructor (value) {
@@ -17,8 +22,8 @@ class NumberValidator extends BaseValidator {
    * @return {Object}            NumberValidator
    */
   between (minValue, maxValue, inclusive = false) {
-    new NumberValidator(minValue).notNaN().throw('NumberValidator.between: minValue is not a valid number');
-    new NumberValidator(maxValue).notNaN().throw('NumberValidator.between: maxValue is not a valid number');
+    checkValidNumber(minValue, 'NumberValidator.between: minValue is not a valid number');
+    checkValidNumber(maxValue, 'NumberValidator.between: maxValue is not a valid number');
     new BooleanValidator(inclusive).throw('NumberValidator.between: inclusive is not of type boolean');
 
     if (inclusive) {
@@ -61,7 +66,7 @@ class NumberValidator extends BaseValidator {
    * @return {Object}         NumberValidator
    */
   greaterThan (gtValue) {
-    new NumberValidator(gtValue).notNaN().throw('NumberValidator.greaterThan: gtValue is not a valid number');
+    checkValidNumber(gtValue, 'NumberValidator.greaterThan: gtValue is not a valid number');
 
     return this.between(gtValue, Number.POSITIVE_INFINITY, false);
   }
@@ -88,7 +93,7 @@ class NumberValidator extends BaseValidator {
    * @return {Object}         NumberValidator
    */
   lessThan (ltValue) {
-    new NumberValidator(ltValue).notNaN().throw('NumberValidator.lessThan: ltValue is not a valid number');
+    checkValidNumber(ltValue, 'NumberValidator.lessThan: ltValue is not a valid number');
 
     return this.between(Number.NEGATIVE_INFINITY, ltValue, false);
   }
@@ -99,7 +104,7 @@ class NumberValidator extends BaseValidator {
    * @return {Object}          NumberValidator
    */
   max (maxValue) {
-    new NumberValidator(maxValue).notNaN().throw('NumberValidator.max: maxValue is not a valid number');
+    checkValidNumber(maxValue, 'NumberValidator.max: maxValue is not a valid number');
 
     return this.between(Number.NEGATIVE_INFINITY, maxValue, true);
   }
@@ -110,7 +115,7 @@ class NumberValidator extends BaseValidator {
    * @return {Object}          NumberValidator
    */
   min (minValue) {
-    new NumberValidator(minValue).notNaN().throw('NumberValidator.min: minValue is not a valid number');
+    checkValidNumber(minValue, 'NumberValidator.min: minValue is not a valid number');
 
     return this.between(minValue, Number.POSITIVE_INFINITY, true);
   }
