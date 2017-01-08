@@ -9,15 +9,26 @@ class BooleanValidator extends BaseValidator {
   }
 
   /**
+   * Check if the value equals the query
+   * @param  {Boolean} query value to compare the value to
+   * @return {Object}        BooleanValidator
+   */
+  equals (query) {
+    new BooleanValidator(query).throw('BooleanValidator.equals: query is not of type boolean');
+
+    if (this.value !== query) {
+      this._addError('equals', query, this.value, `Expected ${this.value} to equal ${query}`);
+    }
+
+    return this;
+  }
+
+  /**
    * Check if value is false
    * @return {Object} BooleanValidator
    */
   false () {
-    if (this.value !== false) {
-      throw new Error(`Expected ${this.value} to be false`);
-    }
-
-    return this;
+    return this.equals(false);
   }
 
   /**
@@ -25,11 +36,7 @@ class BooleanValidator extends BaseValidator {
    * @return {Object} BooleanValidator
    */
   true () {
-    if (this.value !== true) {
-      throw new Error(`Expected ${this.value} to be true`);
-    }
-
-    return this;
+    return this.equals(true);
   }
 
 }

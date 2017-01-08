@@ -8,7 +8,7 @@ const RegExpValidator   = require('./types/RegExp');
 const StringValidator   = require('./types/String');
 const Validator         = require('./Validator');
 
-describe.only('Validator / Validator', () => {
+describe('Validator / Validator', () => {
 
   it('Sets the value', () => {
     const value = 'Hello World!';
