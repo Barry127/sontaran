@@ -3,14 +3,14 @@ const BooleanValidator  = require('./Boolean');
 
 describe('Validator / types / Boolean', () => {
 
-  it('is valid if given value is of type boolean', () => {
+  it('Is valid if given value is of type boolean', () => {
     const value = true;
     const validator = new BooleanValidator(value);
 
     expect(validator.valid()).to.be.true;
   });
 
-  it('Throws a TypeError if given value is undefined', () => {
+  it('Adds an error if given value is undefined', () => {
     const validator = new BooleanValidator();
 
     expect(validator.valid()).to.be.false;
@@ -19,7 +19,7 @@ describe('Validator / types / Boolean', () => {
     expect(validator.errors()[0].actual).to.equal('undefined');
   });
 
-  it('Throws a TypeError if given value is null', () => {
+  it('Adds an error if given value is null', () => {
     const value = null;
     const validator = new BooleanValidator(value);
 
@@ -29,7 +29,7 @@ describe('Validator / types / Boolean', () => {
     expect(validator.errors()[0].actual).to.equal('object');
   });
 
-  it('Throws a TypeError if given type is number', () => {
+  it('Adds an error if given type is number', () => {
     const value = 42;
     const validator = new BooleanValidator(value);
 
@@ -39,7 +39,7 @@ describe('Validator / types / Boolean', () => {
     expect(validator.errors()[0].actual).to.equal('number');
   });
 
-  it('Throws a TypeError if given type is object', () => {
+  it('Adds an error if given type is object', () => {
     const value = {};
     const validator = new BooleanValidator(value);
 
@@ -49,7 +49,7 @@ describe('Validator / types / Boolean', () => {
     expect(validator.errors()[0].actual).to.equal('object');
   });
 
-  it('Throws a TypeError if given type is string', () => {
+  it('Adds an error if given type is string', () => {
     const value = 'Hello World!';
     const validator = new BooleanValidator(value);
 
