@@ -1,5 +1,3 @@
-/* eslint no-new: "off" */
-
 const BaseValidator     = require('./Base');
 const BooleanValidator  = require('./Boolean');
 
@@ -19,22 +17,23 @@ class NumberValidator extends BaseValidator {
    * @return {Object}            NumberValidator
    */
   between (minValue, maxValue, inclusive = false) {
-    new NumberValidator(minValue).notNaN();
-    new NumberValidator(maxValue).notNaN();
-    new BooleanValidator(inclusive);
-
-    if (minValue > maxValue) {
-      throw new Error(`NumberValidator:between expected maxValue: ${maxValue} to be greater than minValue: ${minValue}`);
-    }
+    new NumberValidator(minValue).notNaN().throw('NumberValidator.between: minValue is not a valid number');
+    new NumberValidator(maxValue).notNaN().throw('NumberValidator.between: maxValue is not a valid number');
+    new BooleanValidator(inclusive).throw('NumberValidator.between: inclusive is not of type boolean');
 
     if (inclusive) {
-      this.min(minValue).max(maxValue);
+      if (this.value < minValue) {
+        return this._addError('min', minValue, this.value, `Expected ${this.value} to be at least ${minValue}`);
+      }
+      if (this.value > maxValue) {
+        return this._addError('max', maxValue, this.value, `Expected ${this.value} to be at most ${maxValue}`);
+      }
     } else {
       if (this.value <= minValue) {
-        throw new Error(`Expected ${this.value} to be greater than ${minValue}`);
+        return this._addError('greaterThan', `> ${minValue}`, this.value, `Expected ${this.value} to be greater than ${minValue}`);
       }
       if (this.value >= maxValue) {
-        throw new Error(`Expected ${this.value} to be less than ${maxValue}`);
+        return this._addError('lessThan', `< ${maxValue}`, this.value, `Expected ${this.value} to be less than ${maxValue}`);
       }
     }
 
@@ -47,13 +46,24 @@ class NumberValidator extends BaseValidator {
    * @return {Object}            NumberValidator
    */
   equals (checkValue) {
-    new NumberValidator(checkValue);
+    new NumberValidator(checkValue).throw('NumberValidator.equals: checkValue is not of type number');
 
-    if (checkValue !== this.value) {
-      throw new Error(`Expected ${this.value} to equal ${checkValue}`);
+    if (this.value !== checkValue) {
+      return this._addError('equals', checkValue, this.value, `Expected ${this.value} to equal ${checkValue}`);
     }
 
     return this;
+  }
+
+  /**
+   * Check if value is greater than minValue
+   * @param  {Number} minValue value needs to be greater than this
+   * @return {Object}          NumberValidator
+   */
+  greaterThan (minValue) {
+    new NumberValidator(minValue).notNaN().throw('NumberValidator.greaterThan: minValue is not a valid number');
+
+    return this.between(minValue, Number.POSITIVE_INFINITY, false);
   }
 
   int () {
@@ -65,11 +75,22 @@ class NumberValidator extends BaseValidator {
    * @return {Object} NumberValidator
    */
   integer () {
-    if (Math.floor(this.value) !== this.value || Math.abs(this.value) > Number.MAX_SAFE_INTEGER) {
-      throw new Error(`Expected ${this.value} to be an intger`);
+    if (!Number.isInteger(this.value)) {
+      this._addError('integer', Math.floor(this.value), this.value, `Expected ${this.value} to be an integer`);
     }
 
     return this;
+  }
+
+  /**
+   * Check if value is less than maxValue
+   * @param  {Number} maxValue value needs to be less than this
+   * @return {Object}          NumberValidator
+   */
+  lessThan (maxValue) {
+    new NumberValidator(maxValue).notNaN().throw('NumberValidator.lessThan: maxValue is not a valid number');
+
+    return this.between(Number.NEGATIVE_INFINITY, maxValue, false);
   }
 
   /**
@@ -78,13 +99,9 @@ class NumberValidator extends BaseValidator {
    * @return {Object}          NumberValidator
    */
   max (maxValue) {
-    new NumberValidator(maxValue).notNaN();
+    new NumberValidator(maxValue).notNaN().throw('NumberValidator.max: maxValue is not a valid number');
 
-    if (this.value > maxValue) {
-      throw new Error(`Expected ${this.value} to be at most ${maxValue}`);
-    }
-
-    return this;
+    return this.between(Number.NEGATIVE_INFINITY, maxValue, true);
   }
 
   /**
@@ -93,13 +110,9 @@ class NumberValidator extends BaseValidator {
    * @return {Object}          NumberValidator
    */
   min (minValue) {
-    new NumberValidator(minValue).notNaN();
+    new NumberValidator(minValue).notNaN().throw('NumberValidator.min: minValue is not a valid number');
 
-    if (this.value < minValue) {
-      throw new Error(`Expected ${this.value} to be at least ${minValue}`);
-    }
-
-    return this;
+    return this.between(minValue, Number.POSITIVE_INFINITY, true);
   }
 
   /**
@@ -107,19 +120,19 @@ class NumberValidator extends BaseValidator {
    * @return {Object} NumberValidator
    */
   NaN () {
-    if (this.value === this.value) {
-      throw new Error(`Expected ${this.value} to be NaN`);
+    if (!Number.isNaN(this.value)) {
+      return this._addError('NaN', Number.NaN, this.value, `Expected ${this.value} to be NaN`);
     }
 
     return this;
   }
 
   naN () {
-    return this.NaN(); // eslint-disable-line
+    return this.NaN();
   }
 
   nan () {
-    return this.NaN(); // eslint-disable-line
+    return this.NaN();
   }
 
   /**
@@ -127,8 +140,8 @@ class NumberValidator extends BaseValidator {
    * @return {Object} NumberValidator
    */
   notNaN () {
-    if (this.value !== this.value) {
-      throw new Error(`Expected ${this.value} to not be NaN`);
+    if (Number.isNaN(this.value)) {
+      return this._addError('notNaN', 'not NaN', this.value, `Expected ${this.value} to not be NaN`);
     }
 
     return this;

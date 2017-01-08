@@ -2,297 +2,649 @@ const { expect }      = require('chai');
 const { spy }         = require('sinon');
 const NumberValidator = require('./Number');
 
-describe('Validator / types / Number', () => {
+describe.only('Validator / types / Number', () => {
 
-  it('Returns itself if given value type is number', () => {
+  it('Is valid if given value is of type number', () => {
     const value = 42;
     const validator = new NumberValidator(value);
 
-    expect(validator).to.be.an.instanceof(NumberValidator);
+    expect(validator.valid()).to.be.true;
   });
 
-  it('Throws a TypeError if given value is undefined', () => {
-    const createValidator = () => {
-      return new NumberValidator();
-    }
+  it('Is invalid if given value is undefined', () => {
+    const validator = new NumberValidator();
 
-    expect(createValidator).to.throw(TypeError);
+    expect(validator.valid()).to.be.false;
+    expect(validator.errors()[0].type).to.equal('type');
+    expect(validator.errors()[0].expected).to.equal('number');
+    expect(validator.errors()[0].actual).to.equal('undefined');
   });
 
-  it('Throws a TypeError if given value is null', () => {
+  it('Is invalid if given value is null', () => {
     const value = null;
-    const createValidator = () => {
-      return new NumberValidator(value);
-    }
+    const validator = new NumberValidator(value);
 
-    expect(createValidator).to.throw(TypeError);
+    expect(validator.valid()).to.be.false;
+    expect(validator.errors()[0].type).to.equal('type');
+    expect(validator.errors()[0].expected).to.equal('number');
+    expect(validator.errors()[0].actual).to.equal('object');
   });
 
-  it('Throws a TypeError if given type is boolean', () => {
+  it('Is invalid if given type is boolean', () => {
     const value = false;
-    const createValidator = () => {
-      return new NumberValidator(value);
-    }
+    const validator = new NumberValidator(value);
 
-    expect(createValidator).to.throw(TypeError);
+    expect(validator.valid()).to.be.false;
+    expect(validator.errors()[0].type).to.equal('type');
+    expect(validator.errors()[0].expected).to.equal('number');
+    expect(validator.errors()[0].actual).to.equal('boolean');
   });
 
-  it('Throws a TypeError if given type is object', () => {
+  it('Is invalid if given type is object', () => {
     const value = {};
-    const createValidator = () => {
-      return new NumberValidator(value);
-    }
+    const validator = new NumberValidator(value);
 
-    expect(createValidator).to.throw(TypeError);
+    expect(validator.valid()).to.be.false;
+    expect(validator.errors()[0].type).to.equal('type');
+    expect(validator.errors()[0].expected).to.equal('number');
+    expect(validator.errors()[0].actual).to.equal('object');
   });
 
-  it('Throws a TypeError if given type is string', () => {
+  it('Is invalid if given type is string', () => {
     const value = '3';
+    const validator = new NumberValidator(value);
 
-    const createValidator = () => {
-      return new NumberValidator(value);
-    }
-
-    expect(createValidator).to.throw(TypeError);
+    expect(validator.valid()).to.be.false;
+    expect(validator.errors()[0].type).to.equal('type');
+    expect(validator.errors()[0].expected).to.equal('number');
+    expect(validator.errors()[0].actual).to.equal('string');
   });
 
   describe('between', () => {
-    const validator = new NumberValidator(4);
 
-    it('Throws a TypeError if minValue is not of type number', () => {
-      expect(validator.between.bind(validator, '3', 5)).to.throw(TypeError);
+    it('Throws an Error if minValue is not of type number', () => {
+      const validator = new NumberValidator(4);
+
+      expect(validator.between.bind(validator, '3', 5)).to.throw(Error, 'NumberValidator.between: minValue is not a valid number');
     });
 
     it('Throws an Error if minValue is NaN', () => {
-      expect(validator.between.bind(validator, Number.NaN, 5)).to.throw(Error);
+      const validator = new NumberValidator(4);
+
+      expect(validator.between.bind(validator, Number.NaN, 5)).to.throw(Error, 'NumberValidator.between: minValue is not a valid number');
     });
 
     it('Throws a TypeError if maxValue is not of type number', () => {
-      expect(validator.between.bind(validator, 3, '5')).to.throw(TypeError);
+      const validator = new NumberValidator(4);
+
+      expect(validator.between.bind(validator, 3, '5')).to.throw(Error, 'NumberValidator.between: maxValue is not a valid number');
     });
 
     it('Throws an Error if maxValue is NaN', () => {
-      expect(validator.between.bind(validator, 3, Number.NaN)).to.throw(Error);
+      const validator = new NumberValidator(4);
+
+      expect(validator.between.bind(validator, 3, Number.NaN)).to.throw(Error, 'NumberValidator.between: maxValue is not a valid number');
     });
 
-    it('Throws a TypeError if inclusive is not of type boolean', () => {
-      expect(validator.between.bind(validator, 3, 5, 'true')).to.throw(TypeError);
+    it('Throws an Error if inclusive is not of type boolean', () => {
+      const validator = new NumberValidator(4);
+
+      expect(validator.between.bind(validator, 3, 5, 'true')).to.throw(Error, 'NumberValidator.between: inclusive is not of type boolean');
     });
 
-    it('Throws an Error if minValue is greater than maxValue', () => {
-      expect(validator.between.bind(validator, 5, 3)).to.throw(Error);
-    });
+    it('Returns itself', () => {
+      const validator = new NumberValidator(4);
 
-    it('Returns itself if the value is between minValue and maxValue', () => {
       expect(validator.between(3, 5)).to.be.an.instanceof(NumberValidator);
+      expect(validator.between(5, 3)).to.be.an.instanceof(NumberValidator);
+
     });
 
-    it('Returns itself is the value is exactly minValue and inclusive is true', () => {
-      expect(validator.between(4, 5, true)).to.be.an.instanceof(NumberValidator);
+    it('Is valid if the value is between minValue and maxValue and inclusive is false', () => {
+      const validator = new NumberValidator(4);
+
+      expect(validator.between(3, 5, false).valid()).to.be.true;
     });
 
-    it('Returns itself if the value is exactly maxValue and inclusive is true', () => {
-      expect(validator.between(3, 4, true)).to.be.an.instanceof(NumberValidator);
+    it('Is valid if the value is between minValue and maxValue and inclusive is true', () => {
+      const validator = new NumberValidator(4);
+
+      expect(validator.between(3, 5, true).valid()).to.be.true;
     });
 
-    it('Throws an Error if the value is exactly minValue and inclusive is false', () => {
-      expect(validator.between.bind(validator, 4, 5, false)).to.throw(Error);
+    it('Is valid if the value is exactly minValue and inclusive is true', () => {
+      const validator = new NumberValidator(4);
+
+      expect(validator.between(4, 5, true).valid()).to.be.true;
     });
 
-    it('Throws an Error if the value is exactly maxValue and inclusive is false', () => {
-      expect(validator.between.bind(validator, 3, 4, false)).to.throw(Error);
+    it('Is valid if the value is exactly maxValue and inclusive is true', () => {
+      const validator = new NumberValidator(4);
+
+      expect(validator.between(3, 4, true).valid()).to.be.true;
     });
 
-    it('Throws an Error if the value is outside minValue and maxValue', () => {
-      expect(validator.between.bind(validator, 7, 9, true)).throw(Error);
-      expect(validator.between.bind(validator, 0, 2, true)).throw(Error);
-      expect(validator.between.bind(validator, 7, 9, false)).throw(Error);
-      expect(validator.between.bind(validator, 0, 2, false)).throw(Error);
+    it('Is invalid if the value is exactly minValue and inclusive is false', () => {
+      const validator = new NumberValidator(4);
+
+      expect(validator.between(4, 5, false).valid()).to.be.false;
+    });
+
+    it('Sets the correct type, expected and actual to the error for the above case', () => {
+      const validator = new NumberValidator(4);
+      validator.between(4, 5, false);
+
+      expect(validator.errors()[0].type).to.equal('greaterThan');
+      expect(validator.errors()[0].expected).to.equal('> 4');
+      expect(validator.errors()[0].actual).to.equal(4);
+    });
+
+    it('Is invalid if the value is exactly maxValue and inclusive is false', () => {
+      const validator = new NumberValidator(4);
+
+      expect(validator.between(3, 4, false).valid()).to.be.false;
+    });
+
+    it('Sets the correct type, expected and actual to the error for the above case', () => {
+      const validator = new NumberValidator(4);
+      validator.between(3, 4, false);
+
+      expect(validator.errors()[0].type).to.equal('lessThan');
+      expect(validator.errors()[0].expected).to.equal('< 4');
+      expect(validator.errors()[0].actual).to.equal(4);
+    });
+
+    it('Is invalid if the value is less than minValue and inclusive is true', () => {
+      const validator = new NumberValidator(4);
+
+      expect(validator.between(7, 9, true).valid()).to.be.false;
+    });
+
+    it('Sets the correct type, expected and actual to the error for the above case', () => {
+      const validator = new NumberValidator(4);
+      validator.between(7, 9, true);
+
+      expect(validator.errors()[0].type).to.equal('min');
+      expect(validator.errors()[0].expected).to.equal(7);
+      expect(validator.errors()[0].actual).to.equal(4);
+    });
+
+    it('Is invalid if the value is less than minValue and inclusive is false', () => {
+      const validator = new NumberValidator(4);
+
+      expect(validator.between(7, 9, false).valid()).to.be.false;
+    });
+
+    it('Sets the correct type, expected and actual to the error for the above case', () => {
+      const validator = new NumberValidator(4);
+      validator.between(7, 9, false);
+
+      expect(validator.errors()[0].type).to.equal('greaterThan');
+      expect(validator.errors()[0].expected).to.equal('> 7');
+      expect(validator.errors()[0].actual).to.equal(4);
+    });
+
+    it('Is invalid if the value is greater than maxValue and inclusive is true', () => {
+      const validator = new NumberValidator(4);
+
+      expect(validator.between(1, 3, true).valid()).to.be.false;
+    });
+
+    it('Sets the correct type, expected and actual to the error for the above case', () => {
+      const validator = new NumberValidator(4);
+      validator.between(1, 3, true);
+
+      expect(validator.errors()[0].type).to.equal('max');
+      expect(validator.errors()[0].expected).to.equal(3);
+      expect(validator.errors()[0].actual).to.equal(4);
+    });
+
+    it('Is invalid if the value is greater than maxValue and inclusive is false', () => {
+      const validator = new NumberValidator(4);
+
+      expect(validator.between(1, 3, false).valid()).to.be.false;
+    });
+
+    it('Sets the correct type, expected and actual to the error for the above case', () => {
+      const validator = new NumberValidator(4);
+      validator.between(1, 3, false);
+
+      expect(validator.errors()[0].type).to.equal('lessThan');
+      expect(validator.errors()[0].expected).to.equal('< 3');
+      expect(validator.errors()[0].actual).to.equal(4);
     });
   });
 
   describe('equals', () => {
 
-    const value = 2.718;
-    const validator = new NumberValidator(value);
+    it('Throws an Error if checkValue is not of type number', () => {
+      const value = 2.718;
+      const validator = new NumberValidator(value);
 
-    it('Throws a TypeError if checkValue is not of type number', () => {
-      expect(validator.equals.bind(validator, '2.718')).to.throw(TypeError);
+      expect(validator.equals.bind(validator, '2.718')).to.throw(Error, 'NumberValidator.equals: checkValue is not of type number');
     });
 
-    it('Returns itself if checkValue equals the value', () => {
+    it('Returns itself', () => {
+      const value = 2.718;
+      const validator = new NumberValidator(value);
+
       expect(validator.equals(2.718)).to.be.an.instanceof(NumberValidator);
+      expect(validator.equals(3.14)).to.be.an.instanceof(NumberValidator);
     });
 
-    it('Throws an Error if checkValue is not equal to the value', () => {
-      expect(validator.equals.bind(validator, 3)).to.throw(Error);
+    it('Is valid if the value equals checkValue', () => {
+      const value = 2.718;
+      const validator = new NumberValidator(value);
+
+      expect(validator.equals(2.718).valid()).to.be.true;
     });
 
-    it('Throws an Error comparing NaN to NaN', () => {
+    it('Is invalid if the value is not equal to checkValue', () => {
+      const value = 2.718;
+      const validator = new NumberValidator(value);
+
+      expect(validator.equals(3).valid()).to.be.false;
+    });
+
+    it('Sets the correct type, expected and actual to the error', () => {
+      const value = 2.718;
+      const validator = new NumberValidator(value);
+      validator.equals(3);
+
+      expect(validator.errors()[0].type).to.equal('equals');
+      expect(validator.errors()[0].expected).to.equal(3);
+      expect(validator.errors()[0].actual).to.equal(2.718);
+    });
+
+    it('Is invalid if the value and checkValue are both NaN', () => {
       const value = Number.NaN;
       const validator = new NumberValidator(value);
 
-      expect(validator.equals.bind(validator, Number.NaN)).to.throw(Error);
+      expect(validator.equals(Number.NaN).valid()).to.be.false;
+    });
+
+  });
+
+  describe('greaterThan', () => {
+
+    it('Throws an Error if minValue is not of type number', () => {
+      const value = 4;
+      const validator = new NumberValidator(value);
+
+      expect(validator.greaterThan.bind(validator, '3')).to.throw(Error, 'NumberValidator.greaterThan: minValue is not a valid number');
+    });
+
+    it('Throws an Error if minValue is NaN', () => {
+      const value = 4;
+      const validator = new NumberValidator(value);
+
+      expect(validator.greaterThan.bind(validator, Number.NaN)).to.throw(Error, 'NumberValidator.greaterThan: minValue is not a valid number');
+    });
+
+    it('Returns itself', () => {
+      const value = 4;
+      const validator = new NumberValidator(value);
+
+      expect(validator.greaterThan(3)).to.be.an.instanceof(NumberValidator);
+      expect(validator.greaterThan(5)).to.be.an.instanceof(NumberValidator);
+    });
+
+    it('Is valid if the value is greater than minValue', () => {
+      const value = 4;
+      const validator = new NumberValidator(value);
+
+      expect(validator.greaterThan(3).valid()).to.be.true;
+    });
+
+    it('Is invalid if the value is exactly minValue', () => {
+      const value = 4;
+      const validator = new NumberValidator(value);
+
+      expect(validator.greaterThan(4).valid()).to.be.false;
+    });
+
+    it('Is invalid if the value is less than minValue', () => {
+      const value = 4;
+      const validator = new NumberValidator(value);
+
+      expect(validator.greaterThan(5).valid()).to.be.false;
+    });
+
+    it('Sets the correct type, expected and actual to the error', () => {
+      const value = 4;
+      const validator = new NumberValidator(value);
+      validator.greaterThan(5);
+
+      expect(validator.errors()[0].type).to.equal('greaterThan');
+      expect(validator.errors()[0].expected).to.equal('> 5');
+      expect(validator.errors()[0].actual).to.equal(4);
+    });
+
+  });
+
+  describe('int', () => {
+
+    it('Calls integer', () => {
+      const validator = new NumberValidator(42);
+      validator.integer = spy();
+      validator.int();
+
+      expect(validator.integer.calledOnce).to.be.true;
     });
 
   });
 
   describe('integer', () => {
 
-    it('Returns itself if the value is an integer', () => {
+    it('Returns itself', () => {
       const value = 42;
       const validator = new NumberValidator(value);
 
       expect(validator.integer()).to.be.an.instanceof(NumberValidator);
     });
 
-    it('Throws an Error if the value is a float', () => {
+    it('Is valid if the value is an integer', () => {
+      const value = 42;
+      const validator = new NumberValidator(value);
+
+      expect(validator.integer().valid()).to.be.true;
+    });
+
+    it('Is invalid if the value is a float', () => {
       const value = 3.14;
       const validator = new NumberValidator(value);
 
-      expect(validator.integer.bind(validator)).to.throw(Error);
+      expect(validator.integer().valid()).to.be.false;
     });
 
-    it('Throws an Error if the value is an integer outside the save integer range', () => {
-      const highValue   = Math.pow(2, 53);
-      const lowValue    = -(Math.pow(2, 53));
-      const validator1  = new NumberValidator(highValue);
-      const validator2  = new NumberValidator(lowValue);
-
-      expect(validator1.integer.bind(validator1)).to.throw(Error);
-      expect(validator2.integer.bind(validator2)).to.throw(Error);
-    });
-
-    it('Throws an Error if the value is NaN', () => {
+    it('Is invalid if the value is NaN', () => {
       const value = Number.NaN;
       const validator = new NumberValidator(value);
 
-      expect(validator.integer).to.throw(Error);
+      expect(validator.integer().valid()).to.be.false;
     });
 
-    it('int is a shortcut for integer', () => {
-      const value = 127;
-      const validator = new NumberValidator(value);
-      validator.integer = spy();
-      validator.int();
+    it('Sets the correct type, expected and actual to the error', () => {
+      const value = 3.14;
+      const validator = new NumberValidator(value).integer();
 
-      expect(validator.integer.calledOnce).to.be.ok;
+      expect(validator.errors()[0].type).to.equal('integer');
+      expect(validator.errors()[0].expected).to.equal(3);
+      expect(validator.errors()[0].actual).to.equal(3.14);
+    });
+
+  });
+
+  describe('lessThan', () => {
+
+    it('Throws an Error if maxValue is not of type number', () => {
+      const value = 4;
+      const validator = new NumberValidator(value);
+
+      expect(validator.lessThan.bind(validator, '5')).to.throw(Error, 'NumberValidator.lessThan: maxValue is not a valid number');
+    });
+
+    it('Throws an Error if maxValue is NaN', () => {
+      const value = 4;
+      const validator = new NumberValidator(value);
+
+      expect(validator.lessThan.bind(validator, Number.NaN)).to.throw(Error, 'NumberValidator.lessThan: maxValue is not a valid number');
+    });
+
+    it('Returns itself', () => {
+      const value = 4;
+      const validator = new NumberValidator(value);
+
+      expect(validator.lessThan(3)).to.be.an.instanceof(NumberValidator);
+      expect(validator.lessThan(5)).to.be.an.instanceof(NumberValidator);
+    });
+
+    it('Is valid if the value is less than maxValue', () => {
+      const value = 4;
+      const validator = new NumberValidator(value);
+
+      expect(validator.lessThan(5).valid()).to.be.true;
+    });
+
+    it('Is invalid if the value is exactly maxValue', () => {
+      const value = 4;
+      const validator = new NumberValidator(value);
+
+      expect(validator.lessThan(4).valid()).to.be.false;
+    });
+
+    it('Is invalid if the value is greater than maxValue', () => {
+      const value = 4;
+      const validator = new NumberValidator(value);
+
+      expect(validator.lessThan(3).valid()).to.be.false;
+    });
+
+    it('Sets the correct type, expected and actual to the error', () => {
+      const value = 4;
+      const validator = new NumberValidator(value);
+      validator.lessThan(3);
+
+      expect(validator.errors()[0].type).to.equal('lessThan');
+      expect(validator.errors()[0].expected).to.equal('< 3');
+      expect(validator.errors()[0].actual).to.equal(4);
     });
 
   });
 
   describe('max', () => {
 
-    const validator = new NumberValidator(12.3);
+    it('Throws an Error if maxValue is not of type number', () => {
+      const value = 13;
+      const validator = new NumberValidator(value);
 
-    it('Throws a TypeError if maxValue is not of type number', () => {
-      expect(validator.max.bind(validator, '13')).to.throw(TypeError);
+      expect(validator.max.bind(validator, '14')).to.throw(Error, 'NumberValidator.max: maxValue is not a valid number');
     });
 
     it('Throws an Error if maxValue is NaN', () => {
-      expect(validator.max.bind(validator, Number.NaN)).to.throw(Error);
+      const value = 13;
+      const validator = new NumberValidator(value);
+
+      expect(validator.max.bind(validator, Number.NaN)).to.throw(Error, 'NumberValidator.max: maxValue is not a valid number');
     });
 
-    it('Returns itself if maxValue is greater than the value', () => {
-      expect(validator.max(13)).to.be.an.instanceof(NumberValidator);
+    it('Returns itself', () => {
+      const value = 13;
+      const validator = new NumberValidator(value);
+
+      expect(validator.max(12)).to.be.an.instanceof(NumberValidator);
+      expect(validator.max(14)).to.be.an.instanceof(NumberValidator);
     });
 
-    it('Returns intself if maxValue is exactly the value', () => {
-      expect(validator.max(12.3)).to.be.an.instanceof(NumberValidator);
+    it('Is valid if the value is less than maxValue', () => {
+      const value = 13;
+      const validator = new NumberValidator(value);
+
+      expect(validator.max(14).valid()).to.be.true;
     });
 
-    it('Throws an Error if maxValue is less than the value', () => {
-      expect(validator.max.bind(validator, 12)).to.throw(Error);
+    it('Is valid if the value is exactly maxValue', () => {
+      const value = 13;
+      const validator = new NumberValidator(value);
+
+      expect(validator.max(13).valid()).to.be.true;
+    });
+
+    it('Is invalid if the value is greater than maxValue', () => {
+      const value = 13;
+      const validator = new NumberValidator(value);
+
+      expect(validator.max(12.3).valid()).to.be.false;
+    });
+
+    it('Sets the correct type, expected and actual to the error', () => {
+      const value = 13;
+      const validator = new NumberValidator(value).max(12.3);
+
+      expect(validator.errors()[0].type).to.equal('max');
+      expect(validator.errors()[0].expected).to.equal(12.3);
+      expect(validator.errors()[0].actual).to.equal(13);
     });
 
   });
 
   describe('min', () => {
 
-    const validator = new NumberValidator(12.3);
+    it('Throws an Error if minValue is not of type number', () => {
+      const value = 13;
+      const validator = new NumberValidator(value);
 
-    it('Throws a TypeError if minValue is not of type number', () => {
-      expect(validator.min.bind(validator, '13')).to.throw(TypeError);
+      expect(validator.min.bind(validator, '12')).to.throw(Error, 'NumberValidator.min: minValue is not a valid number');
     });
 
-    it('Throws an Error if minValue is NaN', () => {
-      expect(validator.min.bind(validator, Number.NaN)).to.throw(Error);
+    it('Throws an Error if maxValue is NaN', () => {
+      const value = 13;
+      const validator = new NumberValidator(value);
+
+      expect(validator.min.bind(validator, Number.NaN)).to.throw(Error, 'NumberValidator.min: minValue is not a valid number');
     });
 
-    it('Returns itself if minValue is less than the value', () => {
+    it('Returns itself', () => {
+      const value = 13;
+      const validator = new NumberValidator(value);
+
       expect(validator.min(12)).to.be.an.instanceof(NumberValidator);
+      expect(validator.min(14)).to.be.an.instanceof(NumberValidator);
     });
 
-    it('Returns itself if minValue is exactly the value', () => {
-      expect(validator.min(12.3)).to.be.an.instanceof(NumberValidator);
+    it('Is valid if the value is greater than minValue', () => {
+      const value = 13;
+      const validator = new NumberValidator(value);
+
+      expect(validator.min(12).valid()).to.be.true;
     });
 
-    it('Throws an Error if minValue is greater than the value', () => {
-      expect(validator.min.bind(validator, 13)).to.throw(Error);
+    it('Is valid if the value is exactly minValue', () => {
+      const value = 13;
+      const validator = new NumberValidator(value);
+
+      expect(validator.min(13).valid()).to.be.true;
+    });
+
+    it('Is invalid if the value is less than minValue', () => {
+      const value = 13;
+      const validator = new NumberValidator(value);
+
+      expect(validator.min(14).valid()).to.be.false;
+    });
+
+    it('Sets the correct type, expected and actual to the error', () => {
+      const value = 13;
+      const validator = new NumberValidator(value).min(14);
+
+      expect(validator.errors()[0].type).to.equal('min');
+      expect(validator.errors()[0].expected).to.equal(14);
+      expect(validator.errors()[0].actual).to.equal(13);
     });
 
   });
 
   describe('NaN', () => {
 
-    it('Returns itself if the value is NaN', () => {
-      const value = Number.NaN;
-      const validator = new NumberValidator(value);
+    it('Returns itself', () => {
+      const validator = new NumberValidator(Number.NaN);
 
       expect(validator.NaN()).to.be.an.instanceof(NumberValidator);
     });
 
-    it('Throws an Error if the value is a valid number', () => {
-      const value = 64;
-      const validator = new NumberValidator(value);
-
-      expect(validator.NaN.bind(validator)).to.throw(Error);
-    });
-
-    it('naN is a shortcut for NaN', () => {
+    it('Is valid if the value is NaN', () => {
       const value = Number.NaN;
       const validator = new NumberValidator(value);
+
+      expect(validator.NaN().valid()).to.be.true;
+    });
+
+    it('Is invalid if the value is a valid number', () => {
+      const value = 42;
+      const validator = new NumberValidator(value);
+
+      expect(validator.NaN().valid()).to.be.false;
+    });
+
+    it('Sets the correct type, expected and actual to the error', () => {
+      const value = 3.14;
+      const validator = new NumberValidator(value);
+      validator.NaN();
+
+      expect(validator.errors()[0].type).to.equal('NaN');
+      expect(validator.errors()[0].expected).to.be.NaN;
+      expect(validator.errors()[0].actual).to.equal(3.14);
+    });
+
+  });
+
+  describe('naN', () => {
+
+    it('Calls NaN', () => {
+      const validator = new NumberValidator(Number.NaN);
       validator.NaN = spy();
       validator.naN();
 
-      expect(validator.NaN.calledOnce).to.be.ok;
+      expect(validator.NaN.calledOnce).to.be.true;
     });
 
-    it('nan is a shortcut for NaN', () => {
-      const value = Number.NaN;
-      const validator = new NumberValidator(value);
+  });
+
+  describe('nan', () => {
+
+    it('Calls NaN', () => {
+      const validator = new NumberValidator(Number.NaN);
       validator.NaN = spy();
       validator.nan();
 
-      expect(validator.NaN.calledOnce).to.be.ok;
+      expect(validator.NaN.calledOnce).to.be.true;
     });
 
   });
 
   describe('notNaN', () => {
 
-    it('Returns itself if the value is valid number', () => {
-      const value = Math.PI;
-      const validator = new NumberValidator(value);
+    it('Returns itself', () => {
+      const validator = new NumberValidator(42);
 
       expect(validator.notNaN()).to.be.an.instanceof(NumberValidator);
     });
 
-    it('Throws an Error if the value is NaN', () => {
+    it('Is valid if the value is a valid number', () => {
+      const value = 3.14;
+      const validator = new NumberValidator(value);
+
+      expect(validator.notNaN().valid()).to.be.true;
+    });
+
+    it('Is invalid if the value is NaN', () => {
       const value = Number.NaN;
       const validator = new NumberValidator(value);
 
-      expect(validator.notNaN.bind(validator)).to.throw(Error);
+      expect(validator.notNaN().valid()).to.be.false;
     });
 
-    it('notNan is a shortcut for notNaN', () => {
-      const value = 1;
+    it('Sets the correct type, expected and actual to the error', () => {
+      const value = Number.NaN;
       const validator = new NumberValidator(value);
+      validator.notNaN();
+
+      expect(validator.errors()[0].type).to.equal('notNaN');
+      expect(validator.errors()[0].expected).to.equal('not NaN');
+      expect(validator.errors()[0].actual).to.be.NaN;
+    });
+
+  });
+
+  describe('notNan', () => {
+
+    it('Calls notNaN', () => {
+      const validator = new NumberValidator(42);
       validator.notNaN = spy();
       validator.notNan();
 
-      expect(validator.notNaN.calledOnce).to.be.ok;
-    });
+      expect(validator.notNaN.calledOnce).to.be.true;
+    })
 
   });
 
