@@ -2,6 +2,7 @@ const ArrayValidator    = require('.//types/Array');
 const BooleanValidator  = require('./types/Boolean');
 const EmailValidator    = require('./types/Email');
 const NumberValidator   = require('./types/Number');
+const RegExpValidator   = require('./types/RegExp');
 const StringValidator   = require('./types/String');
 
 class Validator {
@@ -28,6 +29,14 @@ class Validator {
 
   number () {
     return new NumberValidator(this.value);
+  }
+
+  regexp () {
+    return this.regExp();
+  }
+
+  regExp () {
+    return new RegExpValidator(this.value);
   }
 
   string () {
