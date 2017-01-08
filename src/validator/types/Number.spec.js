@@ -267,18 +267,18 @@ describe.only('Validator / types / Number', () => {
 
   describe('greaterThan', () => {
 
-    it('Throws an Error if minValue is not of type number', () => {
+    it('Throws an Error if gtValue is not of type number', () => {
       const value = 4;
       const validator = new NumberValidator(value);
 
-      expect(validator.greaterThan.bind(validator, '3')).to.throw(Error, 'NumberValidator.greaterThan: minValue is not a valid number');
+      expect(validator.greaterThan.bind(validator, '3')).to.throw(Error, 'NumberValidator.greaterThan: gtValue is not a valid number');
     });
 
-    it('Throws an Error if minValue is NaN', () => {
+    it('Throws an Error if gtValue is NaN', () => {
       const value = 4;
       const validator = new NumberValidator(value);
 
-      expect(validator.greaterThan.bind(validator, Number.NaN)).to.throw(Error, 'NumberValidator.greaterThan: minValue is not a valid number');
+      expect(validator.greaterThan.bind(validator, Number.NaN)).to.throw(Error, 'NumberValidator.greaterThan: gtValue is not a valid number');
     });
 
     it('Returns itself', () => {
@@ -289,21 +289,21 @@ describe.only('Validator / types / Number', () => {
       expect(validator.greaterThan(5)).to.be.an.instanceof(NumberValidator);
     });
 
-    it('Is valid if the value is greater than minValue', () => {
+    it('Is valid if the value is greater than gtValue', () => {
       const value = 4;
       const validator = new NumberValidator(value);
 
       expect(validator.greaterThan(3).valid()).to.be.true;
     });
 
-    it('Is invalid if the value is exactly minValue', () => {
+    it('Is invalid if the value is exactly gtValue', () => {
       const value = 4;
       const validator = new NumberValidator(value);
 
       expect(validator.greaterThan(4).valid()).to.be.false;
     });
 
-    it('Is invalid if the value is less than minValue', () => {
+    it('Is invalid if the value is less than gtValue', () => {
       const value = 4;
       const validator = new NumberValidator(value);
 
@@ -377,18 +377,18 @@ describe.only('Validator / types / Number', () => {
 
   describe('lessThan', () => {
 
-    it('Throws an Error if maxValue is not of type number', () => {
+    it('Throws an Error if ltValue is not of type number', () => {
       const value = 4;
       const validator = new NumberValidator(value);
 
-      expect(validator.lessThan.bind(validator, '5')).to.throw(Error, 'NumberValidator.lessThan: maxValue is not a valid number');
+      expect(validator.lessThan.bind(validator, '5')).to.throw(Error, 'NumberValidator.lessThan: ltValue is not a valid number');
     });
 
-    it('Throws an Error if maxValue is NaN', () => {
+    it('Throws an Error if ltValue is NaN', () => {
       const value = 4;
       const validator = new NumberValidator(value);
 
-      expect(validator.lessThan.bind(validator, Number.NaN)).to.throw(Error, 'NumberValidator.lessThan: maxValue is not a valid number');
+      expect(validator.lessThan.bind(validator, Number.NaN)).to.throw(Error, 'NumberValidator.lessThan: ltValue is not a valid number');
     });
 
     it('Returns itself', () => {
@@ -399,21 +399,21 @@ describe.only('Validator / types / Number', () => {
       expect(validator.lessThan(5)).to.be.an.instanceof(NumberValidator);
     });
 
-    it('Is valid if the value is less than maxValue', () => {
+    it('Is valid if the value is less than ltValue', () => {
       const value = 4;
       const validator = new NumberValidator(value);
 
       expect(validator.lessThan(5).valid()).to.be.true;
     });
 
-    it('Is invalid if the value is exactly maxValue', () => {
+    it('Is invalid if the value is exactly ltValue', () => {
       const value = 4;
       const validator = new NumberValidator(value);
 
       expect(validator.lessThan(4).valid()).to.be.false;
     });
 
-    it('Is invalid if the value is greater than maxValue', () => {
+    it('Is invalid if the value is greater than ltValue', () => {
       const value = 4;
       const validator = new NumberValidator(value);
 
@@ -490,7 +490,7 @@ describe.only('Validator / types / Number', () => {
 
   describe('min', () => {
 
-    it('Throws an Error if minValue is not of type number', () => {
+    it('Throws an Error if maxValue is not of type number', () => {
       const value = 13;
       const validator = new NumberValidator(value);
 

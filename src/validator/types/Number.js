@@ -56,14 +56,14 @@ class NumberValidator extends BaseValidator {
   }
 
   /**
-   * Check if value is greater than minValue
-   * @param  {Number} minValue value needs to be greater than this
-   * @return {Object}          NumberValidator
+   * Check if value is greater than gtValue
+   * @param  {Number} gtValue value needs to be greater than this
+   * @return {Object}         NumberValidator
    */
-  greaterThan (minValue) {
-    new NumberValidator(minValue).notNaN().throw('NumberValidator.greaterThan: minValue is not a valid number');
+  greaterThan (gtValue) {
+    new NumberValidator(gtValue).notNaN().throw('NumberValidator.greaterThan: gtValue is not a valid number');
 
-    return this.between(minValue, Number.POSITIVE_INFINITY, false);
+    return this.between(gtValue, Number.POSITIVE_INFINITY, false);
   }
 
   int () {
@@ -83,14 +83,14 @@ class NumberValidator extends BaseValidator {
   }
 
   /**
-   * Check if value is less than maxValue
-   * @param  {Number} maxValue value needs to be less than this
-   * @return {Object}          NumberValidator
+   * Check if value is less than ltValue
+   * @param  {Number} ltValue value needs to be less than this
+   * @return {Object}         NumberValidator
    */
-  lessThan (maxValue) {
-    new NumberValidator(maxValue).notNaN().throw('NumberValidator.lessThan: maxValue is not a valid number');
+  lessThan (ltValue) {
+    new NumberValidator(ltValue).notNaN().throw('NumberValidator.lessThan: ltValue is not a valid number');
 
-    return this.between(Number.NEGATIVE_INFINITY, maxValue, false);
+    return this.between(Number.NEGATIVE_INFINITY, ltValue, false);
   }
 
   /**
@@ -128,11 +128,11 @@ class NumberValidator extends BaseValidator {
   }
 
   naN () {
-    return this.NaN();
+    return this.NaN(); // eslint-disable-line
   }
 
   nan () {
-    return this.NaN();
+    return this.NaN(); // eslint-disable-line
   }
 
   /**
