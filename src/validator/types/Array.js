@@ -115,7 +115,7 @@ class ArrayValidator extends BaseValidator {
    */
   of (type) {
     new StringValidator(type).throw('ArrayValidator.of: type is not of type string');
-    let errors = 0;
+    let errors = false;
 
     switch (type.toLowerCase()) {
 
@@ -131,7 +131,7 @@ class ArrayValidator extends BaseValidator {
           }
           // eslint-disable-next-line valid-typeof
           if (typeof element !== type.toLowerCase()) {
-            errors++;
+            errors = true;
           }
         });
         break;
@@ -139,7 +139,7 @@ class ArrayValidator extends BaseValidator {
       case 'array':
         this.value.forEach((element) => {
           if (!Array.isArray(element)) {
-            errors++;
+            errors = true;
           }
         });
         break;
@@ -149,7 +149,7 @@ class ArrayValidator extends BaseValidator {
 
     }
 
-    if (errors > 0) {
+    if (errors) {
       return this._addError('of', type, `[${this.value.toString()}]`, `Expected all elements of [${this.value.toString()}] to be of type ${type}`);
     }
 
