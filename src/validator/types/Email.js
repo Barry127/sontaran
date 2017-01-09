@@ -1,8 +1,12 @@
-/* eslint no-new: "off" */
-/* eslint no-control-regex: "off" */
-
+const RegexpValidator   = require('./RegExp');
 const StringValidator   = require('./String');
 const throwAwayDomains  = require('../data/throw-away-email-domains');
+
+function testPart (part, pattern, method) {
+  new RegexpValidator(pattern).throw(`EmailValidator.${method}: pattern is not an instance of RegExp`);
+
+  return pattern.test(part);
+}
 
 class EmailValidator extends StringValidator {
 
@@ -10,14 +14,17 @@ class EmailValidator extends StringValidator {
     super(value);
 
     /* Regex from Philippe Verday his comment @ http://emailregex.com/ */
+    // eslint-disable-next-line max-len
     const emailRegex = /^((?:[-!#$%&'*+/=?^`{|}~\w]|\\.)+(?:\.(?:[-!#$%&'*+/=?^`{|}~\w]|\\.)+)*|"(?:[^\\"]|\\.)+")@(?:\[(?:((?:(?:[01][\d]{0,2}|2(?:[0-4]\d?|5[0-5]?|[6-9])?|[3-9]\d?)\.){3}(?:[01][\d]{0,2}|2(?:[0-4]\d?|5[0-5]?|[6-9])?|[3-9]\d?))|IPv6:((?:[0-9A-F]{1,4}:){7}[0-9A-F]{1,4}|(?:[0-9A-F]{1,4}:){6}:[0-9A-F]{1,4}|(?:[0-9A-F]{1,4}:){5}:(?:[0-9A-F]{1,4}:)?[0-9A-F]{1,4}|(?:[0-9A-F]{1,4}:){4}:(?:[0-9A-F]{1,4}:){0,2}[0-9A-F]{1,4}|(?:[0-9A-F]{1,4}:){3}:(?:[0-9A-F]{1,4}:){0,3}[0-9A-F]{1,4}|(?:[0-9A-F]{1,4}:){2}:(?:[0-9A-F]{1,4}:){0,4}[0-9A-F]{1,4}|[0-9A-F]{1,4}::(?:[0-9A-F]{1,4}:){0,5}[0-9A-F]{1,4}|::(?:[0-9A-F]{1,4}:){0,6}[0-9A-F]{1,4}|(?:[0-9A-F]{1,4}:){1,7}:|(?:[0-9A-F]{1,4}:){6}(?:(?:[01][\d]{0,2}|2(?:[0-4]\d?|5[0-5]?|[6-9])?|[3-9]\d?)\.){3}(?:[01][\d]{0,2}|2(?:[0-4]\d?|5[0-5]?|[6-9])?|[3-9]\d?)|(?:[0-9A-F]{1,4}:){0,5}:(?:(?:[01][\d]{0,2}|2(?:[0-4]\d?|5[0-5]?|[6-9])?|[3-9]\d?)\.){3}(?:[01][\d]{0,2}|2(?:[0-4]\d?|5[0-5]?|[6-9])?|[3-9]\d?)|::(?:[0-9A-F]{1,4}:){0,5}(?:(?:[01][\d]{0,2}|2(?:[0-4]\d?|5[0-5]?|[6-9])?|[3-9]\d?)\.){3}(?:[01][\d]{0,2}|2(?:[0-4]\d?|5[0-5]?|[6-9])?|[3-9]\d?))|([-a-z\d]{0,62}[a-z\d]:[^[\\\]]+))]|([a-z\d](?:[-a-z\d]{0,62}[a-z\d])?(?:\.[a-z\d](?:[-a-z\d]{0,62}[a-z\d])?)+))$/i;
 
-    if (!emailRegex.test(value)) {
-      throw new Error(`${value} is an invalid email address`);
-    }
+    this.match(emailRegex, {
+      type: 'email',
+      expected: 'email',
+      messsage: `${value} is an invalid email address`
+    });
 
-    const domain = value.split('@').pop();
-    const localPart = value.substring(0, value.length - domain.length - 1);
+    const domain = this.valid() ? value.split('@').pop() : '';
+    const localPart = this.valid() ? value.substring(0, value.length - domain.length - 1) : '';
 
     this.email = {
       domain,
@@ -31,13 +38,18 @@ class EmailValidator extends StringValidator {
    * @return {Object}            EmailValidator
    */
   domain (domainName) {
-    new StringValidator(domainName);
+    new StringValidator(domainName).throw('EmailValidator.domain: domainName is not of type string');
 
     if (this.email.domain.toLowerCase() !== domainName.toLowerCase()) {
-      throw new Error(`Expected domain of ${this.value} to equal ${domainName}`);
+      this._addError('domain', domainName, this.email.domain, `Expected domain of ${this.value} to equal ${domainName}`);
     }
 
     return this;
+  }
+
+
+  domainMatch (pattern) {
+    return this.matchDomain(pattern);
   }
 
   /**
@@ -45,34 +57,9 @@ class EmailValidator extends StringValidator {
    * @param  {Object} pattern RegExp
    * @return {Object}         EmailValidator
    */
-  domainMatch (pattern) {
-    this._checkRegExp(pattern);
-
-    if (!pattern.test(this.email.domain)) {
-      throw new Error(`Expected domain of ${this.value} to match pattern ${pattern.toString()}`);
-    }
-
-    return this;
-  }
-
   matchDomain (pattern) {
-    return this.domainMatch(pattern);
-  }
-
-  matchName (pattern) {
-    return this.nameMatch(pattern);
-  }
-
-  /**
-   * Checks if name (local-part) equals checkValue (case-sensitive)
-   * @param  {[type]} checkValue [description]
-   * @return {[type]}            [description]
-   */
-  name (checkValue) {
-    new StringValidator(checkValue);
-
-    if (this.email.localPart !== checkValue) {
-      throw new Error(`Expected name (local-part) of ${this.value} to equal ${checkValue}`);
+    if (!testPart(this.email.domain, pattern, 'matchDomain')) {
+      return this._addError('matchDomain', pattern.toString(), this.email.domain, `Expected domain of ${this.value} to match pattern ${pattern.toString()}`);
     }
 
     return this;
@@ -83,14 +70,32 @@ class EmailValidator extends StringValidator {
    * @param  {Object} pattern RegExp
    * @return {Object}         EmailValidator
    */
-  nameMatch (pattern) {
-    this._checkRegExp(pattern);
-
-    if (!pattern.test(this.email.localPart)) {
-      throw new Error(`Expected name (local-part) of ${this.value} to match pattern ${pattern.toString()}`);
+  matchName (pattern) {
+    if (!testPart(this.email.localPart, pattern, 'matchName')) {
+      return this._addError('matchName', pattern.toString(), this.email.localPart, `Expected name (local-part) of ${this.value} to match pattern ${pattern.toString()}`);
     }
 
     return this;
+  }
+
+  /**
+   * Checks if name (local-part) equals query (case-sensitive)
+   * @param  {String} query [description]
+   * @return {Object}        [description]
+   */
+  name (query) {
+    new StringValidator(query).throw('EmailValidator.name: query is not of type string');
+
+    if (this.email.localPart !== query) {
+      return this._addError('name', query, this.email.localPart, `Expected name (local-part) of ${this.value} to equal ${query}`);
+    }
+
+    return this;
+  }
+
+
+  nameMatch (pattern) {
+    return this.matchName(pattern);
   }
 
   /**
@@ -103,7 +108,7 @@ class EmailValidator extends StringValidator {
     });
 
     if (subjects.some(domain => throwAwayDomains.indexOf(domain) > -1)) {
-      throw new Error(`Expected ${this.value} not to be a throw away email account`);
+      return this._addError('noThrowAway', 'valid email', this.value, `Expected ${this.value} not to be a throw away email account`);
     }
 
     return this;
