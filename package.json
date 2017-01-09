@@ -9,6 +9,7 @@
     "lint:watch": "onchange \"**/*.js\" -- npm run lint",
     "prepublish": "npm run build",
     "test": "mocha --recursive \"**/*.spec.js\"",
+    "test:coverage": "istanbul cover _mocha \"**/*.spec.js\" -- -R spec",
     "test:watch": "npm run test -- --watch"
   },
   "repository": {
@@ -36,6 +37,7 @@
     "chai": "^3.5.0",
     "eslint": "^3.12.2",
     "eslint-config-airbnb-base": "^11.0.0",
+    "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
     "onchange": "^3.2.1",
     "sinon": "^1.17.6"
