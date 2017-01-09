@@ -2,6 +2,7 @@ engines:
   duplication:
     enabled: true
     exclude_fingerprints:
+      - 8e1cfa5a8bde28ff9bcdf058296d2985
       - 994f52aa89543a329a5773e5044ca47b
       - f99c6452391f59f6ae210d800c53d544
       - 07de349ac15a281207f8072415a7ba8d
