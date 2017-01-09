@@ -1,5 +1,3 @@
-/* eslint no-new: "off" */
-
 const BaseValidator     = require('./Base');
 const NumberValidator   = require('./Number');
 const StringValidator   = require('./String');
@@ -12,7 +10,7 @@ class ArrayValidator extends BaseValidator {
     if (!Array.isArray(value)) {
       const type = typeof value;
 
-      throw new TypeError(`Expected ${type} to be an Array`);
+      this._addError('type', 'Array', type, `Expected ${type} to be an Array`);
     }
   }
 
@@ -23,9 +21,6 @@ class ArrayValidator extends BaseValidator {
    * @return {Object}           ArrayValidator
    */
   between (minLength, maxLength) {
-    new NumberValidator(minLength).integer();
-    new NumberValidator(maxLength).integer();
-
     return this.min(minLength).max(maxLength);
   }
 
@@ -36,7 +31,7 @@ class ArrayValidator extends BaseValidator {
    */
   contains (value) {
     if (this.value.indexOf(value) === -1) {
-      throw new Error(`Expected [${this.value.toString()}] to contain ${value}`);
+      return this._addError('contains', value, `[${this.value.toString()}]`, `Expected [${this.value.toString()}] to contain ${value}`);
     }
 
     return this;
@@ -47,18 +42,23 @@ class ArrayValidator extends BaseValidator {
   }
 
   /**
-   * Run function fn on each value in value array
-   * @param  {Function} fn function to run on each value. Takes 3 arguments: element, index, array
+   * Run function fn on each value in value array return a string to set error
+   * @param  {Function} fn function to run on each value.
+   *                       Takes 3 arguments: element, index, array. Returns (string) error | void
    * @return {Object}      ArrayValidator
    */
   forEach (fn) {
-    this._checkType.call({ value: fn }, 'function');
-
-    try {
-      this.value.forEach(fn);
-    } catch (error) {
-      throw new Error(`Expected [${this.value.toString()}] forEach not to throw: ${error.message}`);
+    if (typeof fn !== 'function') {
+      throw new Error('ArrayValidator.forEach: fn is not a function');
     }
+
+    this.value.forEach((element, index, array) => {
+      const result = fn(element, index, array);
+
+      if (typeof result === 'string') {
+        this._addError('forEach', null, element, result);
+      }
+    });
 
     return this;
   }
@@ -69,10 +69,10 @@ class ArrayValidator extends BaseValidator {
    * @return {Object}        ArrayValidator
    */
   length (length) {
-    new NumberValidator(length).integer();
+    new NumberValidator(length).integer().throw('ArrayValidator.length: length is not a valid integer');
 
     if (this.value.length !== length) {
-      throw new Error(`Expected length of [${this.value.toString()}] to be exactly ${length}`);
+      return this._addError('length', length, this.value.length, `Expected length of [${this.value.toString()}] to be exactly ${length}`);
     }
 
     return this;
@@ -84,10 +84,10 @@ class ArrayValidator extends BaseValidator {
    * @return {Object}           ArrayValidator
    */
   max (maxLength) {
-    new NumberValidator(maxLength).integer();
+    new NumberValidator(maxLength).integer().throw('ArrayValidator.max: maxLength is not a valid integer');
 
     if (this.value.length > maxLength) {
-      throw new Error(`Expected length of [${this.value.toString()}] to be at most ${maxLength}`);
+      return this._addError('max', maxLength, this.value.length, `Expected length of [${this.value.toString()}] to be at most ${maxLength}`);
     }
 
     return this;
@@ -99,27 +99,29 @@ class ArrayValidator extends BaseValidator {
    * @return {Object}           ArrayValidator
    */
   min (minLength) {
-    new NumberValidator(minLength).integer();
+    new NumberValidator(minLength).integer().throw('ArrayValidator.min: minLength is not a valid integer');
 
     if (this.value.length < minLength) {
-      throw new Error(`Expected length of [${this.value.toString()}] to be at least ${minLength}`);
+      return this._addError('min', minLength, this.value.length, `Expected length of [${this.value.toString()}] to be at least ${minLength}`);
     }
 
     return this;
   }
 
   /**
-   * Check if all elements of value array are of type tpe
+   * Check if all elements of value array are of primitive type
    * @param  {String} type type all value elements should be
    * @return {Object}      ArrayValidator
    */
   of (type) {
-    new StringValidator(type);
+    new StringValidator(type).throw('ArrayValidator.of: type is not of type string');
+    let errors = false;
 
     switch (type.toLowerCase()) {
 
       case 'bool':
       case 'boolean':
+      case 'function':
       case 'number':
       case 'object':
       case 'string':
@@ -127,23 +129,28 @@ class ArrayValidator extends BaseValidator {
           if (type === 'bool') {
             type = 'boolean'; // eslint-disable-line
           }
-          this._checkType.call({ value: element }, type.toLowerCase());
+          // eslint-disable-next-line valid-typeof
+          if (typeof element !== type.toLowerCase()) {
+            errors = true;
+          }
         });
         break;
 
       case 'array':
         this.value.forEach((element) => {
           if (!Array.isArray(element)) {
-            const elementType = typeof element;
-
-            throw new TypeError(`Expected ${elementType} to be an Array`);
+            errors = true;
           }
         });
         break;
 
       default:
-        throw new Error(`could not determine how to check [${this.value.toString()}] for type ${type}`);
+        return this._addError('of', type, `[${this.value.toString()}]`, `could not determine how to check [${this.value.toString()}] for type ${type}`);
 
+    }
+
+    if (errors) {
+      return this._addError('of', type, `[${this.value.toString()}]`, `Expected all elements of [${this.value.toString()}] to be of type ${type}`);
     }
 
     return this;
