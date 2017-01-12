@@ -1,6 +1,7 @@
 const ArrayValidator    = require('.//types/Array');
 const BooleanValidator  = require('./types/Boolean');
 const EmailValidator    = require('./types/Email');
+const NetworkValidator  = require('./types/Network');
 const NumberValidator   = require('./types/Number');
 const RegExpValidator   = require('./types/RegExp');
 const StringValidator   = require('./types/String');
@@ -25,6 +26,10 @@ class Validator {
 
   email () {
     return new EmailValidator(this.value);
+  }
+
+  network () {
+    return new NetworkValidator(this.value);
   }
 
   number () {

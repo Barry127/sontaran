@@ -3,6 +3,7 @@ const { spy }           = require('sinon');
 const ArrayValidator    = require('./types/Array');
 const BooleanValidator  = require('./types/Boolean');
 const EmailValidator    = require('./types/Email');
+const NetworkValidator  = require('./types/Network');
 const NumberValidator   = require('./types/Number');
 const RegExpValidator   = require('./types/RegExp');
 const StringValidator   = require('./types/String');
@@ -53,6 +54,14 @@ describe('Validator / Validator', () => {
       expect(validator.email()).to.be.an.instanceof(EmailValidator);
     });
 
+  });
+
+  describe('network', () => {
+
+    it('Returns an instance of NetworkValidator', () => {
+      const validator = new Validator('127.0.0.1');
+      expect(validator.network()).to.be.an.instanceof(NetworkValidator);
+    });
   });
 
   describe('number', () => {
