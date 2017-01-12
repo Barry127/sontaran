@@ -2,7 +2,7 @@ const { expect }        = require('chai');
 const { spy }           = require('sinon');
 const NetworkValidator  = require('./Network');
 
-describe.only('Validator / types / Network', () => {
+describe('Validator / types / Network', () => {
 
   it('Is valid if given value is of type string', () => {
     const value = 'Hello World';
