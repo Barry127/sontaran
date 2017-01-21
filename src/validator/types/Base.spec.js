@@ -178,6 +178,25 @@ describe('Validator / types / Base', () => {
 
   });
 
+describe('_isRequired', () => {
+
+  let validator;
+
+  beforeEach(() => {
+    validator = new BaseValidator();
+  });
+
+  it('A validator (key) is not required by default', () => {
+    expect(validator._isRequired()).to.be.false;
+  });
+
+  it('Returns true if key is required', () => {
+    validator.required();
+    expect(validator._isRequired()).to.be.true;
+  });
+
+});
+
   describe('errors', () => {
 
     it('Returns a clone of all error', () => {
@@ -233,6 +252,40 @@ describe('Validator / types / Base', () => {
       validator.result();
 
       expect(validator.valid.calledOnce).to.be.true;
+    });
+
+  });
+
+  describe('required', () => {
+
+    let validator;
+
+    beforeEach(() => {
+      validator = new BaseValidator();
+    });
+
+    it('Throws an Error if isRequired is not of type boolean', () => {
+      expect(validator.required.bind(validator, 'true')).to.throw(Error, 'BaseValidator.required: isRequired is not of type boolean');
+    });
+
+    it('Returns itself', () => {
+      expect(validator.required()).to.be.an.instanceof(BaseValidator);
+      expect(validator.required(false)).to.be.an.instanceof(BaseValidator);
+    });
+
+    it('Sets required to true if no value is passed', () => {
+      validator.required();
+      expect(validator._isRequired()).to.be.true;
+    });
+
+    it('Sets required to false if isRequired is false', () => {
+      validator.required(false);
+      expect(validator._isRequired()).to.be.false;
+    });
+
+    it('Chains and keeps the last call to require as value', () => {
+      validator.required(true).required(false).required();
+      expect(validator._isRequired()).to.be.true;
     });
 
   });

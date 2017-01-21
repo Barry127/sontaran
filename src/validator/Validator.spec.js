@@ -5,6 +5,7 @@ const BooleanValidator  = require('./types/Boolean');
 const EmailValidator    = require('./types/Email');
 const NetworkValidator  = require('./types/Network');
 const NumberValidator   = require('./types/Number');
+const ObjectValidator   = require('./types/Object');
 const RegExpValidator   = require('./types/RegExp');
 const StringValidator   = require('./types/String');
 const Validator         = require('./Validator');
@@ -69,6 +70,14 @@ describe('Validator / Validator', () => {
     it('Returns an instance of NumberValidator', () => {
       const validator = new Validator(42);
       expect(validator.number()).to.be.an.instanceof(NumberValidator);
+    });
+  });
+
+  describe('object', () => {
+
+    it('Returns an instance of ObjectValidator', () => {
+      const validator = new Validator({});
+      expect(validator.object()).to.be.an.instanceof(ObjectValidator);
     });
   });
 

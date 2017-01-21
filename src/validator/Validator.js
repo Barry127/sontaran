@@ -3,6 +3,7 @@ const BooleanValidator  = require('./types/Boolean');
 const EmailValidator    = require('./types/Email');
 const NetworkValidator  = require('./types/Network');
 const NumberValidator   = require('./types/Number');
+const ObjectValidator   = require('./types/Object');
 const RegExpValidator   = require('./types/RegExp');
 const StringValidator   = require('./types/String');
 
@@ -13,7 +14,7 @@ class Validator {
   }
 
   array () {
-    return new ArrayValidator(this.value);
+    return new ArrayValidator(this.value, Validator);
   }
 
   bool () {
@@ -21,19 +22,23 @@ class Validator {
   }
 
   boolean () {
-    return new BooleanValidator(this.value);
+    return new BooleanValidator(this.value, Validator);
   }
 
   email () {
-    return new EmailValidator(this.value);
+    return new EmailValidator(this.value, Validator);
   }
 
   network () {
-    return new NetworkValidator(this.value);
+    return new NetworkValidator(this.value, Validator);
   }
 
   number () {
-    return new NumberValidator(this.value);
+    return new NumberValidator(this.value, Validator);
+  }
+
+  object () {
+    return new ObjectValidator(this.value, Validator);
   }
 
   regexp () {
@@ -41,11 +46,11 @@ class Validator {
   }
 
   regExp () {
-    return new RegExpValidator(this.value);
+    return new RegExpValidator(this.value, Validator);
   }
 
   string () {
-    return new StringValidator(this.value);
+    return new StringValidator(this.value, Validator);
   }
 
 }

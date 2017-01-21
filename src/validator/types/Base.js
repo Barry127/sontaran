@@ -1,10 +1,13 @@
-const ERRORS = Symbol('ERRORS');
+const ERRORS    = Symbol('ERRORS');
+const REQUIRED  = Symbol('REQUIRED');
 
 class BaseValidator {
 
   constructor (value) {
     this.value = value;
+
     this[ERRORS] = [];
+    this[REQUIRED] = false;
   }
 
   _addError (type, expected, actual, message) {
@@ -36,6 +39,10 @@ class BaseValidator {
     return this;
   }
 
+  _isRequired () {
+    return this[REQUIRED];
+  }
+
   /**
    * Get an array of all errors
    * @return {Array} Errors
@@ -58,6 +65,21 @@ class BaseValidator {
 
   result () {
     return this.valid();
+  }
+
+  /**
+   * (for ObjectValidator) Is this key required?
+   * @param  {Boolean} isRequired Is this key required
+   * @return {Object}             BaseValidator
+   */
+  required (isRequired = true) {
+    new BaseValidator(isRequired)
+      ._checkType('boolean')
+      .throw('BaseValidator.required: isRequired is not of type boolean');
+
+    this[REQUIRED] = isRequired;
+
+    return this;
   }
 
   /**
