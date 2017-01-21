@@ -39,7 +39,7 @@ class ObjectValidator extends BaseValidator {
       throw new Error('ObjectValidator.key: validateFn is not a function');
     }
 
-    let validator = validateFn(validate(this.value[key]));
+    const validator = validateFn(validate(this.value[key]));
 
     if (this.value[key] === undefined) {
       if (validator._isRequired()) {
@@ -49,8 +49,8 @@ class ObjectValidator extends BaseValidator {
       return this;
     }
 
-    if (!validator.valid) {
-      validator = new BaseValidator(this.value[key]);
+    if (!(validator instanceof BaseValidator)) {
+      throw new Error(`ObjectValidator.key: validateFn for ${key} does not return a valid Validator`);
     }
 
     if (!validator.valid()) {

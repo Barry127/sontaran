@@ -106,6 +106,10 @@ describe('Validator / types / Object', () => {
       expect(validator.key.bind(validator, 'pi', {})).to.throw(Error, 'ObjectValidator.key: validateFn is not a function');
     });
 
+    it('Throws an Error if validateFn does not return a validator', () => {
+      expect(validator.key.bind(validator, 'pi', () => null)).to.throw(Error, 'ObjectValidator.key: validateFn for pi does not return a valid Validator');
+    });
+
     it('Returns itself', () => {
       expect(validator.key('pi', (v) => v.number())).to.be.an.instanceof(ObjectValidator);
       expect(validator.key('welcome', (v) => v.boolean())).to.be.an.instanceof(ObjectValidator);
