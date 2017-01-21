@@ -6,6 +6,10 @@ class BooleanValidator extends BaseValidator {
     super(value);
 
     this._checkType('boolean');
+
+    if (!this.valid()) {
+      this.value = false;
+    }
   }
 
   /**

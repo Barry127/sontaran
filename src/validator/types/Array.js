@@ -11,6 +11,7 @@ class ArrayValidator extends BaseValidator {
       const type = typeof value;
 
       this._addError('type', 'Array', type, `Expected ${type} to be an Array`);
+      this.value = [];
     }
   }
 

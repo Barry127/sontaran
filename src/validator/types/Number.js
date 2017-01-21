@@ -12,6 +12,10 @@ class NumberValidator extends BaseValidator {
     super(value);
 
     this._checkType('number');
+
+    if (!this.valid()) {
+      this.value = Number.NaN;
+    }
   }
 
   /**

@@ -18,6 +18,13 @@ class StringValidator extends BaseValidator {
         lowercase: value.toLowerCase(),
         uppercase: value.toUpperCase()
       };
+    } else {
+      this.value = '';
+      this.props = {
+        length: 0,
+        lowercase: '',
+        uppercase: ''
+      };
     }
   }
 
