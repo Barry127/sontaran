@@ -3,6 +3,7 @@ const { validate, validators }  = require('./index');
 const Validator     = require('./validator/Validator');
 
 const ArrayValidator    = require('./validator/types/Array');
+const BaseValidator     = require('./validator/types/Base');
 const BooleanValidator  = require('./validator/types/Boolean');
 const EmailValidator    = require('./validator/types/Email');
 const NetworkValidator  = require('./validator/types/Network');
@@ -29,6 +30,10 @@ describe('index', () => {
 
     it('Exports ArrayValidator', () => {
       expect(validators.ArrayValidator).to.equal(ArrayValidator);
+    });
+
+    it('Exports BaseValidator', () => {
+      expect(validators.BaseValidator).to.equal(BaseValidator);
     });
 
     it('Exports BooleanValidator', () => {

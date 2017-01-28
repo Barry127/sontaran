@@ -1,6 +1,7 @@
 const Validator         = require('./validator/Validator');
 
 const ArrayValidator    = require('./validator/types/Array');
+const BaseValidator     = require('./validator/types/Base');
 const BooleanValidator  = require('./validator/types/Boolean');
 const EmailValidator    = require('./validator/types/Email');
 const NetworkValidator  = require('./validator/types/Network');
@@ -17,6 +18,7 @@ module.exports = {
   validate,
   validators: {
     ArrayValidator,
+    BaseValidator,
     BooleanValidator,
     EmailValidator,
     NetworkValidator,
