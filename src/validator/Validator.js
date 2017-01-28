@@ -1,4 +1,4 @@
-const ArrayValidator    = require('.//types/Array');
+const ArrayValidator    = require('./types/Array');
 const BooleanValidator  = require('./types/Boolean');
 const EmailValidator    = require('./types/Email');
 const NetworkValidator  = require('./types/Network');
