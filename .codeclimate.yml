@@ -1,21 +1,10 @@
 engines:
   duplication:
     enabled: true
-    exclude_fingerprints:
-      - 8e1cfa5a8bde28ff9bcdf058296d2985
-      - 994f52aa89543a329a5773e5044ca47b
-      - f99c6452391f59f6ae210d800c53d544
-      - 07de349ac15a281207f8072415a7ba8d
-      - a86ba54049a660fac3cedb3114b2e883
-      - 0d04da1208edb6445a9cbc32bcedd818
-      - 3482fdda2301bf67634fe211dc2ba37a
     config:
       languages:
-      - ruby
       - javascript:
           mass_threshold: 50
-      - python
-      - php
   eslint:
     enabled: true
     channel: "eslint-3"
@@ -27,8 +16,5 @@ ratings:
   - "**.js"
   - "**.jsx"
   - "**.module"
-  - "**.php"
-  - "**.py"
-  - "**.rb"
 exclude_paths:
 - "**.spec.js"

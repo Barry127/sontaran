@@ -1,10 +1,16 @@
 module.exports = {
-  "extends": "airbnb-base",
+  "extends": "xo-space",
   "rules": {
-    "no-multi-spaces": 0,
-    "no-plusplus": 0,
-    "no-underscore-dangle": 0,
-    "space-before-function-paren": [2, "always"],
-    "comma-dangle": [2, "never"],
+    "object-curly-spacing": [
+      2,
+      "always"
+    ],
+    "space-before-function-paren": [
+      2,
+      {
+        "anonymous": "always",
+        "named": "always"
+      }
+    ]
   }
 };
