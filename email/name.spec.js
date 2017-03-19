@@ -13,7 +13,7 @@ describe('email/name', () => {
   const invalidPairs = [
     [ 'john@doe.com', 'JoHn' ],
     [ 'larry@gmail.com', 'sergei' ],
-    [ 'bill.hotmail.com', /steve/ ],
+    [ 'bill@hotmail.com', /steve/ ],
     [ 'some@mail.ru', Math.PI ]
   ];
 
