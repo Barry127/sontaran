@@ -14,7 +14,8 @@ describe('email/domain', () => {
   const invalidPairs = [
     [ 'larry@gmail.com', 'hotmail.com' ],
     [ 'bill.hotmail.com', /gmail/ ],
-    [ 'some@mail.ru', Math.PI ]
+    [ 'some@mail.ru', Math.PI ],
+    [ 3, /notAnEmail/ ]
   ];
 
   validPairs.forEach(pair => {

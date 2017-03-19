@@ -14,7 +14,8 @@ describe('email/name', () => {
     [ 'john@doe.com', 'JoHn' ],
     [ 'larry@gmail.com', 'sergei' ],
     [ 'bill@hotmail.com', /steve/ ],
-    [ 'some@mail.ru', Math.PI ]
+    [ 'some@mail.ru', Math.PI ],
+    [ 3, /notAnEmail/ ]
   ];
 
   validPairs.forEach(pair => {
