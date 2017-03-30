@@ -1,0 +1,22 @@
+module.exports = {
+  ascii: require('./ascii'),
+  base64: require('./base64'),
+  between: require('./between'),
+  contains: require('./contains'),
+  empty: require('./empty'),
+  endsWith: require('./endsWith'),
+  enum: require('./enum'),
+  equals: require('./equals'),
+  extendedAscii: require('./extendedAscii'),
+  hexColor: require('./hexColor'),
+  isJson: require('./isJson'),
+  isString: require('./isString'),
+  length: require('./length'),
+  lowercase: require('./lowercase'),
+  match: require('./match'),
+  max: require('./max'),
+  min: require('./min'),
+  notEmpty: require('./notEmpty'),
+  startsWith: require('./startsWith'),
+  uppercase: require('./uppercase')
+};
