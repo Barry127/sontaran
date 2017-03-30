@@ -1,4 +1,7 @@
 module.exports = {
+  "parserOptions": {
+    "ecmaVersion": 6
+  },
   "extends": "xo-space",
   "rules": {
     "object-curly-spacing": [
