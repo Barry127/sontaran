@@ -3,14 +3,12 @@ engines:
     enabled: false
   eslint:
     enabled: true
-    config: './.eslintrc.js'
+    config:
+      config: './.eslintrc.js'
   fixme:
     enabled: true
 ratings:
   paths:
-  - "**.inc"
   - "**.js"
-  - "**.jsx"
-  - "**.module"
-exclude_paths:
+  exclude_paths:
 - "**.spec.js"
