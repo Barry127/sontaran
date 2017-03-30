@@ -3,11 +3,7 @@
 [![Code Climate](https://codeclimate.com/github/Barry127/sontaran/badges/gpa.svg)](https://codeclimate.com/github/Barry127/sontaran)
 [![Test Coverage](https://codeclimate.com/github/Barry127/sontaran/badges/coverage.svg)](https://codeclimate.com/github/Barry127/sontaran/coverage)
 
-Sontaran is javascript validator with a fluid syntax. It has taken inspiration from great validators like [joi](https://github.com/hapijs/joi) and [validator.js](https://github.com/chriso/validator.js).
-
-Sontarans primary focus is to offer an easy-to-use, flexible and readable validator for Node.js.
-
-Sontaran comes with the folling validators:
+Sontaran is a javascript validator utility library. It comes with validation functions for:
 
 * Array
 * Boolean
@@ -15,32 +11,7 @@ Sontaran comes with the folling validators:
 * Network
 * Number
 * Object
-* RegExp
 * String
-
-## Example
-
-Complete docs can be found [here](https://barry127.github.io/sontaran/).
-
-```javascript
-const { validate } = require('sontaran');
-let user = {
-  // Some user object to validate
-};
-
-let userValidator = validate(user).object().keys({
-  username: (v) => v.string().between(3, 12).required(),
-  password: (v) => v.string().min(8).required(),
-  email: (v) => v.email().noThrowAway().required(),
-  age: (v) => v.number().integer().min(18).required(),
-  bio: (v) => v.string()
-});
-
-if (!userValidator.valid()) {
-  // Log an array of errors if validator is invalid
-  console.log(userValidator.errors());
-}
-```
 
 ## Installation
 
@@ -50,12 +21,129 @@ Sontaran can be installed using npm.
 npm install --save sontaran
 ```
 
-After installation Sontaran can be included to your project.
+Loading Sontaran:
 
 ```javascript
-// ES5 syntax
-var validate = require('sontaran').validate;
+// Load the full library
+var sontaran = require('sontaran');
 
-// ES6 syntax
-const { validate } = require('sontaran');
+// Load a validator category
+var array = require('sontaran/array');
+var number = require('sontaran/number');
+
+// Load specific methods for smaller bundles
+var domain = require('sontaran/email/domain');
+var noThrowAway = require('sontaran/email/noThrowAway');
 ```
+
+## Example
+
+Complete docs can be found [here](https://barry127.github.io/sontaran/).
+
+```javascript
+const { email } = require('sontaran/email');
+
+function myEmailValidator (userEmail) {
+  if (!email.isEmail(userEmail)) {
+    throw Error(userEmail + ' is not a valid email address');
+  }
+
+  if (!email.noThrowAway(userEmail)) {
+    throw Error('Throw away email accounts are not accepted');
+  }
+
+  // This is probably the worst email check ever
+  if (email.domain(userEmail, /gmail/i)) {
+    throw Error('Gmail accounts are not accepted');
+  }
+
+  return userEmail;
+}
+
+const formData = {
+  // some formdata
+};
+
+try {
+  myEmailValidator(formData.email);
+} catch (e) {
+  // handle error
+}
+
+// email is valid
+```
+
+## Function List
+
+* array
+  * between
+  * contains
+  * equals
+  * isArray
+  * isSubset
+  * isSuperset
+  * length
+  * max
+  * min
+  * of
+* boolean
+  * equals
+  * isBoolean
+  * isFalse
+  * isTrue
+* email
+  * domain
+  * isEmail
+  * name
+  * noThrowAway
+* network
+  * ip
+  * ipv4
+  * ipv6
+  * mac
+* number
+  * between
+  * equals
+  * greaterThan
+  * isInteger
+  * isNaN
+  * isNegative
+  * isNumber
+  * isPositive
+  * lessThan
+  * max
+  * min
+  * notNaN
+* object
+  * contains
+  * equals
+  * hasKey
+  * hasKeys
+  * hasOwnProperty
+  * isObject
+  * isSubset
+  * isSuperset
+  * length
+  * max
+  * min
+* string
+  * ascii
+  * base64
+  * between
+  * contains
+  * empty
+  * endsWith
+  * enum
+  * equals
+  * extendedAscii
+  * hexColor
+  * isJson
+  * isString
+  * length
+  * lowercase
+  * match
+  * max
+  * min
+  * notEmpty
+  * startsWith
+  * uppercase
