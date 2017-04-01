@@ -12,6 +12,7 @@ describe('email/noThrowAway', () => {
   const invalidValues = [
     42,
     'johndoe@yopmail.com',
+    'johndoe@YopMail.com',
     'john.doe@toiea.com',
     'jane.doe@sub.fastmazda.com',
     'me@some.crazy.long.prefix.zehnminutenmail.de'

@@ -21,7 +21,7 @@ function noThrowAway (email) {
     emailDomain.split('.').slice(index).join('.')
   );
 
-  return !subjects.some(domain => throwAwayMails.indexOf(domain) > -1);
+  return !subjects.some(domain => throwAwayMails.indexOf(domain.toLowerCase()) > -1);
 }
 
 module.exports = noThrowAway;
