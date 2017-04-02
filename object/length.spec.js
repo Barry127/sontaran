@@ -4,11 +4,11 @@ const length = require('./length');
 describe('object/length', () => {
 
   const myObject = function () {
-    return {
-      a: 1,
-      b: 2,
-      c: 3
-    };
+    this.a = 1;
+    this.b = 2;
+    this.c = 3;
+
+    return this;
   };
 
   myObject.prototype.x = 24;
