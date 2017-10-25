@@ -1,19 +1,15 @@
-const { expect } = require('chai');
 const boolean = require('./index');
 
-describe('boolean', () => {
+const methods = [
+  'equals',
+  'isBool',
+  'isBoolean',
+  'isFalse',
+  'isTrue'
+];
 
-  const methods = [
-    'equals',
-    'isBoolean',
-    'isFalse',
-    'isTrue',
-  ];
-
-  methods.forEach(method => {
-    it(`boolean exports ${method}`, () => {
-      expect(boolean[method]).to.be.a('function');
-    });
+methods.forEach(method => {
+  test(`boolean exports ${method}`, () => {
+    expect(boolean[method]).toBe(require(`./${method}`));
   });
-
 });

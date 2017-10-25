@@ -1,33 +1,39 @@
-const { expect } = require('chai');
 const equals = require('./equals');
 
-describe('boolean/equals', () => {
+test('equals returns a function', () => {
+  expect(equals(true)).toBeInstanceOf(Function);
+});
 
+describe('Valid pairs', () => {
   const validPairs = [
     [ true, true ],
     [ false, false ]
   ];
 
+  validPairs.forEach(pair => {
+    test(`${pair[0]} equals ${pair[1]}`, () => {
+      expect(equals(pair[1])(pair[0])).toBe(true);
+    })
+  });
+});
+
+describe('Invalid pairs', () => {
   const invalidPairs = [
     [ true, false ],
     [ false, true ],
-    [ true, 'true' ],
-    [ true, 1 ],
-    [ false, -1 ],
-    [ false, 0 ],
-    [ false, 'false' ]
+    [ 'true', true ],
+    [ 1, true ]
   ];
 
-  validPairs.forEach(pair => {
-    it(`${pair[0]} equals ${pair[1]}`, () => {
-      expect(equals(pair[0], pair[1])).to.be.true;
-    });
-  });
-
   invalidPairs.forEach(pair => {
-    it(`${pair[0]} equals ${pair[1]}`, () => {
-      expect(equals(pair[0], pair[1])).to.be.false;
+    test(`${pair[0]} does not equal ${pair[1]}`, () => {
+      expect(equals(pair[1])(pair[0])).toBe(false);
     });
   });
+});
 
+describe('Invalid arguments', () => {
+  test('equals throws a type error if expectedValue is not a boolean', () => {
+    expect(equals.bind(null, 'true')).toThrow(TypeError);
+  });
 });

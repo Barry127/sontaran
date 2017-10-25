@@ -1,31 +1,40 @@
-const { expect } = require('chai');
 const isBoolean = require('./isBoolean');
 
-describe('boolean/isBoolean', () => {
+test('isBoolean returns a function', () => {
+  expect(isBoolean()).toBeInstanceOf(Function);
+});
 
-  const validValues = [
+describe('Valid booleans', () => {
+  const validator = isBoolean();
+
+  const validBooleans = [
     true,
     false
   ];
 
-  const invalidValues = [
+  validBooleans.forEach(boolean => {
+    test(`${boolean} is a boolean`, () => {
+      expect(validator(boolean)).toBe(true);
+    });
+  });
+});
+
+describe('Invalid booleans', () => {
+  const validator = isBoolean();
+
+  const invalidBooleans = [
     -1,
     0,
     1,
     'true',
-    'false'
+    'false',
+    null,
+    undefined
   ];
 
-  validValues.forEach(value => {
-    it(`${value} is a valid boolean`, () => {
-      expect(isBoolean(value)).to.be.true;
+  invalidBooleans.forEach(boolean => {
+    test(`${boolean} is not a boolean`, () => {
+      expect(validator(boolean)).toBe(false);
     });
   });
-
-  invalidValues.forEach(value => {
-    it(`${value} is a not valid boolean`, () => {
-      expect(isBoolean(value)).to.be.false;
-    });
-  });
-
 });

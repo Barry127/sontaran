@@ -1,11 +1,11 @@
-/**
- * Check if value is equal to expected
- * @param  {Boolean} value    Value to check
- * @param  {Boolean} expected Expected value
- * @return {Boolean}          Result
- */
-function equals (value, expected) {
-  return value === expected;
+const validBool = require('./isBoolean')();
+
+function equals (expectedValue) {
+  if (!validBool(expectedValue)) {
+    throw new TypeError('equals: expectedValue argument is not a boolean');
+  }
+
+  return value => value === expectedValue;
 }
 
 module.exports = equals;

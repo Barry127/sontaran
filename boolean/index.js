@@ -1,6 +1,14 @@
-module.exports = {
-  equals: require('./equals'),
-  isBoolean: require('./isBoolean'),
-  isFalse: require('./isFalse'),
-  isTrue: require('./isTrue')
-};
+const boolean = {};
+const methods = [
+  'equals',
+  'isBool',
+  'isBoolean',
+  'isFalse',
+  'isTrue'
+];
+
+methods.forEach(method => {
+  boolean[method] = require(`./${method}`);
+});
+
+module.exports = boolean;

@@ -1,12 +1,22 @@
-const { expect } = require('chai');
 const isFalse = require('./isFalse');
 
-describe('boolean/isFalse', () => {
+test('isFalse returns a function', () => {
+  expect(isFalse()).toBeInstanceOf(Function);
+});
 
+describe('Valid values', () => {
   const validValues = [
     false
   ];
 
+  validValues.forEach(value => {
+    test(`${value} is false`, () => {
+      expect(isFalse()(value)).toBe(true);
+    });
+  });
+});
+
+describe('Invalid values', () => {
   const invalidValues = [
     true,
     -1,
@@ -14,15 +24,9 @@ describe('boolean/isFalse', () => {
     'false'
   ];
 
-  validValues.forEach(value => {
-    it(`${value} is false`, () => {
-      return expect(isFalse(value)).to.be.true;
-    });
-  });
-
   invalidValues.forEach(value => {
-    it(`${value} is not false`, () => {
-      return expect(isFalse(value)).to.be.false;
+    test(`${value} is not false`, () => {
+      expect(isFalse()(value)).toBe(false);
     });
   });
 });
