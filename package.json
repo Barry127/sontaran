@@ -6,9 +6,9 @@
   "scripts": {
     "lint": "reset && eslint . || true",
     "lint:watch": "onchange \"**/*.js\" -- npm run lint",
-    "test": "mocha --recursive \"**/*.spec.js\"",
-    "test:coverage": "istanbul cover _mocha \"**/*.spec.js\" -- -R spec",
-    "test:watch": "npm run test -- --watch"
+    "test": "jest",
+    "test:coverage": "jest . --coverage",
+    "test:watch": "jest . --watch"
   },
   "repository": {
     "type": "git",
@@ -29,11 +29,9 @@
   },
   "homepage": "https://barry127.github.io/sontaran",
   "devDependencies": {
-    "chai": "^3.5.0",
     "eslint": "^3.17.1",
     "eslint-config-xo-space": "^0.15.0",
-    "istanbul": "^0.4.5",
-    "mocha": "^3.2.0",
+    "jest": "^21.2.1",
     "onchange": "^3.2.1"
   },
   "dependencies": {}
