@@ -1,11 +1,11 @@
-/**
- * Check if value is equal to expected
- * @param  {Number} value     Value to check
- * @param  {Number} expected  Expected value
- * @return {Boolean}          Result
- */
-function equals (value, expected) {
-  return value === expected;
+const validNumber = require('./isNumber')();
+
+function equals (expectedValue) {
+  if (!validNumber(expectedValue)) {
+    throw new TypeError('equals: expectedValue argument is not a valid number');
+  }
+
+  return value => value === expectedValue;
 }
 
 module.exports = equals;

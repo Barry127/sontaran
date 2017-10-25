@@ -1,9 +1,13 @@
-const { expect } = require('chai');
 const isNumber = require('./isNumber');
 
-describe('number/isNumber', () => {
+test('isNumber returns a function', () => {
+  expect(isNumber()).toBeInstanceOf(Function);
+});
 
-  const validValues = [
+describe('Valid numbers', () => {
+  const validator = isNumber();
+
+  const validNumbers = [
     42,
     -3,
     0,
@@ -14,13 +18,23 @@ describe('number/isNumber', () => {
     Number.POSITIVE_INFINITY,
     Number.NEGATIVE_INFINITY,
     0xFF,
-    3.1E+12,
+    3.1e+12,
     0b011,
-    0o55
-
+    0o55,
+    32e-4
   ];
 
-  const invalidValues = [
+  validNumbers.forEach(number => {
+    test(`${number} is a number`, () => {
+      expect(validator(number)).toBe(true);
+    });
+  });
+});
+
+describe('Invalid numbers', () => {
+  const validator = isNumber();
+
+  const invalidNumbers = [
     '42',
     '-3',
     true,
@@ -28,16 +42,9 @@ describe('number/isNumber', () => {
     '#4'
   ];
 
-  validValues.forEach(value => {
-    it(`${value} is a valid number`, () => {
-      expect(isNumber(value)).to.be.true;
+  invalidNumbers.forEach(number => {
+    test(`${number} is not a number`, () => {
+      expect(validator(number)).toBe(false);
     });
   });
-
-  invalidValues.forEach(value => {
-    it(`${value} is a not valid number`, () => {
-      expect(isNumber(value)).to.be.false;
-    });
-  });
-
 });

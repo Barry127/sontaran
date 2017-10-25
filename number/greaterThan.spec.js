@@ -1,32 +1,41 @@
-const { expect } = require('chai');
 const greaterThan = require('./greaterThan');
 
-describe('number/greaterThan', () => {
+test('greaterThan returns a function', () => {
+  expect(greaterThan(0)).toBeInstanceOf(Function);
+});
 
+describe('Valid Pairs', () => {
   const validPairs = [
     [ 3, 2 ],
     [ -2, -6 ],
     [ 3, Number.NEGATIVE_INFINITY ]
   ];
 
+  validPairs.forEach(pair => {
+    test(`${pair[0]} is greater than ${pair[1]}`, () => {
+      expect(greaterThan(pair[1])(pair[0])).toBe(true);
+    });
+  });
+});
+
+describe('Invalid Pairs', () => {
   const invalidPairs = [
     [ 4, 4 ],
     [ Math.PI, 4 ],
-    [ -2, -1 ],
     [ 4, Number.NaN ],
-    [ 2, '1' ]
+    [ Number.NaN, Number.NEGATIVE_INFINITY ],
+    [ 2, 0x03 ]
   ];
 
-  validPairs.forEach(pair => {
-    it(`${pair[0]} is greater than ${pair[1]}`, () => {
-      expect(greaterThan(pair[0], pair[1])).to.be.true;
-    });
-  });
-
   invalidPairs.forEach(pair => {
-    it(`${pair[0]} is not greater than ${pair[1]}`, () => {
-      expect(greaterThan(pair[0], pair[1])).to.be.false;
+    test(`${pair[0]} is not greater than ${pair[1]}`, () => {
+      expect(greaterThan(pair[1])(pair[0])).toBe(false);
     });
   });
+});
 
+describe('Invalid Arguments', () => {
+  test('greaterThan throws a type error if gt is not a number', () => {
+    expect(greaterThan.bind(null, '3')).toThrow(TypeError);
+  });
 });

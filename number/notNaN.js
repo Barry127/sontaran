@@ -1,12 +1,5 @@
-const isNaN = require('./isNaN');
-
-/**
- * Check if value is not NaN
- * @param  {Number}  value Value to check
- * @return {Boolean}       Result
- */
-function notNaN (value) {
-  return !isNaN(value);
+function isNaN () {
+  return value => !Number.isNaN(value);
 }
 
-module.exports = notNaN;
+module.exports = isNaN;

@@ -1,14 +1,26 @@
-module.exports = {
-  between: require('./between'),
-  equals: require('./equals'),
-  greaterThan: require('./greaterThan'),
-  isInteger: require('./isInteger'),
-  isNaN: require('./isNaN'),
-  isNegative: require('./isNegative'),
-  isNumber: require('./isNumber'),
-  isPositive: require('./isPositive'),
-  lessThan: require('./lessThan'),
-  max: require('./max'),
-  min: require('./min'),
-  notNaN: require('./notNaN')
-};
+const number = {};
+const methods = [
+  'between',
+  'equals',
+  'greaterThan',
+  'gt',
+  'isInt',
+  'isInteger',
+  'isNaN',
+  'isNan',
+  'isNegative',
+  'isNumber',
+  'isPositive',
+  'lessThan',
+  'lt',
+  'max',
+  'min',
+  'notNaN',
+  'notNan'
+];
+
+methods.forEach(method => {
+  number[method] = require(`./${method}`);
+});
+
+module.exports = number;

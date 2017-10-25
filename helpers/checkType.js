@@ -1,12 +1,6 @@
-/**
- * check if value is of certain type
- * @param  {Mixed}  value Value to check
- * @param  {String} type  Type to check value for
- * @return {Boolean}      Result
- */
 function checkType (value, type) {
   if (typeof type !== 'string') {
-    return false;
+    throw new TypeError('checkType: type argument must be of type string');
   }
 
   return (typeof value === type.toLowerCase()); // eslint-disable-line valid-typeof

@@ -1,17 +1,11 @@
-const isNumber = require('./isNumber');
+const validNumber = require('./isNumber')();
 
-/**
- * Check if value is less than lt (exclusive)
- * @param  {Number} value Value to check
- * @param  {Number} gt    Value should be less than gt
- * @return {Boolean}      Result
- */
-function lessThan (value, lt) {
-  if (!isNumber(lt)) {
-    return false;
+function lessThan (lt) {
+  if (!validNumber(lt)) {
+    throw new TypeError('lessThan: lt argument is not a valid number');
   }
 
-  return value < lt;
+  return value => value < lt;
 }
 
 module.exports = lessThan;

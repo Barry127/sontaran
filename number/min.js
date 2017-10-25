@@ -1,17 +1,11 @@
-const isNumber = require('./isNumber');
+const validNumber = require('./isNumber')();
 
-/**
- * Check if value is not less than minValue
- * @param  {Number} value    Value to check
- * @param  {Number} minValue Min value for value
- * @return {Boolean}         Result
- */
-function min (value, minValue) {
-  if (!isNumber(minValue)) {
-    return false;
+function min (min) {
+  if (!validNumber(min)) {
+    throw new TypeError('min: min argument is not a valid number');
   }
 
-  return value >= minValue;
+  return value => value >= min;
 }
 
 module.exports = min;

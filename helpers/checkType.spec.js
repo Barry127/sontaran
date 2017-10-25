@@ -1,143 +1,170 @@
-const { expect } = require('chai');
 const checkType = require('./checkType');
 
-describe('helpers/checkType', () => {
+describe('Boolean checks', () => {
+  const validBooleans = [
+    true,
+    false
+  ];
 
-  it('checks for boolean values', () => {
-    const validValues = [
-      true,
-      false
-    ];
-    const invaildValues = [
-      1,
-      0,
-      -1,
-      'true',
-      'false'
-    ];
+  const invalidBooleans = [
+    1,
+    0,
+    -1,
+    'true',
+    'false'
+  ];
 
-    validValues.forEach(value => {
-      expect(checkType(value, 'boolean')).to.be.true;
-    });
-
-    invaildValues.forEach(value => {
-      expect(checkType(value, 'boolean')).to.be.false;
+  validBooleans.forEach(value => {
+    test(`${value} is a boolean`, () => {
+      expect(checkType(value, 'boolean')).toBe(true);
     });
   });
 
-  it('checks for function values', () => {
-    const myArrowFunction = () => null;
-
-    function myFunction () {
-      return null;
-    }
-
-    const validValues = [
-      myArrowFunction,
-      myFunction,
-      Math.round,
-      new Function()
-    ];
-    const invaildValues = [
-      new Object(),
-      {},
-      'function'
-    ];
-
-    validValues.forEach(value => {
-      expect(checkType(value, 'function')).to.be.true;
+  invalidBooleans.forEach(value => {
+    test(`${value} is not a boolean`, () => {
+      expect(checkType(value, 'boolean')).toBe(false);
     });
+  });
+});
 
-    invaildValues.forEach(value => {
-      expect(checkType(value, 'function')).to.be.false;
+describe('Function checks', () => {
+  function myFunc () {
+    return;
+  }
+
+  const validFunctions = [
+    () => null,
+    myFunc,
+    Math.round,
+    new Function()
+  ];
+
+  const invalidFunctions = [
+    new Object(),
+    {},
+    'function'
+  ];
+
+  validFunctions.forEach(value => {
+    test(`${value} is a function`, () => {
+      expect(checkType(value, 'function')).toBe(true);
     });
   });
 
-  it('checks for number values', () => {
-    const validValues = [
-      1,
-      12.34,
-      Math.PI,
-      Number.NaN,
-      -3
-    ];
-    const invaildValues = [
-      '3',
-      'five',
-      {},
-      Math.ceil
-    ];
-
-    validValues.forEach(value => {
-      expect(checkType(value, 'number')).to.be.true;
+  invalidFunctions.forEach(value => {
+    test(`${value} is not a function`, () => {
+      expect(checkType(value, 'function')).toBe(false);
     });
+  });
+});
 
-    invaildValues.forEach(value => {
-      expect(checkType(value, 'number')).to.be.false;
+describe('Number checks', () => {
+  const validNumbers = [
+    1,
+    12.34,
+    Math.PI,
+    Number.NaN,
+    -3,
+    0xFF,
+    0o23,
+    0b1010
+  ];
+
+  const invalidNumbers = [
+    '3',
+    'five',
+    {},
+    Math.ceil
+  ];
+
+  validNumbers.forEach(value => {
+    test(`${value} is a number`, () => {
+      expect(checkType(value, 'number')).toBe(true);
     });
   });
 
-  it('checks for object values', () => {
-    const validValues = [
-      [],
-      {},
-      new Array()
-    ];
-    const invaildValues = [
-      'string',
-      5,
-      true
-    ];
-
-    validValues.forEach(value => {
-      expect(checkType(value, 'object')).to.be.true;
+  invalidNumbers.forEach(value => {
+    test(`${value} is not a number`, () => {
+      expect(checkType(value, 'number')).toBe(false);
     });
+  });
+});
 
-    invaildValues.forEach(value => {
-      expect(checkType(value, 'object')).to.be.false;
+describe('Object checks', () => {
+  const validObjects = [
+    [],
+    {},
+    new Map(),
+    new Array()
+  ];
+
+  const invalidObjects = [
+    'string',
+    5,
+    true
+  ];
+
+  validObjects.forEach(value => {
+    test(`${value} is an object`, () => {
+      expect(checkType(value, 'object')).toBe(true);
     });
   });
 
-  it('checks for string values', () => {
-    const validValues = [
-      'qwerty'
-    ];
-    const invaildValues = [
-      4,
-      []
-    ];
-
-    validValues.forEach(value => {
-      expect(checkType(value, 'string')).to.be.true;
+  invalidObjects.forEach(value => {
+    test(`${value} is not an object`, () => {
+      expect(checkType(value, 'object')).toBe(false);
     });
+  });
+});
 
-    invaildValues.forEach(value => {
-      expect(checkType(value, 'string')).to.be.false;
+describe('String checks', () => {
+  const validStrings = [
+    'qwerty',
+    'helloWorld'
+  ];
+
+  const invalidStrings = [
+    4,
+    []
+  ];
+
+  validStrings.forEach(value => {
+    test(`${value} is a string`, () => {
+      expect(checkType(value, 'string')).toBe(true);
     });
   });
 
-  it('allows different casing for the type argument', () => {
-    const pairs = [
-      [ true, 'boolEAN' ],
-      [ 'abs', 'STRING' ],
-      [ {}, 'obJect']
-    ];
-
-    pairs.forEach(pair => {
-      expect(checkType(pair[0], pair[1])).to.be.true;
+  invalidStrings.forEach(value => {
+    test(`${value} is not a string`, () => {
+      expect(checkType(value, 'string')).toBe(false);
     });
   });
+});
 
-  it('returns false if type argument is not of type string', () => {
-    const pairs = [
-      [ true, Boolean ],
-      [ 'a', [] ],
-      [ 6, 6 ]
-    ];
+describe('checkType allows different casing for the type argument', () => {
+  const pairs = [
+    [ true, 'boolEAN' ],
+    [ 'abs', 'STRING' ],
+    [ {}, 'ObJecT' ]
+  ];
 
-    pairs.forEach(pair => {
-      expect(checkType(pair[0], pair[1])).to.be.false;
+  pairs.forEach(pair => {
+    test(`${pair[0]} is of type ${pair[1]}`, () => {
+      expect(checkType(pair[0], pair[1])).toBe(true);
     });
   });
+});
 
+describe('checkType throws a TypeError if type argument is no string', () => {
+  const pairs = [
+    [ true, Boolean ],
+    [ 'a', {} ],
+    [ 6, 6 ]
+  ];
+
+  pairs.forEach(pair => {
+    test(`${pair[0]} throws a TypeError with ${pair[1]} as type argument`, () => {
+      expect(checkType.bind(null, pair[0], pair[1])).toThrow(TypeError);
+    });
+  });
 });

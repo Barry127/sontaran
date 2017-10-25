@@ -1,17 +1,11 @@
-const isNumber = require('./isNumber');
+const validNumber = require('./isNumber')();
 
-/**
- * Check if value is not greater than maxValue
- * @param  {Number} value    Value to check
- * @param  {Number} maxValue Max value for value
- * @return {Boolean}         Result
- */
-function max (value, maxValue) {
-  if (!isNumber(maxValue)) {
-    return false;
+function max (max) {
+  if (!validNumber(max)) {
+    throw new TypeError('max: max argument is not a valid number');
   }
 
-  return value <= maxValue;
+  return value => value <= max;
 }
 
 module.exports = max;

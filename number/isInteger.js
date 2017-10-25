@@ -1,10 +1,5 @@
-/**
- * Check if value is integer
- * @param  {Number}  value Value to check
- * @return {Boolean}       Result
- */
-function isInteger (value) {
-  return Number.isInteger(value);
+function isInteger () {
+  return value => Number.isInteger(value);
 }
 
 module.exports = isInteger;

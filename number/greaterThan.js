@@ -1,17 +1,11 @@
-const isNumber = require('./isNumber');
+const validNumber = require('./isNumber')();
 
-/**
- * Check if value is greater than gt (exclusive)
- * @param  {Number} value Value to check
- * @param  {Number} gt    Value should be greater than gt
- * @return {Boolean}      Result
- */
-function greaterThan (value, gt) {
-  if (!isNumber(gt)) {
-    return false;
+function greaterThan (gt) {
+  if (!validNumber(gt)) {
+    throw new TypeError('greaterThan: gt argument is not a valid number');
   }
 
-  return value > gt;
+  return value => value > gt;
 }
 
 module.exports = greaterThan;

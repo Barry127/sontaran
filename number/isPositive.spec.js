@@ -1,39 +1,42 @@
-const { expect } = require('chai');
 const isPositive = require('./isPositive');
 
-describe('number/isPositive', () => {
+test('isPositive returns a function', () => {
+  expect(isPositive()).toBeInstanceOf(Function);
+});
 
+describe('Valid values', () => {
   const validValues = [
-    3,
-    0xFF,
-    3.1E+12,
+    42,
+    0xCA,
+    4.3E6,
     Number.POSITIVE_INFINITY,
-    6.00,
-    0o55
-  ];
-
-  const invalidValues = [
-    0,
-    -3.33,
-    Number.NaN,
-    Number.NEGATIVE_INFINITY,
-    '42',
-    '-3',
-    true,
-    null,
-    '#4'
+    6.0,
+    0o43
   ];
 
   validValues.forEach(value => {
-    it(`${value} is positive`, () => {
-      expect(isPositive(value)).to.be.true;
+    test(`${value} is positive`, () => {
+      expect(isPositive()(value)).toBe(true);
     });
   });
+});
 
-  invalidValues.forEach(value => {
-    it(`${value} is not positive`, () => {
-      expect(isPositive(value)).to.be.false;
+describe('Invalid values', () => {
+  const validValues = [
+      0,
+      (-0),
+      -3,
+      -0xCC,
+      -2.1E+3,
+      Number.NEGATIVE_INFINITY,
+      -6.00,
+      -0o32,
+      Number.NaN
+    ];
+
+    validValues.forEach(value => {
+      test(`${value} is not positive`, () => {
+        expect(isPositive()(value)).toBe(false);
+      });
     });
-  });
-
 });

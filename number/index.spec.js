@@ -1,27 +1,27 @@
-const { expect } = require('chai');
 const number = require('./index');
 
-describe('number', () => {
+const methods = [
+  'between',
+  'equals',
+  'greaterThan',
+  'gt',
+  'isInt',
+  'isInteger',
+  'isNaN',
+  'isNan',
+  'isNegative',
+  'isNumber',
+  'isPositive',
+  'lessThan',
+  'lt',
+  'max',
+  'min',
+  'notNaN',
+  'notNan'
+];
 
-  const methods = [
-    'between',
-    'equals',
-    'greaterThan',
-    'isInteger',
-    'isNaN',
-    'isNegative',
-    'isNumber',
-    'isPositive',
-    'lessThan',
-    'max',
-    'min',
-    'notNaN'
-  ];
-
-  methods.forEach(method => {
-    it(`number exports ${method}`, () => {
-      expect(number[method]).to.be.a('function');
-    });
+methods.forEach(method => {
+  test(`number exports ${method}`, () => {
+    expect(number[method]).toBe(require(`./${method}`));
   });
-
 });

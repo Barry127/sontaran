@@ -1,22 +1,32 @@
-const { expect } = require('chai');
 const isInteger = require('./isInteger');
 
-describe('number/isInteger', () => {
+test('isInteger returns a function', () => {
+  expect(isInteger()).toBeInstanceOf(Function);
+});
 
-  const validValues = [
+describe('Valid integers', () => {
+  const validIntegers = [
     42,
-    -3,
-    0,
+    -3
+    ,0
+    -0,
     0xFF,
-    3.1E+12,
+    3.1E12,
     0b011,
     6.00,
     0o55
   ];
 
-  const invalidValues = [
+  validIntegers.forEach(value => {
+    test(`${value} is an integer`, () => {
+      expect(isInteger()(value)).toBe(true);
+    });
+  });
+});
+
+describe('Invalid integers', () => {
+  const invalidIntegers = [
     3.33,
-    -5.2,
     Math.PI,
     Number.NaN,
     Number.POSITIVE_INFINITY,
@@ -28,16 +38,9 @@ describe('number/isInteger', () => {
     '#4'
   ];
 
-  validValues.forEach(value => {
-    it(`${value} is an integer`, () => {
-      expect(isInteger(value)).to.be.true;
+  invalidIntegers.forEach(value => {
+    test(`${value} is not an integer`, () => {
+      expect(isInteger()(value)).toBe(false);
     });
-  });
-
-  invalidValues.forEach(value => {
-    it(`${value} is not an integer`, () => {
-      expect(isInteger(value)).to.be.false;
-    });
-  });
-
+  })
 });
