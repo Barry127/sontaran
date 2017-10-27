@@ -1,34 +1,36 @@
-const { expect } = require('chai');
 const uppercase = require('./uppercase');
 
-describe('string/uppercase', () => {
+test('uppercase returns a function', () => {
+  expect(uppercase()).toBeInstanceOf(Function);
+});
 
+describe('Valid values', () => {
   const validValues = [
     'HELLO WORLD!',
     'SOME_STRING',
     'NUMBERS-ARE-OK-4',
-    'ÀÁØÇÈÉ'
+    'ÀÁØÇÈÉ',
+    '😉'
   ];
 
+  validValues.forEach(value => {
+    test(`${value} is a valid uppercase string`, () => {
+      expect(uppercase()(value)).toBe(true);
+    });
+  });
+});
+
+describe('Invalid values', () => {
   const invalidValues = [
     'hello world',
     'Hello World',
     'h3',
-    'ßøàáçèé',
-    3,
-    null
+    'ßøàáçèé'
   ];
 
-  validValues.forEach(value => {
-    it(`${value} is a valid uppercase string`, () => {
-      expect(uppercase(value)).to.be.true;
-    });
-  });
-
   invalidValues.forEach(value => {
-    it(`${value} is not a valid uppercase string`, () => {
-      expect(uppercase(value)).to.be.false;
+    test(`${value} is not a valid uppercase string`, () => {
+      expect(uppercase()(value)).toBe(false);
     });
   });
-
 });

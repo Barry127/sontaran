@@ -1,32 +1,28 @@
 const match = require('./match');
+const base64Matcher = match(/^[A-Za-z0-9+/=]*$/);
 
-const base64RegExp = /^[A-Za-z0-9+/=]*$/;
+function base64 () {
+  return value => {
+    if (!base64Matcher(value)) {
+      return false;
+    }
 
-/**
- * Check if value is a valid base64 encoded string
- * @param  {String} value String to check
- * @return {Boolean}      Result
- */
-function base64 (value) {
-  if (!match(value, base64RegExp)) {
-    return false;
-  }
+    if (value.length % 4 !== 0) {
+      return false;
+    }
 
-  if (value.length % 4 !== 0) {
-    return false;
-  }
+    const firstEqual = value.indexOf('=');
 
-  const firstEqual = value.indexOf('=');
+    if (firstEqual > -1 && firstEqual < value.length - 2) {
+      return false;
+    }
 
-  if (firstEqual > -1 && firstEqual < value.length - 2) {
-    return false;
-  }
+    if (firstEqual === value.length - 2 && !value.endsWith('=')) {
+      return false;
+    }
 
-  if (firstEqual === value.length - 2 && !value.endsWith('=')) {
-    return false;
-  }
-
-  return true;
+    return true;
+  };
 }
 
 module.exports = base64;

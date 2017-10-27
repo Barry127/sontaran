@@ -1,8 +1,10 @@
-const { expect } = require('chai');
 const hexColor = require('./hexColor');
 
-describe('string/hexColor', () => {
+test('hexColor returns a function', () => {
+  expect(hexColor()).toBeInstanceOf(Function);
+});
 
+describe('Valid values', () => {
   const validValues = [
     '#000000',
     '#000',
@@ -13,26 +15,25 @@ describe('string/hexColor', () => {
     '#3fE'
   ];
 
+  validValues.forEach(value => {
+    test(`${value} is a valid hexColor`, () => {
+      expect(hexColor()(value)).toBe(true);
+    });
+  });
+});
+
+describe('Invalid values', () => {
   const invalidValues = [
     '000000',
     '000',
     '#EFG',
     '#DEN',
-    '#ef3g4d',
-    4,
-    null
+    '#ef3g4d'
   ];
 
-  validValues.forEach(value => {
-    it(`${value} is a valid hexColor`, () => {
-      expect(hexColor(value)).to.be.true;
-    });
-  });
-
   invalidValues.forEach(value => {
-    it(`${value} is not a valid hexColor`, () => {
-      expect(hexColor(value)).to.be.false;
+    test(`${value} is not a valid hexColor`, () => {
+      expect(hexColor()(value)).toBe(false);
     });
   });
-
 });

@@ -1,17 +1,11 @@
-const isString = require('./isString');
+const validString = require('./isString')();
 
-/**
- * Check if string contains value
- * @param  {String} string String to check
- * @param  {String} value  Value string should contain
- * @return {Boolean}       Result
- */
-function contains (string, value) {
-  if (!isString(string) || !isString(value)) {
-    return false;
+function contains (expectedValue) {
+  if (!validString(expectedValue)) {
+    throw new TypeError('contains: expectedValue argument is not a string');
   }
 
-  return string.indexOf(value) > -1;
+  return value => value.indexOf(expectedValue) > -1;
 }
 
 module.exports = contains;

@@ -1,23 +1,20 @@
-const isNumber = require('../number/isNumber');
-const isString = require('./isString');
+const validNumber = require('../number/isNumber')();
 
-/**
- * Check if length of value is between min and max (both inclusive)
- * @param  {String} value String to check
- * @param  {Number} min   Min length for value
- * @param  {Number} max   Max length for value
- * @return {Boolean}      Result
- */
-function between (value, min, max) {
-  if (!isString(value)) {
-    return false;
+function between (min, max) {
+  if (!validNumber(min)) {
+    throw new TypeError('between: min argument is not a valid number');
+  }
+  if (!validNumber(max)) {
+    throw new TypeError('between: max argument is not a valid number');
   }
 
-  if (!isNumber(min) || !isNumber(max)) {
-    return false;
+  if (min > max) {
+    let temp = min;
+    min = max;
+    max = temp;
   }
 
-  return value.length >= min && value.length <= max;
+  return value => value.length >= min && value.length <= max;
 }
 
 module.exports = between;

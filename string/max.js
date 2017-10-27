@@ -1,22 +1,11 @@
-const isNumber = require('../number/isNumber');
-const isString = require('./isString');
+const validNumber = require('../number/isNumber')();
 
-/**
- * Check if value has a max length of max (inclusive)
- * @param  {String} value Value to check
- * @param  {Number} max   Max length value should be
- * @return {Boolean}      Result
- */
-function max (value, max) {
-  if (!isString(value)) {
-    return false;
+function max (maxLength) {
+  if (!validNumber(maxLength)) {
+    throw new TypeError('max: maxLength argument is not a number');
   }
 
-  if (!isNumber(max)) {
-    return false;
-  }
-
-  return value.length <= max;
+  return value => value.length <= maxLength;
 }
 
 module.exports = max;

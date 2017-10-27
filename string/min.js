@@ -1,22 +1,11 @@
-const isNumber = require('../number/isNumber');
-const isString = require('./isString');
+const validNumber = require('../number/isNumber')();
 
-/**
- * Check if value has a min length of min (inclusive)
- * @param  {String} value Value to check
- * @param  {Number} min   Min length value should be
- * @return {Boolean}      Result
- */
-function min (value, min) {
-  if (!isString(value)) {
-    return false;
+function min (minLength) {
+  if (!validNumber(minLength)) {
+    throw new TypeError('min: minLength argument is not a number');
   }
 
-  if (!isNumber(min)) {
-    return false;
-  }
-
-  return value.length >= min;
+  return value => value.length >= minLength;
 }
 
 module.exports = min;

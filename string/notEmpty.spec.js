@@ -1,36 +1,37 @@
-const { expect } = require('chai');
 const notEmpty = require('./notEmpty');
 
-describe('string/notEmpty', () => {
+test('notEmpty returns a function', () => {
+  expect(notEmpty()).toBeInstanceOf(Function);
+});
 
+describe('Valid values', () => {
   const validValues = [
     '_',
     'Hello',
-    'FooBar'
+    'FooBar',
+    '.'
   ];
 
+  validValues.forEach(value => {
+    test(`${value} is not empty`, () => {
+      expect(notEmpty()(value)).toBe(true);
+    });
+  });
+});
+
+describe('Invalid values', () => {
   const invalidValues = [
     '',
     '  ',
     "\t",
     "\n",
     "\r",
-    "\n  \n\t",
-    4,
-    null,
-    false
+    "\n  \n\t"
   ];
 
-  validValues.forEach(value => {
-    it(`${value} is not empty`, () => {
-      expect(notEmpty(value)).to.be.true;
-    });
-  });
-
   invalidValues.forEach(value => {
-    it(`${value} is empty`, () => {
-      expect(notEmpty(value)).to.be.false;
+    test(`${value} is empty`, () => {
+      expect(notEmpty()(value)).toBe(false);
     });
   });
-
 });

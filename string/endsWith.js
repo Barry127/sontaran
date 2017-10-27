@@ -1,17 +1,11 @@
-const isString = require('./isString');
+const validString = require('./isString')();
 
-/**
- * Check if string ends with value
- * @param  {String} string String to check
- * @param  {String} value  Value string should end with
- * @return {Boolean}       Result
- */
-function endsWith (string, value) {
-  if (!isString(string) || !isString(value)) {
-    return false;
+function endsWith (expectedEnd) {
+  if (!validString(expectedEnd)) {
+    throw new TypeError('endsWith: expectedEnd argument is not a string');
   }
 
-  return string.endsWith(value);
+  return value => value.endsWith(expectedEnd);
 }
 
 module.exports = endsWith;

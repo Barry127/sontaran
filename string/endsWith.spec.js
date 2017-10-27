@@ -1,32 +1,39 @@
-const { expect } = require('chai');
 const endsWith = require('./endsWith');
 
-describe('string/endsWith', () => {
+test('endsWith returns a function', () => {
+  expect(endsWith('')).toBeInstanceOf(Function);
+});
 
+describe('Valid pairs', () => {
   const validPairs = [
     [ 'Hello World', 'World' ],
     [ 'Hello World', 'ld' ],
     [ 'FooBar', 'Bar' ]
   ];
 
+  validPairs.forEach(pair => {
+    test(`${pair[0]} ends with ${pair[1]}`, () => {
+      expect(endsWith(pair[1])(pair[0])).toBe(true);
+    })
+  });
+});
+
+describe('Invalid pairs', () => {
   const invalidPairs = [
     [ 'Hello World', 'Hello' ],
     [ 'Hello World', 'World ' ],
-    [ 'FooBar', 'bar' ],
-    [ 'FooBar2', 2 ],
-    [ [ 1, 2, 3 ], 3 ]
+    [ 'FooBar', 'bar' ]
   ];
 
-  validPairs.forEach(pair => {
-    it(`${pair[0]} ends with ${pair[1]}`, () => {
-      expect(endsWith(pair[0], pair[1])).to.be.true;
-    });
-  });
-
   invalidPairs.forEach(pair => {
-    it(`${pair[0]} does not end with ${pair[1]}`, () => {
-      expect(endsWith(pair[0], pair[1])).to.be.false;
+    test(`${pair[0]} does not end with ${pair[1]}`, () => {
+      expect(endsWith(pair[1])(pair[0])).toBe(false);
     });
   });
+});
 
+describe('Invalid arguments', () => {
+  test('endsWith throws a type error if expectedEnd is not a string', () => {
+    expect(endsWith.bind(null, false)).toThrow(TypeError);
+  });
 });

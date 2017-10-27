@@ -1,33 +1,40 @@
-const { expect } = require('chai');
 const isObject = require('./isObject');
 
-describe('object/isObject', () => {
+test('isObject returns a function', () => {
+  expect(isObject()).toBeInstanceOf(Function);
+});
 
-  const validValues = [
+describe('Valid objects', () => {
+  const validator = isObject();
+
+  const validNumbers = [
     {},
     new Object(),
-    [],
-    null
+    []
   ];
 
-  const invalidValues = [
+  validNumbers.forEach(number => {
+    test(`${number} is an object`, () => {
+      expect(validator(number)).toBe(true);
+    });
+  });
+});
+
+describe('Invalid objects', () => {
+  const validator = isObject();
+
+  const invalidNumbers = [
     '42',
     '-3',
     true,
     '#4',
-    undefined
+    undefined,
+    null
   ];
 
-  validValues.forEach(value => {
-    it(`${value} is an object`, () => {
-      expect(isObject(value)).to.be.true;
+  invalidNumbers.forEach(number => {
+    test(`${number} is not an object`, () => {
+      expect(validator(number)).toBe(false);
     });
   });
-
-  invalidValues.forEach(value => {
-    it(`${value} is not a object`, () => {
-      expect(isObject(value)).to.be.false;
-    });
-  });
-
 });

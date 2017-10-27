@@ -1,8 +1,10 @@
-const { expect } = require('chai');
 const isJson = require('./isJson');
 
-describe('string/isJson', () => {
+test('isJson returns a function', () => {
+  expect(isJson()).toBeInstanceOf(Function);
+});
 
+describe('Valid values', () => {
   const validValues = [
     '{"title":"My Title", "slug": "my-title"}',
     '[ 1, 2, 3 ]',
@@ -12,6 +14,14 @@ describe('string/isJson', () => {
     '[]'
   ];
 
+  validValues.forEach(value => {
+    test(`${value} is valid JSON`, () => {
+      expect(isJson()(value)).toBe(true);
+    });
+  });
+});
+
+describe('Invalid values', () => {
   const invalidValues = [
     '"String"', // no single values
     '{ \'Key\': \'No Single Quotes\'}', // no single quites
@@ -20,16 +30,9 @@ describe('string/isJson', () => {
     4
   ];
 
-  validValues.forEach(value => {
-    it(`${value} contains valid JSON`, () => {
-      expect(isJson(value)).to.be.true;
-    });
-  });
-
   invalidValues.forEach(value => {
-    it(`${value} does not contain valid JSON`, () => {
-      expect(isJson(value)).to.be.false;
+    test(`${value} is not valid JSON`, () => {
+      expect(isJson()(value)).toBe(false);
     });
   });
-
 });

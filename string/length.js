@@ -1,22 +1,11 @@
-const isNumber = require('../number/isNumber');
-const isString = require('./isString');
+const validNumber = require('../number/isNumber')();
 
-/**
- * Check if value has extactly length length
- * @param  {String} value  Value to check
- * @param  {Number} length Length value should have
- * @return {Boolean}       Result
- */
-function length (value, length) {
-  if (!isString(value)) {
-    return false;
+function length (expectedLength) {
+  if (!validNumber(expectedLength)) {
+    throw new TypeError('length: expectedLength argument is not a number');
   }
 
-  if (!isNumber(length)) {
-    return false;
-  }
-
-  return value.length === length;
+  return value => value.length === expectedLength;
 }
 
 module.exports = length;

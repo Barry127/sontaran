@@ -1,37 +1,39 @@
-const { expect } = require('chai');
 const extendedAscii = require('./extendedAscii');
 
-const allAscii = `!"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\`abcdefghijklmnopqrstuvwxyz{|}~`;
-const allExtendedAscii = `${allAscii} ¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ`;
+let extendedAsciiRange = '';
+for (i = 0; i < 256; i++) {
+  extendedAsciiRange += String.fromCharCode(i);
+}
 
-describe('string/extendedAscii', () => {
+test('extendedAscii returns a function', () => {
+  expect(extendedAscii()).toBeInstanceOf(Function);
+});
 
+describe('Valid values', () => {
   const validValues = [
-    'aa',
     'Hello World!',
-    `Something`,
+    'FooBar~!',
+    'Something',
     'not-wrøng',
-    allAscii,
-    allExtendedAscii
-  ];
-
-  const invalidValues = [
-    true,
-    null,
-    4,
-    '♠♣♥♦'
+    extendedAsciiRange
   ];
 
   validValues.forEach(value => {
-    it(`${value} contains only extended ascii characters`, () => {
-      expect(extendedAscii(value)).to.be.true;
+    test(`${value} contains only extended ascii characters`, () => {
+      expect(extendedAscii()(value)).toBe(true);
     });
   });
+});
+
+describe('Invalid values', () => {
+  const invalidValues = [
+    '♠♣♥♦',
+    '😍'
+  ];
 
   invalidValues.forEach(value => {
-    it(`${value} contains non-extended ascii characters`, () => {
-      expect(extendedAscii(value)).to.be.false;
+    test(`${value} contains non-extended ascii characters`, () => {
+      expect(extendedAscii()(value)).toBe(false);
     });
   });
-
 });

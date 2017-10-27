@@ -1,35 +1,39 @@
-const { expect } = require('chai');
 const ascii = require('./ascii');
 
-const allAsci = `!"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\`abcdefghijklmnopqrstuvwxyz{|}~`;
+let asciiRange = '';
+for (i = 0; i < 128; i++) {
+  asciiRange += String.fromCharCode(i);
+}
 
-describe('string/ascii', () => {
+test('ascii returns a function', () => {
+  expect(ascii()).toBeInstanceOf(Function);
+});
 
+describe('Valid values', () => {
   const validValues = [
-    'aa',
     'Hello World!',
-    `Something`,
-    allAsci
-  ];
-
-  const invalidValues = [
-    true,
-    null,
-    4,
-    '♠♣♥♦',
-    'wrøng'
+    'FooBar~!',
+    'Something',
+    asciiRange
   ];
 
   validValues.forEach(value => {
-    it(`${value} contains only ascii characters`, () => {
-      expect(ascii(value)).to.be.true;
+    test(`${value} contains only ascii characters`, () => {
+      expect(ascii()(value)).toBe(true);
     });
   });
+});
+
+describe('Invalid values', () => {
+  const invalidValues = [
+    '♠♣♥♦',
+    'wrøng',
+    '😍'
+  ];
 
   invalidValues.forEach(value => {
-    it(`${value} contains non-ascii characters`, () => {
-      expect(ascii(value)).to.be.false;
+    test(`${value} contains non-ascii characters`, () => {
+      expect(ascii()(value)).toBe(false);
     });
   });
-
 });

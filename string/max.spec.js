@@ -1,32 +1,40 @@
-const { expect } = require('chai');
 const max = require('./max');
 
-describe('string/max', () => {
+test('max returns a function', () => {
+  expect(max(0)).toBeInstanceOf(Function);
+});
 
+describe('Valid pairs', () => {
   const validPairs = [
     [ 'Hello World', 20 ],
     [ 'Hello', 5 ],
-    [ 'd', Number.POSITIVE_INFINITY ],
-    [ '01', 0xFF ]
-  ];
-
-  const invalidPairs = [
-    [ 'Hello World', 10 ],
-    [ 'Hello', Number.NaN ],
-    [ 'Hello World', '11' ],
-    [ [ 1, 2, 3 ], 4 ]
+    [ 'FooBar ', Number.POSITIVE_INFINITY ],
+    [ '01', 0xAB ]
   ];
 
   validPairs.forEach(pair => {
-    it(`${pair[0]} has a max length of ${pair[1]}`, () => {
-      expect(max(pair[0], pair[1])).to.be.true;
-    });
+    test(`${pair[0]} has max length of ${pair[1]}`, () => {
+      expect(max(pair[1])(pair[0])).toBe(true);
+    })
   });
+});
+
+describe('Invalid pairs', () => {
+  const invalidPairs = [
+    [ 'Hello World', 1 ],
+    [ 'Hello', Number.NaN ],
+    [ 'Hello World', -11 ]
+  ];
 
   invalidPairs.forEach(pair => {
-    it(`${pair[0]} length is greater than ${pair[1]}`, () => {
-      expect(max(pair[0], pair[1])).to.be.false;
+    test(`${pair[0]} length is greater than ${pair[1]}`, () => {
+      expect(max(pair[1])(pair[0])).toBe(false);
     });
   });
+});
 
+describe('Invalid arguments', () => {
+  test('max throws a type error if maxLength is not a number', () => {
+    expect(max.bind(null, false)).toThrow(TypeError);
+  });
 });

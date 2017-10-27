@@ -1,13 +1,8 @@
 const match = require('./match');
-const extendedAsciiRegExp = /^[\x00-\xFF]*$/; // eslint-disable-line no-control-regex
+const extendedAsciiMatcher = match(/^[\x00-\xFF]*$/); // eslint-disable-line no-control-regex
 
-/**
- * Check if value only contains extended ascii characters
- * @param  {String} value String to check
- * @return {Boolean}      Result
- */
-function extendedAscii (value) {
-  return match(value, extendedAsciiRegExp);
+function extendedAscii () {
+  return value => extendedAsciiMatcher(value);
 }
 
 module.exports = extendedAscii;

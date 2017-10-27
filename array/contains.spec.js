@@ -1,8 +1,10 @@
-const { expect } = require('chai');
 const contains = require('./contains');
 
-describe('array/contains', () => {
+test('contains returns a function', () => {
+  expect(contains()).toBeInstanceOf(Function);
+});
 
+describe('Valid pairs', () => {
   const validPairs = [
     [ [ 'a', 'b', 'c' ], 'b' ],
     [ [ 'a', 'b', 'c' ], 'a' ],
@@ -10,22 +12,23 @@ describe('array/contains', () => {
     [ [ 255, 333 ], 0xFF ]
   ];
 
+  validPairs.forEach(pair => {
+    test(`${pair[0]} contains ${pair[1]}`, () => {
+      expect(contains(pair[1])(pair[0])).toBe(true);
+    })
+  });
+});
+
+describe('Invalid pairs', () => {
   const invalidPairs = [
     [ [ 'a', 'b', 'c' ], 'A' ],
     [ [ 'a', 'b', 'c' ], 'd' ],
-    [ 'abc', 'c' ]
+    [ [ 'abc'], 'c' ]
   ];
 
-  validPairs.forEach(pair => {
-    it(`${pair[0]} contains ${pair[1]}`, () => {
-      expect(contains(pair[0], pair[1])).to.be.true;
-    });
-  });
-
   invalidPairs.forEach(pair => {
-    it(`${pair[0]} does not contain ${pair[1]}`, () => {
-      expect(contains(pair[0], pair[1])).to.be.false;
+    test(`${pair[0]} does not contain ${pair[1]}`, () => {
+      expect(contains(pair[1])(pair[0])).toBe(false);
     });
   });
-
 });

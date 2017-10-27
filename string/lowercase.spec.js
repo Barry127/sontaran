@@ -1,34 +1,36 @@
-const { expect } = require('chai');
 const lowercase = require('./lowercase');
 
-describe('string/lowercase', () => {
+test('lowercase returns a function', () => {
+  expect(lowercase()).toBeInstanceOf(Function);
+});
 
+describe('Valid values', () => {
   const validValues = [
     'hello world!',
     'some-string',
     'numbers-are-ok-4',
     'ßøàáçèé',
+    '😉'
   ];
 
+  validValues.forEach(value => {
+    test(`${value} is a valid lowercase string`, () => {
+      expect(lowercase()(value)).toBe(true);
+    });
+  });
+});
+
+describe('Invalid values', () => {
   const invalidValues = [
     'HELLO WORLD',
     'Hello World',
     'H3',
-    'ÇÈÉ',
-    3,
-    null
+    'ÇÈÉ'
   ];
 
-  validValues.forEach(value => {
-    it(`${value} is a valid lowercase string`, () => {
-      expect(lowercase(value)).to.be.true;
-    });
-  });
-
   invalidValues.forEach(value => {
-    it(`${value} is not a valid lowercase string`, () => {
-      expect(lowercase(value)).to.be.false;
+    test(`${value} is not a valid lowercase string`, () => {
+      expect(lowercase()(value)).toBe(false);
     });
   });
-
 });

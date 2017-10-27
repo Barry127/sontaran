@@ -1,27 +1,34 @@
-const { expect } = require('chai');
 const isArray = require('./isArray');
 
-describe('array/isArray', () => {
+test('isArray returns a function', () => {
+  expect(isArray()).toBeInstanceOf(Function);
+});
 
-  const validValues = [
+describe('Valid arrays', () => {
+  const validator = isArray();
+
+  const validNumbers = [
     [ 1, 2, 3 ],
     new Array()
   ];
 
-  const invalidValues = [
+  validNumbers.forEach(number => {
+    test(`${number} is an array`, () => {
+      expect(validator(number)).toBe(true);
+    });
+  });
+});
+
+describe('Invalid arrays', () => {
+  const validator = isArray();
+
+  const invalidNumbers = [
     { a: 1, b: 2, c: 3 }
   ];
 
-  validValues.forEach(value => {
-    it(`${value} is an array`, () => {
-      expect(isArray(value)).to.be.true;
+  invalidNumbers.forEach(number => {
+    test(`${number} is not an array`, () => {
+      expect(validator(number)).toBe(false);
     });
   });
-
-  invalidValues.forEach(value => {
-    it(`${value} is not an array`, () => {
-      expect(isArray(value)).to.be.false;
-    });
-  });
-
 });

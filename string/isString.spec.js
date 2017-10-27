@@ -1,30 +1,39 @@
-const { expect } = require('chai');
 const isString = require('./isString');
 
-describe('string/isString', () => {
+test('isString returns a function', () => {
+  expect(isString()).toBeInstanceOf(Function);
+});
 
-  const validValues = [
-    'aa',
+describe('Valid strings', () => {
+  const validator = isString();
+
+  const validStrings = [
+    'aaa',
     'Hello World!',
-    `Something`
+    'Something'
   ];
 
-  const invalidValues = [
+  validStrings.forEach(string => {
+    test(`${string} is a string`, () => {
+      expect(validator(string)).toBe(true);
+    });
+  });
+});
+
+describe('Invalid strings', () => {
+  const validator = isString();
+
+  const invalidStrings = [
     true,
     null,
-    4
+    undefined,
+    5,
+    0xFF
   ];
 
-  validValues.forEach(value => {
-    it(`${value} is a valid string`, () => {
-      expect(isString(value)).to.be.true;
+  invalidStrings.forEach(string => {
+    test(`${string} is not a string`, () => {
+      expect(validator(string)).toBe(false);
     });
   });
-
-  invalidValues.forEach(value => {
-    it(`${value} is a not valid string`, () => {
-      expect(isString(value)).to.be.false;
-    });
-  });
-
 });
