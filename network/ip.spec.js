@@ -1,8 +1,10 @@
-const { expect } = require('chai');
 const ip = require('./ip');
 
-describe('network/ip', () => {
+test('ip returns a function', () => {
+  expect(ip()).toBeInstanceOf(Function);
+});
 
+describe('Valid values', () => {
   const validValues = [
     '192.168.1.1',
     '255.255.255.255',
@@ -20,8 +22,16 @@ describe('network/ip', () => {
     '::ffff:192.168.89.9'
   ];
 
+  validValues.forEach(value => {
+    test(`${value} is a valid ip address`, () => {
+      expect(ip()(value)).toBe(true);
+    });
+  });
+});
+
+describe('Invalid values', () => {
   const invalidValues = [
-    343,
+    '343',
     '192.168.1.666',
     '192.168.01.3',
     '255.168.300.1',
@@ -29,16 +39,9 @@ describe('network/ip', () => {
     '2001:0db8::02de::1428:57ab'
   ];
 
-  validValues.forEach(value => {
-    it(`${value} is a valid ip address`, () => {
-      expect(ip(value)).to.be.true;
-    });
-  });
-
   invalidValues.forEach(value => {
-    it(`${value} is not a valid ip address`, () => {
-      expect(ip(value)).to.be.false;
+    test(`${value} is not a valid ip address`, () => {
+      expect(ip()(value)).toBe(false);
     });
   });
-
 });

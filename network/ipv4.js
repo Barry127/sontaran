@@ -1,41 +1,33 @@
-const isString = require('../string/isString');
-const max = require('../number/max');
-const min = require('../number/min');
+const max255 = require('../number/max')(255);
+const min0 = require('../number/min')(0);
 const notNaN = require('../number/notNaN');
 
-/**
- * Check if value is a valid decimal IPv4 notation
- * @param  {String} value value to check
- * @return {Boolean}      result
- */
-function ipv4 (value) {
-  if (!isString(value)) {
-    return false;
-  }
+function ipv4 () {
+  return value => {
+    const parts = value.split('.');
 
-  const parts = value.split('.');
-
-  if (parts.length !== 4) {
-    return false;
-  }
-
-  return parts.reduce((valid, part) => {
-    if (!valid) {
+    if (parts.length !== 4) {
       return false;
     }
 
-    if (part.length > 1 && part.startsWith('0')) {
-      return false;
-    }
+    return parts.reduce((valid, part) => {
+      if (!valid) {
+        return false;
+      }
 
-    const numericValue = parseInt(part, 10);
+      if (part.length > 1 && part.startsWith('0')) {
+        return false;
+      }
 
-    if (!notNaN(numericValue) || !min(numericValue, 0) || !max(numericValue, 255)) {
-      return false;
-    }
+      const numericValue = parseInt(part, 10);
 
-    return true;
-  }, true);
+      if (!notNaN(numericValue) || !min0(numericValue) || !max255(numericValue)) {
+        return false;
+      }
+
+      return true;
+    }, true);
+  };
 }
 
 module.exports = ipv4;

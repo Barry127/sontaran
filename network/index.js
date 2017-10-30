@@ -1,6 +1,15 @@
-module.exports = {
-  ip: require('./ip'),
-  ipv4: require('./ipv4'),
-  ipv6: require('./ipv6'),
-  mac: require('./mac')
-};
+const network = {};
+const methods = [
+  'ip',
+  'ipV4',
+  'ipv4',
+  'ipV6',
+  'ipv6',
+  'mac'
+];
+
+methods.forEach(method => {
+  network[method] = require(`./${method}`);
+});
+
+module.exports = network;

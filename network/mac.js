@@ -1,12 +1,8 @@
-const MACRegex = /^([0-9a-f]{2}:){5}[0-9a-f]{2}$/i;
+const match = require('../string/match');
+const macMAtcher = match(/^([0-9a-f]{2}:){5}[0-9a-f]{2}$/i);
 
-/**
- * Check if value is a MAC address
- * @param  {String} value Value to check
- * @return {Boolean}      Result
- */
-function mac (value) {
-  return MACRegex.test(value);
+function mac () {
+  return value => macMAtcher(value);
 }
 
 module.exports = mac;
