@@ -1,22 +1,11 @@
-const isArray = require('./isArray');
-const isNumber = require('../number/isNumber');
+const validNumber = require('../number/isNumber')();
 
-/**
- * Check if array has length length
- * @param  {Array}  array  Array to check
- * @param  {Number} length Length array should be
- * @return {Boolean}       Result
- */
-function length (array, length) {
-  if (!isArray(array)) {
-    return false;
+function length (expectedLength) {
+  if (!validNumber(expectedLength)) {
+    throw new TypeError('length: expectedLength argument is not a number');
   }
 
-  if (!isNumber(length)) {
-    return false;
-  }
-
-  return array.length === length;
+  return value => value.length === expectedLength;
 }
 
 module.exports = length;

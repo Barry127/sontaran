@@ -1,23 +1,17 @@
-const isArray = require('./isArray');
+const validArray = require('./isArray')();
 const contains = require('./contains');
 
-/**
- * Check if array is subset of superset
- * @param  {Array}   array    Array to check
- * @param  {Array}   superset Array should be a subset of this array
- * @return {Boolean}          Result
- */
-function isSubset (array, superset) {
-  if (!isArray(array) || !isArray(superset)) {
-    return false;
+function isSubset (superset) {
+  if (!validArray(superset)) {
+    throw new TypeError('isSubset: superset argument is not an array');
   }
 
-  return array.reduce((valid, element) => {
+  return value => value.reduce((valid, elem) => {
     if (!valid) {
       return false;
     }
 
-    return contains(superset, element);
+    return contains(elem)(superset);
   }, true);
 }
 

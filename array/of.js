@@ -1,39 +1,27 @@
 const checkType = require('../helpers/checkType');
-const isArray = require('./isArray');
-const isString = require('../string/isString');
+const validArray = require('./isArray')();
+const validString = require('../string/isString')();
 
-/**
- * Check if array is of type type
- * @param  {Array}  array Array to check
- * @param  {String} type  Type all elements of array should be
- * @return {Boolean}      Result
- */
-function _of (array, type) {
-  if (!isArray(array)) {
-    return false;
+function _of (expectedType) {
+  if (!validString(expectedType)) {
+    throw new TypeError('of: expectedType argument is not a string');
   }
 
-  if (!isString(type)) {
-    return false;
-  }
-
-  type = type.toLowerCase();
-
-  return array.reduce((valid, element) => {
+  return value => value.reduce((valid, elem) => {
     if (!valid) {
       return false;
     }
 
-    switch (type) {
+    switch (expectedType.toLowerCase()) {
       case 'array':
-        return isArray(element);
+        return validArray(elem);
 
       case 'boolean':
       case 'function':
       case 'number':
       case 'object':
       case 'string':
-        return checkType(element, type);
+        return checkType(elem, expectedType);
 
       default:
         return false;

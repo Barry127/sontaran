@@ -1,12 +1,20 @@
-module.exports = {
-  between: require('./between'),
-  contains: require('./contains'),
-  equals: require('./equals'),
-  isArray: require('./isArray'),
-  isSubset: require('./isSubset'),
-  isSuperset: require('./isSuperset'),
-  length: require('./length'),
-  max: require('./max'),
-  min: require('./min'),
-  of: require('./of')
-};
+const array = {};
+const methods = [
+  'between',
+  'contains',
+  'each',
+  'equals',
+  'isArray',
+  'isSubset',
+  'isSuperset',
+  'length',
+  'max',
+  'min',
+  'of'
+];
+
+methods.forEach(method => {
+  array[method] = require(`./${method}`);
+});
+
+module.exports = array;

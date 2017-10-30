@@ -1,23 +1,20 @@
-const isArray = require('./isArray');
-const isNumber = require('../number/isNumber');
+const validNumber = require('../number/isNumber')();
 
-/**
- * Check if length of array is between min and max (both inclusive)
- * @param  {Array}  array Array to check
- * @param  {Number} min   Min length for array
- * @param  {Number} max   Max length for array
- * @return {Boolean}      Result
- */
-function between (array, min, max) {
-  if (!isArray(array)) {
-    return false;
+function between (min, max) {
+  if (!validNumber(min)) {
+    throw new TypeError('between: min argument is not a valid number');
+  }
+  if (!validNumber(max)) {
+    throw new TypeError('between: max argument is not a valid number');
   }
 
-  if (!isNumber(min) || !isNumber(max)) {
-    return false;
+  if (min > max) {
+    let temp = min;
+    min = max;
+    max = temp;
   }
 
-  return array.length >= min && array.length <= max;
+  return value => value.length >= min && value.length <= max;
 }
 
 module.exports = between;

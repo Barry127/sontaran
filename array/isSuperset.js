@@ -1,13 +1,12 @@
+const validArray = require('./isArray')();
 const isSubset = require('./isSubset');
 
-/**
- * Check if array is superset of subset
- * @param  {Array}   array    Array to check
- * @param  {Array}   superset Array should be a super of this array
- * @return {Boolean}          Result
- */
-function isSuperset (array, subset) {
-  return isSubset(subset, array);
+function isSuperset (subset) {
+  if (!validArray(subset)) {
+    throw new TypeError('isSuperset: subset argument is not an array');
+  }
+
+  return value => isSubset(value)(subset);
 }
 
 module.exports = isSuperset;

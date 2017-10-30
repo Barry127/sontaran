@@ -1,22 +1,12 @@
-const isArray = require('./isArray');
+const validArray = require('./isArray')();
 const isSubset = require('./isSubset');
 
-/**
- * Check if values of array equal the values of expected
- * @param  {Array} array    Array to check
- * @param  {Array} expected Expected values for array
- * @return {Boolean}        Result
- */
-function equals (array, expected) {
-  if (!isArray(array) || !isArray(expected)) {
-    return false;
+function equals (expectedValue) {
+  if (!validArray(expectedValue)) {
+    throw new TypeError('equals: expectedValue argument is not an array');
   }
 
-  if (array.length !== expected.length) {
-    return false;
-  }
-
-  return isSubset(expected, array);
+  return value => value.length === expectedValue.length && isSubset(expectedValue)(value);
 }
 
 module.exports = equals;

@@ -1,8 +1,10 @@
-const { expect } = require('chai');
 const isSuperset = require('./isSuperset');
 
-describe('array/isSuperset', () => {
+test('isSuperset returns a function', () => {
+  expect(isSuperset([])).toBeInstanceOf(Function);
+});
 
+describe('Valid pairs', () => {
   const validPairs = [
     [ [ 1, 2 ], [ 1, 2 ] ],
     [ [ 'a', 'b', 'c', 'd' ], [ 'a', 'b', 'c' ] ],
@@ -11,23 +13,30 @@ describe('array/isSuperset', () => {
     [ [ 0xFF, 0xFE, 0xFD ], [ 255 ] ]
   ];
 
+  validPairs.forEach(pair => {
+    test(`${pair[0]} is a superset of ${pair[1]}`, () => {
+      expect(isSuperset(pair[1])(pair[0])).toBe(true);
+    })
+  });
+});
+
+describe('Invalid pairs', () => {
   const invalidPairs = [
     [ [ 'a', 'b' ], [ 'a', 'b', 'c' ] ],
     [ [ '1', 2 ], [ 1, 2 ] ],
     [ [ { a: 1, b: 2 } ], [ { a: 1, b: 2 } ] ],
-    [ [ 'a', 'b' ], 'a' ]
+    [ [ 'a' ], [ 'a', 'b' ] ]
   ];
 
-  validPairs.forEach(pair => {
-    it(`${pair[0]} is a superset of ${pair[1]}`, () => {
-      expect(isSuperset(pair[0], pair[1])).to.be.true;
-    });
-  });
-
   invalidPairs.forEach(pair => {
-    it(`${pair[0]} is not a superset of ${pair[1]}`, () => {
-      expect(isSuperset(pair[0], pair[1])).to.be.false;
+    test(`${pair[0]} is not a superset of ${pair[1]}`, () => {
+      expect(isSuperset(pair[1])(pair[0])).toBe(false);
     });
   });
+});
 
+describe('Invalid arguments', () => {
+  test('isSuperset throws a type error if subset is not an array', () => {
+    expect(isSuperset.bind(null, false)).toThrow(TypeError);
+  });
 });

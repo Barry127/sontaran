@@ -1,22 +1,11 @@
-const isArray = require('./isArray');
-const isNumber = require('../number/isNumber');
+const validNumber = require('../number/isNumber')();
 
-/**
- * Check if array has a min length of min (inclusive)
- * @param  {Array}  array  Array to check
- * @param  {Number} min    Min length array should be
- * @return {Boolean}       Result
- */
-function min (array, min) {
-  if (!isArray(array)) {
-    return false;
+function min (minLength) {
+  if (!validNumber(minLength)) {
+    throw new TypeError('min: minLength argument is not a number');
   }
 
-  if (!isNumber(min)) {
-    return false;
-  }
-
-  return array.length >= min;
+  return value => value.length >= minLength;
 }
 
 module.exports = min;
