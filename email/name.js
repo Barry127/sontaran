@@ -1,27 +1,17 @@
-const checkType = require('../helpers/checkType');
+const validString = require('../string/isString')();
 
-/**
- * Check if email has string name of matches RegExp name
- * @param  {String}        email  Email to check name part for
- * @param  {String|RegExp} name   String for name part or RegExp name should match
- * @return {Boolean}              Result
- */
-function name (email, name) {
-  if (!checkType(email, 'string')) {
-    return false;
+function name (expectedName) {
+  if (!validString(expectedName) && !(expectedName instanceof RegExp)) {
+    throw new TypeError('name: expectedName argument is not a string or an instance of RegExp');
   }
 
-  const localPart = email.split('@')[0];
+  return value => {
+    const localPart = value.split('@')[0];
 
-  if (typeof name === 'string') {
-    return localPart === name;
-  }
-
-  if (checkType(name, 'object') && name instanceof RegExp) {
-    return name.test(localPart);
-  }
-
-  return false;
+    return validString(expectedName) ?
+      localPart === expectedName :
+      expectedName.test(localPart);
+  };
 }
 
 module.exports = name;

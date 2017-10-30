@@ -1,6 +1,14 @@
-module.exports = {
-  domain: require('./domain'),
-  isEmail: require('./isEmail'),
-  name: require('./name'),
-  noThrowAway: require('./noThrowAway')
-};
+const email = {};
+const methods = [
+  'domain',
+  'isEmail',
+  'localPart',
+  'name',
+  'noThrowAway'
+];
+
+methods.forEach(method => {
+  email[method] = require(`./${method}`);
+});
+
+module.exports = email;

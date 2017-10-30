@@ -1,8 +1,10 @@
-const { expect } = require('chai');
 const isEmail = require('./isEmail');
 
-describe('email/isEmail', () => {
+test('isEmail returns a function', () => {
+  expect(isEmail()).toBeInstanceOf(Function);
+});
 
+describe('Valid values', () => {
   const validValues = [
     'prettyandsimple@example.com',
     'very.common@example.com',
@@ -20,6 +22,14 @@ describe('email/isEmail', () => {
     'user@172.217.17.101' // IPv4 address
   ];
 
+  validValues.forEach(value => {
+    test(`${value} is a valid email`, () => {
+      expect(isEmail()(value)).toBe(true);
+    });
+  });
+});
+
+describe('Invalid values', () => {
   const invalidValues = [
     33,
     true,
@@ -38,16 +48,9 @@ describe('email/isEmail', () => {
     'john@doe.com ', // a valid email address with a trailing space
   ];
 
-  validValues.forEach(value => {
-    it(`${value} is a valid email`, () => {
-      expect(isEmail(value)).to.be.true;
-    });
-  });
-
   invalidValues.forEach(value => {
-    it(`${value} is a not valid email`, () => {
-      expect(isEmail(value)).to.be.false;
+    test(`${value} is not a valid email`, () => {
+      expect(isEmail()(value)).toBe(false);
     });
   });
-
 });

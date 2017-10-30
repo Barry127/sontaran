@@ -1,27 +1,17 @@
-const checkType = require('../helpers/checkType');
+const validString = require('../string/isString')();
 
-/**
- * Check if email has string domain or matches RegExp domain
- * @param  {String}        email  Email to check domain for
- * @param  {String|RegExp} domain String for domain or RegExp domain should match
- * @return {Boolean}              Result
- */
-function domain (email, domain) {
-  if (!checkType(email, 'string')) {
-    return false;
+function domain (expectedDomain) {
+  if (!validString(expectedDomain) && !(expectedDomain instanceof RegExp)) {
+    throw new TypeError('domain: expectedDomain argument is not a string or an instance of RegExp');
   }
 
-  const emailDomain = email.split('@')[1];
+  return value => {
+    const emailDomain = value.split('@')[1];
 
-  if (checkType(domain, 'string')) {
-    return emailDomain.toLowerCase() === domain.toLowerCase();
-  }
-
-  if (checkType(domain, 'object') && domain instanceof RegExp) {
-    return domain.test(emailDomain);
-  }
-
-  return false;
+    return validString(expectedDomain) ?
+      emailDomain.toLowerCase() === expectedDomain.toLowerCase() :
+      expectedDomain.test(emailDomain);
+  };
 }
 
 module.exports = domain;
