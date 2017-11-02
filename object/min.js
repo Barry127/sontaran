@@ -1,23 +1,11 @@
-const getOwnProperties = require('../helpers/getOwnProperties');
-const isNumber = require('../number/isNumber');
-const isObject = require('./isObject');
+const validNumber = require('../number/isNumber')();
 
-/**
- * Check if object has min length of own properties of min (inclusive)
- * @param  {Object} object Object to check
- * @param  {Number} length Min length of own properties object should have
- * @return {Boolean}       Result
- */
-function min (object, min) {
-  if (!isObject(object)) {
-    return false;
+function min (minLength) {
+  if (!validNumber(minLength)) {
+    throw new TypeError('min: minLength argument is not a number');
   }
 
-  if (!isNumber(min)) {
-    return false;
-  }
-
-  return getOwnProperties(object).length >= min;
+  return value => Object.keys(value).length >= minLength;
 }
 
 module.exports = min;

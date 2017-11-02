@@ -1,23 +1,11 @@
-const getOwnProperties = require('../helpers/getOwnProperties');
-const isNumber = require('../number/isNumber');
-const isObject = require('./isObject');
+const validNumber = require('../number/isNumber')();
 
-/**
- * Check if object has length of own properties length
- * @param  {Object} object Object to check
- * @param  {Number} length Length of own properties object should have
- * @return {Boolean}       Result
- */
-function length (object, length) {
-  if (!isObject(object)) {
-    return false;
+function length (expectedLength) {
+  if (!validNumber(expectedLength)) {
+    throw new TypeError('length: expectedLength argument is not a number');
   }
 
-  if (!isNumber(length)) {
-    return false;
-  }
-
-  return getOwnProperties(object).length === length;
+  return value => Object.keys(value).length === expectedLength;
 }
 
 module.exports = length;

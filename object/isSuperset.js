@@ -1,13 +1,12 @@
+const validObject = require('./isObject')();
 const isSubset = require('./isSubset');
 
-/**
- * Check if object is superset of subset
- * @param  {Object}  object   Object to check
- * @param  {Object}  superset Object should be a superset of this object
- * @return {Boolean}          Result
- */
-function isSuperset (object, subset) {
-  return isSubset(subset, object);
+function isSuperset (subset) {
+  if (!validObject(subset)) {
+    throw new TypeError('isSuperset: subset argument is not an object');
+  }
+
+  return value => isSubset(value)(subset);
 }
 
 module.exports = isSuperset;

@@ -1,45 +1,45 @@
-const { expect } = require('chai');
 const hasOwnProperty = require('./hasOwnProperty');
 
-describe('object/hasOwnProperty', () => {
+test('hasOwnProperty returns a function', () => {
+  expect(hasOwnProperty('')).toBeInstanceOf(Function);
+});
 
-  const myObject = function () {
-    this.a = 1;
-    this.b = 2;
-    this.c = 3;
+const MyObject = function () {
+  this.a = 1;
+  this.b = 2;
+  this.c = 3;
 
-    return this;
-  };
+  return this;
+}
 
-  myObject.prototype.x = 24;
-  myObject.prototype.y = 25;
-  myObject.prototype.z = 26;
+MyObject.prototype.x = 24;
+MyObject.prototype.y = 25;
+MyObject.prototype.z = 26;
 
-  const myObjectInstance = new myObject();
-
+describe('Valid pairs', () => {
   const validPairs = [
     [ { foo: 1, bar: 2 }, 'foo' ],
-    [ myObjectInstance, 'c' ]
-  ];
-
-  const invalidPairs = [
-    [ { foo: 1, bar: 2 }, 'baz' ],
-    [ myObjectInstance, 'z' ],
-    [ ['aa'], 'aa' ],
-    [ 'a', 'length' ],
-    [ { '2': 2 }, true ]
+    [ new MyObject(), 'c' ]
   ];
 
   validPairs.forEach(pair => {
-    it(`${pair[0]} has own property ${pair[1]}`, () => {
-        expect(hasOwnProperty(pair[0], pair[1])).to.be.true;
-    });
+    test(`${pair[0]} has own property ${pair[1]}`, () => {
+      expect(hasOwnProperty(pair[1])(pair[0])).toBe(true);
+    })
   });
+});
+
+describe('Invalid pairs', () => {
+  const invalidPairs = [
+    [ { foo: 1, bar: 2 }, 'baz' ],
+    [ new MyObject(), 'z' ],
+    [ ['aa'], 'aa' ],
+    [ { '2': 2 }, true ]
+  ];
 
   invalidPairs.forEach(pair => {
-    it(`${pair[0]} does not have own property ${pair[1]}`, () => {
-      expect(hasOwnProperty(pair[0], pair[1])).to.be.false;
+    test(`${pair[0]} does not have own property ${pair[1]}`, () => {
+      expect(hasOwnProperty(pair[1])(pair[0])).toBe(false);
     });
   });
-
 });

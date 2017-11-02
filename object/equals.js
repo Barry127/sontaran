@@ -1,23 +1,12 @@
-const getOwnProperties = require('../helpers/getOwnProperties');
-const isObject = require('./isObject');
+const validObject = require('./isObject')();
 const isSubset = require('./isSubset');
 
-/**
- * Check if values of object equal the values of expected
- * @param  {Object} object   Object to check
- * @param  {Object} expected Expected values for object
- * @return {Boolean}         Result
- */
-function equals (object, expected) {
-  if (!isObject(object) || !isObject(expected)) {
-    return false;
+function equals (expectedValue) {
+  if (!validObject(expectedValue)) {
+    throw new TypeError('equals: expectedValue argument is not an object');
   }
 
-  if (getOwnProperties(object).length !== getOwnProperties(expected).length) {
-    return false;
-  }
-
-  return isSubset(expected, object);
+  return value => Object.keys(value).length === Object.keys(expectedValue).length && isSubset(expectedValue)(value);
 }
 
 module.exports = equals;

@@ -1,25 +1,17 @@
-const isObject = require('./isObject');
-const getOwnProperties = require('../helpers/getOwnProperties');
+const validObject = require('./isObject')();
 
-/**
- * Check if object is subset of superset
- * @param  {Object}  object   Object to check
- * @param  {Object}  superset Object should be a subset of this object
- * @return {Boolean}          Result
- */
-function isSubset (object, superset) {
-  if (!isObject(object) || !isObject(superset)) {
-    return false;
+function isSubset (superSet) {
+  if (!validObject(superSet)) {
+    throw new TypeError('isSubset: superSet argument is not an object');
   }
 
-  return getOwnProperties(object)
-    .reduce((valid, key) => {
-      if (!valid) {
-        return false;
-      }
+  return value => Object.keys(value).reduce((valid, key) => {
+    if (!valid) {
+      return false;
+    }
 
-      return object[key] === superset[key];
-    }, true);
+    return value[key] === superSet[key];
+  }, true);
 }
 
 module.exports = isSubset;

@@ -1,26 +1,22 @@
-const { expect } = require('chai');
 const object = require('./index');
 
-describe('object', () => {
+const methods = [
+  'contains',
+  'equals',
+  'hasKey',
+  'hasKeys',
+  'hasOwnProperties',
+  'hasOwnProperty',
+  'isObject',
+  'isSubset',
+  'isSuperset',
+  'length',
+  'max',
+  'min'
+];
 
-  const methods = [
-    'contains',
-    'equals',
-    'hasKey',
-    'hasKeys',
-    'hasOwnProperty',
-    'isObject',
-    'isSubset',
-    'isSuperset',
-    'length',
-    'max',
-    'min'
-  ];
-
-  methods.forEach(method => {
-    it(`object exports ${method}`, () => {
-      expect(object[method]).to.be.a('function');
-    });
+methods.forEach(method => {
+  test(`object exports ${method}`, () => {
+    expect(object[method]).toBe(require(`./${method}`));
   });
-
 });
