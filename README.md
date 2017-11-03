@@ -40,34 +40,35 @@ var noThrowAway = require('sontaran/email/noThrowAway');
 
 Complete docs can be found [here](https://barry127.github.io/sontaran/).
 
+Every sontaran validator function returns a new validator function that can be chained using `sontaran/validator`
+
 ```javascript
-const { email } = require('sontaran/email');
+const validator = require('sontaran/validator');
+const { isString, notEmpty, min, max, match } = require('sontaran/string');
+const { isEmail, noThrowAway } = require('sontaran/email');
 
-function myEmailValidator (userEmail) {
-  if (!email.isEmail(userEmail)) {
-    throw Error(userEmail + ' is not a valid email address');
-  }
+const usernameValidator = validator(
+  isString(),
+  notEmpty(),
+  min(3),
+  max(10),
+  match(/^[a-zA-Z0-9_\-]*$/)
+);
 
-  if (!email.noThrowAway(userEmail)) {
-    throw Error('Throw away email accounts are not accepted');
-  }
-
-  // This is probably the worst email check ever
-  if (email.domain(userEmail, /gmail/i)) {
-    throw Error('Gmail accounts are not accepted');
-  }
-
-  return userEmail;
-}
+const emailValidator = validator(
+  isEmail(),
+  noThrowAway()
+);
 
 const formData = {
   // some formdata
 };
 
-try {
-  myEmailValidator(formData.email);
-} catch (e) {
-  // handle error
+if (!usernameValidator(formData.username)) {
+  // => invalid username
+}
+if (!emailValidator(formData.email)) {
+  // => invalid email
 }
 
 // email is valid
@@ -78,6 +79,7 @@ try {
 * array
   * between
   * contains
+  * each
   * equals
   * isArray
   * isSubset
@@ -94,6 +96,7 @@ try {
 * email
   * domain
   * isEmail
+  * localPart => name
   * name
   * noThrowAway
 * network
@@ -105,21 +108,25 @@ try {
   * between
   * equals
   * greaterThan
+  * gt => greaterThan
+  * isInt => isInteger
   * isInteger
   * isNaN
   * isNegative
   * isNumber
   * isPositive
   * lessThan
+  * lt => lessThan
   * max
   * min
   * notNaN
 * object
   * contains
   * equals
-  * hasKey
-  * hasKeys
+  * hasKey => hasOwnProperty
+  * hasKeys => hasOwnProperties
   * hasOwnProperty
+  * hasOwnProperties
   * isObject
   * isSubset
   * isSuperset
@@ -133,7 +140,7 @@ try {
   * contains
   * empty
   * endsWith
-  * enum
+  * enum => oneOf
   * equals
   * extendedAscii
   * hexColor
