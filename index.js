@@ -6,7 +6,8 @@ const methods = [
   'network',
   'number',
   'object',
-  'string'
+  'string',
+  'validator'
 ];
 
 methods.forEach(method => {
