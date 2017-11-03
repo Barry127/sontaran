@@ -1,10 +1,16 @@
-module.exports = {
-  array: require('./array'),
-  boolean: require('./boolean'),
-  email: require('./email'),
-  helpers: require('./helpers'),
-  network: require('./network'),
-  number: require('./number'),
-  object: require('./object'),
-  string: require('./string')
-};
+const sontaran = {};
+const methods = [
+  'array',
+  'boolean',
+  'email',
+  'network',
+  'number',
+  'object',
+  'string'
+];
+
+methods.forEach(method => {
+  sontaran[method] = require(`./${method}`);
+});
+
+module.exports = sontaran;

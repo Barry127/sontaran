@@ -1,23 +1,17 @@
-const { expect } = require('chai');
 const sontaran = require('./index');
 
-describe('sontaran', () => {
+const methods = [
+  'array',
+  'boolean',
+  'email',
+  'network',
+  'number',
+  'object',
+  'string'
+];
 
-  const validator = [
-    'array',
-    'boolean',
-    'email',
-    'helpers',
-    'network',
-    'number',
-    'object',
-    'string'
-  ];
-
-  validator.forEach(method => {
-    it(`sontaran exports ${method}`, () => {
-      expect(sontaran[method]).to.be.a('object');
-    });
+methods.forEach(method => {
+  test(`sontaran exports ${method}`, () => {
+    expect(sontaran[method]).toBe(require(`./${method}`));
   });
-
 });
