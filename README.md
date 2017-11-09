@@ -3,7 +3,7 @@
 [![Code Climate](https://codeclimate.com/github/Barry127/sontaran/badges/gpa.svg)](https://codeclimate.com/github/Barry127/sontaran)
 [![Test Coverage](https://codeclimate.com/github/Barry127/sontaran/badges/coverage.svg)](https://codeclimate.com/github/Barry127/sontaran/coverage)
 
-Sontaran is a javascript validator utility library. It comes with validation functions for:
+Sontaran is a javascript validator library. It comes with validation functions for:
 
 * Array
 * Boolean
@@ -13,6 +13,10 @@ Sontaran is a javascript validator utility library. It comes with validation fun
 * Object
 * String
 
+Sontaran takes a functional aproach in validations. All validators are composable to create useful validators.
+
+> Sontaran uses recent ES features. It is tested on stable Node and should run out of the box in evergreen browsers. If you need to support legacy browsers consider using a transpiler with polyfills.
+
 ## Installation
 
 Sontaran can be installed using npm.
@@ -21,58 +25,140 @@ Sontaran can be installed using npm.
 npm install --save sontaran
 ```
 
-Loading Sontaran:
+For the complete code including all tests the repo can be cloned.
 
-```javascript
-// Load the full library
-var sontaran = require('sontaran');
-
-// Load a validator category
-var array = require('sontaran/array');
-var number = require('sontaran/number');
-
-// Load specific methods for smaller bundles
-var domain = require('sontaran/email/domain');
-var noThrowAway = require('sontaran/email/noThrowAway');
+```bash
+git clone https://github.com/Barry127/sontaran.git
+cd sontaran
+npm run test
 ```
 
-## Example
+## Getting Started
 
-Complete docs can be found [here](https://barry127.github.io/sontaran/).
+The `sontaran/validator` function composes the sontaran validators to a single validator function. The validators are run in order, if one returns false the following functions will not be run.
 
-Every sontaran validator function returns a new validator function that can be chained using `sontaran/validator`
+In this example the username:
+
+* Must be a string
+* Cannot be only empty characters (spaces, tabs, return, ...)
+* Must have a length between 3 and 10 characters
+* Must match the given RegExp (only contain alphanum characters and dash, underscore)
 
 ```javascript
 const validator = require('sontaran/validator');
-const { isString, notEmpty, min, max, match } = require('sontaran/string');
-const { isEmail, noThrowAway } = require('sontaran/email');
 
-const usernameValidator = validator(
+const isString = require('sontaran/string/isString');
+const notEmpty = require('sontaran/string/notEmpty');
+const between = require('sontaran/string/between');
+const match = require('sontaran/string/match');
+
+const validateUsername = validator(
   isString(),
   notEmpty(),
-  min(3),
-  max(10),
+  between(3, 10),
   match(/^[a-zA-Z0-9_\-]*$/)
 );
 
-const emailValidator = validator(
+// Valid usernames (return true)
+validateUsername('Barry127');
+validateUsername('DoctorWho');
+validateUsername('JohnDoe');
+validateUsername('-_hi_-');
+
+// invalid usernames (return false)
+validateUsername(123); // => not a string
+validateUsername(' \t\r'); => Empty characters
+validateUsername('aa'); => too short
+validateUsername('Hello-World'); // too long
+validateUsername('B@dInput'); // invalid character
+```
+
+`sontaran/validator` can take any function as argument that takes the value to validate as argument and returns a boolean as result.
+
+```javascript
+const validator = require('sontaran/validator');
+
+const isEmail = require('sontaran/email/isEmail');
+const noThrowAway = require('sontaran/email/noThrowAway');
+
+// this validator is quite useless in this example
+// but for demonstration purpose it will serve just fine
+const myCustomValidator = value => value.indexOf('@') > -1;
+
+const validateEmail = validator(
   isEmail(),
+  myCustomValidator,
   noThrowAway()
 );
 
-const formData = {
-  // some formdata
-};
+// valid emails (return true)
+validateEmail('me@you.com');
+validateEmail('info@my.sub.domain.co.uk');
+validateEmail('email@domain.tld');
 
-if (!usernameValidator(formData.username)) {
-  // => invalid username
-}
-if (!emailValidator(formData.email)) {
-  // => invalid email
-}
-
-// email is valid
+// invalid emails (return false)
+validateEmail('hi'); // => not an email
+validateEmail('www.google.com'); // => not an email
+validateEmail('me@yopmail.com'); // => throw away email not allowed
 ```
+
+Again we compose some validators using the `sontaran/validate` function.
+
+In this example the email:
+
+* Must be a valid email address
+* Must contain an @ sign (our custom validator)
+* Cannot be an email address from a throw away email service
+
+# Docs
+
+## validator
+
+`validator([functions])`
+
+validator is the heart of Sontaran. It combines all (validation) functions it gets as an argument and combines them to one validator.
+
+### Arguments
+
+|                           |                                      |
+|-------------------------: |------------------------------------- |
+| **[functions]** Function  | The validator functions to combine to one validation function |
+
+### Returns
+
+|                 |                                      |
+|---------------: |------------------------------------- |
+| **Function**    | A validator function that combines all validators given as arguments |
+
+### Example
+
+```javascript
+const validator = require('sontaran/validator');
+const isNumber = require('sontaran/number/isNumber');
+const isInteger = require('sontaran/number/isInteger');
+const min = require('sontaran/number/min');
+
+const ageValidator = validator(
+  isNumber(),
+  isInteger(),
+  min(18)
+);
+
+ageValidator(21);
+// => true
+
+ageValidator(18);
+// => true
+
+
+ageValidator('21');
+// => false
+
+ageValidator(33.33);
+// => false
+```
+
+> More docs can be found [here](https://barry127.github.io/sontaran/).
 
 ## Function List
 
