@@ -20,16 +20,19 @@ export abstract class BaseValidator {
   protected message = 'Validation error';
   protected value!: any;
 
+  /** Set custom error message */
   withMessage(message: string) {
     this.message = message;
     return this;
   }
 
+  /** add custom validator */
   custom(validator: ValidatorFunction) {
     this.validators.push(validator);
     return this;
   }
 
+  /** validate a value against validator */
   async validate({
     field,
     value
