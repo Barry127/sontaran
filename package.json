@@ -2,13 +2,17 @@
   "name": "sontaran",
   "version": "1.0.0",
   "description": "Javascript number, string, boolean, object validator",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "scripts": {
-    "lint": "reset && eslint . || true",
-    "lint:watch": "onchange \"**/*.js\" -- npm run lint",
-    "test": "jest",
-    "test:coverage": "jest . --coverage",
-    "test:watch": "jest . --watch"
+    "clear": "rimraf coverage dist",
+    "prebuild": "yarn clear",
+    "build": "rollup --config",
+    "prepublish": "yarn test:ci && yarn build",
+    "postpublish": "yarn clear",
+    "test": "jest --watch",
+    "test:ci": "jest",
+    "test:coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -29,10 +33,29 @@
   },
   "homepage": "https://barry127.github.io/sontaran",
   "devDependencies": {
-    "eslint": "^3.17.1",
-    "eslint-config-xo-space": "^0.15.0",
-    "jest": "^21.2.1",
-    "onchange": "^3.2.1"
+    "@types/jest": "^26.0.10",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^26.3.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "jest": "^26.4.2",
+    "rollup": "^2.26.8",
+    "rollup-plugin-typescript2": "^0.27.2",
+    "typescript": "^4.0.2"
+  },
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ],
+    "modulePaths": [
+      "src"
+    ]
+  }
 }

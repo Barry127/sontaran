@@ -1,14 +1,10 @@
 engines:
   duplication:
     enabled: false
-  eslint:
-    config:
-      config: .eslintrc.js
-    enabled: true
   fixme:
     enabled: true
 ratings:
   exclude_paths:
-    - "**.spec.js"
+    - 'src/**.spec.ts'
   paths:
-    - "**.js"
+    - 'src/**.ts'

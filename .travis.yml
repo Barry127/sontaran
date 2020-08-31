@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - 12
+cache:
+  npm: false
+script:
+  - yarn test:ci
+  - yarn build
+  - yarn test:coverage:ci
