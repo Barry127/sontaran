@@ -1,7 +1,7 @@
-import { log } from './index';
+import DefaultExport, { BaseValidator, Sontaran } from '.';
 
-it('tests', () => {
-  expect(2).toBe(2);
-
-  log('test');
+it('exports everything', () => {
+  expect(DefaultExport).toBe(Sontaran);
+  expect(BaseValidator).toBeDefined();
+  expect(Sontaran).toBeDefined();
 });
