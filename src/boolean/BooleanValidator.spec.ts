@@ -39,7 +39,7 @@ describe('BooleanValidator', () => {
     validPairs.forEach(([value, argument]) => {
       it(`${value} is equal to ${argument}`, async () => {
         const result = await boolean()
-          .equal(value)
+          .equal(argument)
           .validate({ field: 'test', value });
         expect(result).toBeNull();
       });
@@ -48,9 +48,9 @@ describe('BooleanValidator', () => {
     invalidPairs.forEach(([value, argument]) => {
       it(`${value} is not equal to ${argument}`, async () => {
         const result = await boolean()
-          .equal(value)
+          .equal(argument)
           .validate({ field: 'test', value });
-        expect(result).toBeNull();
+        expect(result).not.toBeNull();
       });
     });
   });
