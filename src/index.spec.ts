@@ -3,6 +3,10 @@ import DefaultExport, {
   bool,
   boolean,
   BooleanValidator,
+  int,
+  integer,
+  number,
+  NumberValidator,
   Sontaran,
   StringValidator,
   string
@@ -14,6 +18,10 @@ it('exports everything', () => {
   expect(bool).toBeDefined();
   expect(boolean).toBeDefined();
   expect(BooleanValidator).toBeDefined();
+  expect(int).toBeDefined();
+  expect(integer).toBeDefined();
+  expect(number).toBeDefined();
+  expect(NumberValidator).toBeDefined();
   expect(Sontaran).toBeDefined();
   expect(StringValidator).toBeDefined();
   expect(string).toBeDefined();
@@ -23,6 +31,9 @@ describe('Sontaran', () => {
   it('has static methods that return instances of validators', () => {
     expect(Sontaran.bool()).toBeInstanceOf(BooleanValidator);
     expect(Sontaran.boolean()).toBeInstanceOf(BooleanValidator);
+    expect(Sontaran.int()).toBeInstanceOf(NumberValidator);
+    expect(Sontaran.integer()).toBeInstanceOf(NumberValidator);
+    expect(Sontaran.number()).toBeInstanceOf(NumberValidator);
     expect(Sontaran.string()).toBeInstanceOf(StringValidator);
   });
 });
