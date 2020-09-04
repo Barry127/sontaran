@@ -1,4 +1,6 @@
 import DefaultExport, {
+  ArrayValidator,
+  array,
   BaseValidator,
   bool,
   boolean,
@@ -14,6 +16,8 @@ import DefaultExport, {
 
 it('exports everything', () => {
   expect(DefaultExport).toBe(Sontaran);
+  expect(ArrayValidator).toBeDefined();
+  expect(array).toBeDefined();
   expect(BaseValidator).toBeDefined();
   expect(bool).toBeDefined();
   expect(boolean).toBeDefined();
@@ -29,6 +33,7 @@ it('exports everything', () => {
 
 describe('Sontaran', () => {
   it('has static methods that return instances of validators', () => {
+    expect(Sontaran.array()).toBeInstanceOf(ArrayValidator);
     expect(Sontaran.bool()).toBeInstanceOf(BooleanValidator);
     expect(Sontaran.boolean()).toBeInstanceOf(BooleanValidator);
     expect(Sontaran.int()).toBeInstanceOf(NumberValidator);

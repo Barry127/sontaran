@@ -75,8 +75,8 @@ export class ArrayValidator extends BaseValidator {
       throw new TypeError('ArrayValidator equals: superset must by an array');
 
     this.validators.push((value: any[]) => {
-      for (let arrayValue of value) {
-        if (!superset.includes(arrayValue)) return false;
+      for (let element of value) {
+        if (!superset.includes(element)) return false;
       }
 
       return true;
@@ -160,3 +160,5 @@ export class ArrayValidator extends BaseValidator {
     return this;
   }
 }
+
+export const array = () => new ArrayValidator();
