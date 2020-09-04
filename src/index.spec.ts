@@ -2,9 +2,12 @@ import DefaultExport, {
   ArrayValidator,
   array,
   BaseValidator,
+  badEmailDomains,
   bool,
   boolean,
   BooleanValidator,
+  email,
+  EmailValidator,
   int,
   integer,
   number,
@@ -22,6 +25,8 @@ it('exports everything', () => {
   expect(bool).toBeDefined();
   expect(boolean).toBeDefined();
   expect(BooleanValidator).toBeDefined();
+  expect(email).toBeDefined();
+  expect(EmailValidator).toBeDefined();
   expect(int).toBeDefined();
   expect(integer).toBeDefined();
   expect(number).toBeDefined();
@@ -29,6 +34,8 @@ it('exports everything', () => {
   expect(Sontaran).toBeDefined();
   expect(StringValidator).toBeDefined();
   expect(string).toBeDefined();
+
+  expect(Array.isArray(badEmailDomains)).toBe(true);
 });
 
 describe('Sontaran', () => {
@@ -36,6 +43,7 @@ describe('Sontaran', () => {
     expect(Sontaran.array()).toBeInstanceOf(ArrayValidator);
     expect(Sontaran.bool()).toBeInstanceOf(BooleanValidator);
     expect(Sontaran.boolean()).toBeInstanceOf(BooleanValidator);
+    expect(Sontaran.email()).toBeInstanceOf(EmailValidator);
     expect(Sontaran.int()).toBeInstanceOf(NumberValidator);
     expect(Sontaran.integer()).toBeInstanceOf(NumberValidator);
     expect(Sontaran.number()).toBeInstanceOf(NumberValidator);
