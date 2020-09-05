@@ -2,6 +2,7 @@ import { BaseValidator } from './BaseValidator';
 import { array } from './array/ArrayValidator';
 import { boolean } from './boolean/BooleanValidator';
 import { email } from './string/EmailValidator';
+import { network } from './string/NetworkValidator';
 import { number, integer } from './number/NumberValidator';
 import { string } from './string/StringValidator';
 
@@ -10,6 +11,7 @@ export * from './array/ArrayValidator';
 export * from './boolean/BooleanValidator';
 export * from './number/NumberValidator';
 export * from './string/EmailValidator';
+export * from './string/NetworkValidator';
 export * from './string/StringValidator';
 
 export { badEmailDomains } from './string/badEmailDomains';
@@ -37,6 +39,10 @@ export class Sontaran extends BaseValidator {
 
   static integer() {
     return integer();
+  }
+
+  static network() {
+    return network();
   }
 
   static number() {

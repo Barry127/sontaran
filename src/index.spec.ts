@@ -10,6 +10,8 @@ import DefaultExport, {
   EmailValidator,
   int,
   integer,
+  network,
+  NetworkValidator,
   number,
   NumberValidator,
   Sontaran,
@@ -29,6 +31,8 @@ it('exports everything', () => {
   expect(EmailValidator).toBeDefined();
   expect(int).toBeDefined();
   expect(integer).toBeDefined();
+  expect(network).toBeDefined();
+  expect(NetworkValidator).toBeDefined();
   expect(number).toBeDefined();
   expect(NumberValidator).toBeDefined();
   expect(Sontaran).toBeDefined();
@@ -46,6 +50,7 @@ describe('Sontaran', () => {
     expect(Sontaran.email()).toBeInstanceOf(EmailValidator);
     expect(Sontaran.int()).toBeInstanceOf(NumberValidator);
     expect(Sontaran.integer()).toBeInstanceOf(NumberValidator);
+    expect(Sontaran.network()).toBeInstanceOf(NetworkValidator);
     expect(Sontaran.number()).toBeInstanceOf(NumberValidator);
     expect(Sontaran.string()).toBeInstanceOf(StringValidator);
   });
