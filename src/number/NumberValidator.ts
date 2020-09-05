@@ -61,14 +61,9 @@ export class NumberValidator extends BaseValidator {
   }
 
   /** Expect value to be `NaN` */
-  isNan() {
+  isNaN() {
     this.validators.push((value: NumericValue) => Number.isNaN(value));
     return this;
-  }
-
-  /** Expect value to be `NaN` */
-  isNaN() {
-    return this.isNan();
   }
 
   /** Expect value to be negative */
@@ -120,14 +115,9 @@ export class NumberValidator extends BaseValidator {
   }
 
   /** Expect value to be a valid number */
-  notNan() {
+  notNaN() {
     this.validators.push((value: NumericValue) => !Number.isNaN(value));
     return this;
-  }
-
-  /** Expect value to be a valid number */
-  notNaN() {
-    return this.notNan();
   }
 }
 

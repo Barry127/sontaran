@@ -64,12 +64,16 @@ describe('ArrayValidator', () => {
 
     it('between throws a TypeError when min is not a number', () => {
       const validator = array();
-      expect(validator.between.bind(validator, '4', 3)).toThrow(TypeError);
+      expect(validator.between.bind(validator, '4' as any, 3)).toThrow(
+        TypeError
+      );
     });
 
     it('between throws a TypeError when max is not a number', () => {
       const validator = array();
-      expect(validator.between.bind(validator, 4, '6')).toThrow(TypeError);
+      expect(validator.between.bind(validator, 4, '6' as any)).toThrow(
+        TypeError
+      );
     });
   });
 
@@ -136,7 +140,9 @@ describe('ArrayValidator', () => {
 
     it('each throws a TypeError when validator is not an instance of Sontaran BaseValidator', () => {
       const validator = array();
-      expect(validator.each.bind(validator, () => null)).toThrow(TypeError);
+      expect(validator.each.bind(validator, (() => null) as any)).toThrow(
+        TypeError
+      );
     });
 
     it('calls validate the length of value number of times', async () => {
@@ -219,7 +225,7 @@ describe('ArrayValidator', () => {
 
     it('equals throws a TypeError when expectedValue is not an Array', () => {
       const validator = array();
-      expect(validator.equals.bind(validator, {})).toThrow(TypeError);
+      expect(validator.equals.bind(validator, {} as any)).toThrow(TypeError);
     });
   });
 
@@ -290,7 +296,9 @@ describe('ArrayValidator', () => {
 
     it('isSubsetOf throws a TypeError when superset is not an Array', () => {
       const validator = array();
-      expect(validator.isSubsetOf.bind(validator, {})).toThrow(TypeError);
+      expect(validator.isSubsetOf.bind(validator, {} as any)).toThrow(
+        TypeError
+      );
     });
   });
 
@@ -347,7 +355,9 @@ describe('ArrayValidator', () => {
 
     it('isSupersetOf throws a TypeError when superset is not an Array', () => {
       const validator = array();
-      expect(validator.isSupersetOf.bind(validator, {})).toThrow(TypeError);
+      expect(validator.isSupersetOf.bind(validator, {} as any)).toThrow(
+        TypeError
+      );
     });
   });
 
@@ -384,7 +394,7 @@ describe('ArrayValidator', () => {
 
     it('length throws a TypeError when expectedLength is not an number', () => {
       const validator = array();
-      expect(validator.length.bind(validator, '2')).toThrow(TypeError);
+      expect(validator.length.bind(validator, '2' as any)).toThrow(TypeError);
     });
   });
 
@@ -421,7 +431,7 @@ describe('ArrayValidator', () => {
 
     it('max throws a TypeError when maxLength is not an number', () => {
       const validator = array();
-      expect(validator.max.bind(validator, '2')).toThrow(TypeError);
+      expect(validator.max.bind(validator, '2' as any)).toThrow(TypeError);
     });
   });
 
@@ -458,7 +468,7 @@ describe('ArrayValidator', () => {
 
     it('min throws a TypeError when minLength is not an number', () => {
       const validator = array();
-      expect(validator.min.bind(validator, '2')).toThrow(TypeError);
+      expect(validator.min.bind(validator, '2' as any)).toThrow(TypeError);
     });
   });
 

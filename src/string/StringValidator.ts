@@ -122,11 +122,6 @@ export class StringValidator extends BaseValidator {
     return this;
   }
 
-  /** Expect value to be valid JSON. Uses `JSON.parse` under the hood, so be careful with large values */
-  isJSON() {
-    return this.isJson();
-  }
-
   /** Expect value to have exact length of `expectedLength` */
   length(expectedLength: number) {
     if (typeof expectedLength !== 'number')

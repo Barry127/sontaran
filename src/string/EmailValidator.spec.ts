@@ -88,7 +88,7 @@ describe('StringValidator', () => {
 
     it('throws a type error when expectedDomain is not a string or RegExp', () => {
       const validator = email();
-      expect(validator.domain.bind(validator, {})).toThrow(TypeError);
+      expect(validator.domain.bind(validator, {} as any)).toThrow(TypeError);
     });
   });
 
@@ -123,9 +123,9 @@ describe('StringValidator', () => {
 
     it('throws a type error when blacklist is not an array', () => {
       const validator = email();
-      expect(validator.domainBlacklist.bind(validator, 'yopmail.com')).toThrow(
-        TypeError
-      );
+      expect(
+        validator.domainBlacklist.bind(validator, 'yopmail.com' as any)
+      ).toThrow(TypeError);
     });
   });
 
@@ -177,7 +177,7 @@ describe('StringValidator', () => {
 
     it('throws a type error when expectedName is not a string or RegExp', () => {
       const validator = email();
-      expect(validator.name.bind(validator, {})).toThrow(TypeError);
+      expect(validator.name.bind(validator, {} as any)).toThrow(TypeError);
     });
   });
 });

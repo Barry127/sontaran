@@ -118,12 +118,16 @@ describe('StringValidator', () => {
 
     it('between throws a TypeError when min is not a number', () => {
       const validator = string();
-      expect(validator.between.bind(validator, '4', 3)).toThrow(TypeError);
+      expect(validator.between.bind(validator, '4' as any, 3)).toThrow(
+        TypeError
+      );
     });
 
     it('between throws a TypeError when max is not a number', () => {
       const validator = string();
-      expect(validator.between.bind(validator, 4, '6')).toThrow(TypeError);
+      expect(validator.between.bind(validator, 4, '6' as any)).toThrow(
+        TypeError
+      );
     });
   });
 
@@ -242,7 +246,7 @@ describe('StringValidator', () => {
 
     it('throws a type error when expectedValues is not an array', () => {
       const validator = string();
-      expect(validator.enum.bind(validator, {})).toThrow(TypeError);
+      expect(validator.enum.bind(validator, {} as any)).toThrow(TypeError);
     });
   });
 
@@ -417,19 +421,6 @@ describe('StringValidator', () => {
     });
   });
 
-  describe('isJSON', () => {
-    it('calls isJson', () => {
-      const validator = string();
-      validator.isJson = jest.fn();
-
-      expect(validator.isJson).not.toBeCalled();
-
-      validator.isJSON();
-
-      expect(validator.isJson).toBeCalled();
-    });
-  });
-
   describe('length', () => {
     const validPairs = [
       ['Hello World', 11],
@@ -463,7 +454,7 @@ describe('StringValidator', () => {
 
     it('throws a type error when length is not a number', () => {
       const validator = string();
-      expect(validator.length.bind(validator, '11')).toThrow(TypeError);
+      expect(validator.length.bind(validator, '11' as any)).toThrow(TypeError);
     });
   });
 
@@ -537,7 +528,7 @@ describe('StringValidator', () => {
 
     it('throws a type error when pattern is not a RegExp', () => {
       const validator = string();
-      expect(validator.match.bind(validator, {})).toThrow(TypeError);
+      expect(validator.match.bind(validator, {} as any)).toThrow(TypeError);
     });
   });
 
@@ -594,6 +585,15 @@ describe('StringValidator', () => {
           .startsWith(argument)
           .validate({ field: 'test', value });
         expect(result).toBeNull();
+      });
+    });
+
+    invalidPairs.forEach(([value, argument]) => {
+      it(`${value} does not starts ${argument}`, async () => {
+        const result = await string()
+          .startsWith(argument)
+          .validate({ field: 'test', value });
+        expect(result).not.toBeNull();
       });
     });
   });

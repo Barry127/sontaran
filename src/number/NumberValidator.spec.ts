@@ -76,12 +76,16 @@ describe('NumberValidator', () => {
 
     it('throws a type error when min is not a number or BigInt', () => {
       const validator = number();
-      expect(validator.between.bind(validator, '4', 5)).toThrow(TypeError);
+      expect(validator.between.bind(validator, '4' as any, 5)).toThrow(
+        TypeError
+      );
     });
 
     it('throws a type error when max is not a number or BigInt', () => {
       const validator = number();
-      expect(validator.between.bind(validator, 4, '5')).toThrow(TypeError);
+      expect(validator.between.bind(validator, 4, '5' as any)).toThrow(
+        TypeError
+      );
     });
   });
 
@@ -160,7 +164,9 @@ describe('NumberValidator', () => {
 
     it('throws a type error when gt is not a number or BigInt', () => {
       const validator = number();
-      expect(validator.greaterThan.bind(validator, '4')).toThrow(TypeError);
+      expect(validator.greaterThan.bind(validator, '4' as any)).toThrow(
+        TypeError
+      );
     });
   });
 
@@ -248,10 +254,10 @@ describe('NumberValidator', () => {
     });
   });
 
-  describe('isNan', () => {
+  describe('isNaN', () => {
     const validValues = [Number.NaN, Math.sqrt(-3)];
     const invalidValues = [4.3, Math.PI, 5, -9, BigInt(3)];
-    const validator = number().isNan();
+    const validator = number().isNaN();
 
     validValues.forEach((value) => {
       it(`${value} is NaN`, async () => {
@@ -265,19 +271,6 @@ describe('NumberValidator', () => {
         const result = await validator.validate({ field: 'test', value });
         expect(result).not.toBeNull();
       });
-    });
-  });
-
-  describe('isNaN', () => {
-    it('calls isNan', () => {
-      const validator = number();
-      validator.isNan = jest.fn();
-
-      expect(validator.isNan).not.toBeCalled();
-
-      validator.isNaN();
-
-      expect(validator.isNan).toBeCalled();
     });
   });
 
@@ -392,7 +385,7 @@ describe('NumberValidator', () => {
 
     it('throws a type error when lt is not a number or BigInt', () => {
       const validator = number();
-      expect(validator.lessThan.bind(validator, '4')).toThrow(TypeError);
+      expect(validator.lessThan.bind(validator, '4' as any)).toThrow(TypeError);
     });
   });
 
@@ -447,7 +440,7 @@ describe('NumberValidator', () => {
 
     it('throws a type error when max is not a number or BigInt', () => {
       const validator = number();
-      expect(validator.min.bind(validator, '4')).toThrow(TypeError);
+      expect(validator.min.bind(validator, '4' as any)).toThrow(TypeError);
     });
   });
 
@@ -488,15 +481,15 @@ describe('NumberValidator', () => {
 
     it('throws a type error when min is not a number or BigInt', () => {
       const validator = number();
-      expect(validator.min.bind(validator, '4')).toThrow(TypeError);
+      expect(validator.min.bind(validator, '4' as any)).toThrow(TypeError);
     });
   });
 
-  describe('notNan', () => {
+  describe('notNaN', () => {
     const validValues = [4.3, Math.PI, 5, -9, BigInt(42)];
     const invalidValues = [Number.NaN, Math.sqrt(-3)];
 
-    const validator = number().notNan();
+    const validator = number().notNaN();
 
     validValues.forEach((value) => {
       it(`${value} is not NaN`, async () => {
@@ -510,19 +503,6 @@ describe('NumberValidator', () => {
         const result = await validator.validate({ field: 'test', value });
         expect(result).not.toBeNull();
       });
-    });
-  });
-
-  describe('notNaN', () => {
-    it('calls notNan', () => {
-      const validator = number();
-      validator.notNan = jest.fn();
-
-      expect(validator.notNan).not.toBeCalled();
-
-      validator.notNaN();
-
-      expect(validator.notNan).toBeCalled();
     });
   });
 });
