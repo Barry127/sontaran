@@ -1,3 +1,4 @@
+import json from '@rollup/plugin-json';
 import typescript from 'rollup-plugin-typescript2';
 
 export default {
@@ -7,14 +8,16 @@ export default {
     {
       file: 'dist/index.js',
       format: 'cjs',
-      sourcemap: true
+      sourcemap: true,
+      exports: 'named'
     },
     {
       file: 'dist/index.mjs',
       format: 'es',
-      sourcemap: true
+      sourcemap: true,
+      exports: 'named'
     }
   ],
 
-  plugins: [typescript({ tsconfig: 'tsconfig.json' })]
+  plugins: [json(), typescript({ tsconfig: 'tsconfig.json' })]
 };

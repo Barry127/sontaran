@@ -33,6 +33,7 @@
   },
   "homepage": "https://barry127.github.io/sontaran",
   "devDependencies": {
+    "@rollup/plugin-json": "^4.1.0",
     "@types/jest": "^26.0.10",
     "rimraf": "^3.0.2",
     "ts-jest": "^26.3.0"
