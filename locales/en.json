@@ -1,6 +1,9 @@
 {
   "base.blacklist": "Value {{value}} is not allowed for {{label}}",
-  "base.enum": "Value {{value}} is not allowed for {{label}}. It must be one of [{{enum}}]",
-  "base.equals": "Value {{value}} for {{label}} must equal {{expectedValue}}",
-  "base.forbidden": "Field {{label}} is not allowed to be defined"
+  "base.enum": "{{label}} value must be one of [{{enum}}]",
+  "base.equals": "{{label}} must equal {{expectedValue}}",
+  "base.forbidden": "{{label}} is not allowed to be defined",
+  "boolean.boolean": "{{label}} must be of type boolean",
+  "boolean.false": "{{label}} must be false",
+  "boolean.true": "{{label}} must be true"
 }

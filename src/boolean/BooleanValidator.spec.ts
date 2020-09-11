@@ -13,45 +13,24 @@ describe('BooleanValidator', () => {
 
     validValues.forEach((value) => {
       it(`${value} is a valid boolean value`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+        const result = await validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
       it(`${value} is not a valid boolean value`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
-      });
-    });
-  });
-
-  describe('equal', () => {
-    const validPairs = [
-      [true, true],
-      [false, false]
-    ];
-    const invalidPairs = [
-      [true, false],
-      [false, true]
-    ];
-
-    validPairs.forEach(([value, argument]) => {
-      it(`${value} is equal to ${argument}`, async () => {
-        const result = await boolean()
-          .equal(argument)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+        const result = await validator.validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
-    invalidPairs.forEach(([value, argument]) => {
-      it(`${value} is not equal to ${argument}`, async () => {
-        const result = await boolean()
-          .equal(argument)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
-      });
+    it('sets correct error type and message', () => {
+      const result = boolean().label('myLabel').validate('true');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('boolean.boolean');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('boolean');
     });
   });
 
@@ -62,16 +41,24 @@ describe('BooleanValidator', () => {
 
     validValues.forEach((value) => {
       it(`${value} is false`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+        const result = await validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
       it(`${value} is not false`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+        const result = await validator.validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate(true);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('boolean.false');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('false');
     });
   });
 
@@ -82,16 +69,24 @@ describe('BooleanValidator', () => {
 
     validValues.forEach((value) => {
       it(`${value} is true`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+        const result = await validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
       it(`${value} is not true`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+        const result = await validator.validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate(false);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('boolean.true');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('true');
     });
   });
 });

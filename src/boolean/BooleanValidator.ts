@@ -1,32 +1,40 @@
-import { BaseValidator, ValidatorFunction } from '../BaseValidator';
+import { BaseValidator } from '../BaseValidator';
+import { ValidatorOptions } from '../types';
+import { ValidationError } from '../errors/ValidationError';
 
-export class BooleanValidator extends BaseValidator {
-  protected validators: ValidatorFunction<boolean>[] = [];
+export class BooleanValidator extends BaseValidator<boolean> {
+  constructor(options: Partial<ValidatorOptions> = {}) {
+    super(options);
 
-  constructor() {
-    super();
+    this.custom((value: any) => {
+      if (typeof value !== 'boolean')
+        throw new ValidationError('boolean.boolean');
 
-    this.validators.push((value: any) => typeof value === 'boolean');
-  }
-
-  /** Expect value to equal `expectedValue` */
-  equal(expectedValue: boolean) {
-    this.validators.push((value: boolean) => value === expectedValue);
-    return this;
+      return value;
+    });
   }
 
   /** Expect value to be false */
   false() {
-    this.validators.push((value: boolean) => value === false);
+    this.custom((value: boolean) => {
+      if (value !== false) throw new ValidationError('boolean.false');
+
+      return value;
+    });
     return this;
   }
 
   /** Expect value to be true */
   true() {
-    this.validators.push((value: boolean) => value === true);
+    this.custom((value: boolean) => {
+      if (value !== true) throw new ValidationError('boolean.true');
+
+      return value;
+    });
     return this;
   }
 }
 
-export const boolean = () => new BooleanValidator();
+export const boolean = (options: Partial<ValidatorOptions> = {}) =>
+  new BooleanValidator(options);
 export const bool = boolean;
