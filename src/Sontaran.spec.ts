@@ -1,9 +1,13 @@
-import { Sontaran } from './Sontaran';
+import { Sontaran, any } from './Sontaran';
 
 import en from '../locales/en.json';
 import { ValidationError } from './errors/ValidationError';
 
 describe('Sontaran', () => {
+  it('exports factory method', () => {
+    expect(any()).toBeInstanceOf(Sontaran);
+  });
+
   describe('options', () => {
     it('sets default options', () => {
       const validator = new Sontaran();
@@ -166,11 +170,14 @@ describe('Sontaran', () => {
     });
 
     it('sets correct error type and message', () => {
-      const result = new Sontaran().enum([1, 2, 3]).validate(4);
-      expect(result.errors?.[0].type).toBe('base.enum');
-      expect(result.errors?.[0].message).toBe(
-        'Value 4 is not allowed for unnamed field. It must be one of [1,2,3]'
-      );
+      const result = new Sontaran()
+        .label('myLabel')
+        .enum([1, 2, 3])
+        .validate(4);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('base.enum');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain([1, 2, 3].toString());
     });
 
     it('throws a type error when expectedValues is not an array', () => {
@@ -231,11 +238,10 @@ describe('Sontaran', () => {
 
     it('sets correct error type and message', () => {
       const result = new Sontaran().equals(1).label('myLabel').validate(2);
-      const error = result.errors?.[0];
+      const error = result.errors?.[0]!;
       expect(error.type).toBe('base.equals');
       expect(error.message).toContain('myLabel');
       expect(error.message).toContain('1');
-      expect(error.message).toContain('2');
     });
   });
 

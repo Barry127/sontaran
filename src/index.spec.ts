@@ -1,7 +1,10 @@
 import DefaultExport, {
   any,
   BaseValidator,
+  BooleanValidator,
   badEmailDomains,
+  bool,
+  boolean,
   Sontaran
 } from '.';
 it('exports everything', () => {
@@ -10,9 +13,9 @@ it('exports everything', () => {
   // expect(ArrayValidator).toBeDefined();
   // expect(array).toBeDefined();
   expect(BaseValidator).toBeDefined();
-  // expect(bool).toBeDefined();
-  // expect(boolean).toBeDefined();
-  // expect(BooleanValidator).toBeDefined();
+  expect(BooleanValidator).toBeDefined();
+  expect(bool).toBeDefined();
+  expect(boolean).toBeDefined();
   // expect(email).toBeDefined();
   // expect(EmailValidator).toBeDefined();
   // expect(int).toBeDefined();

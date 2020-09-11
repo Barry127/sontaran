@@ -101,7 +101,6 @@ export abstract class BaseValidator<T = any> {
     this.custom((value: any) => {
       if (value !== expectedValue)
         throw new ValidationError('base.equals', {
-          value,
           expectedValue: expectedValue as any
         });
 
