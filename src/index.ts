@@ -6,7 +6,7 @@ export * from './errors/ValidationError';
 // export * from './array/ArrayValidator';
 export * from './boolean/BooleanValidator';
 export * from './number/NumberValidator';
-// export * from './string/EmailValidator';
+export * from './string/EmailValidator';
 // export * from './string/NetworkValidator';
 export * from './string/StringValidator';
 

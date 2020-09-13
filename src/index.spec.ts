@@ -5,6 +5,8 @@ import DefaultExport, {
   badEmailDomains,
   bool,
   boolean,
+  EmailValidator,
+  email,
   int,
   integer,
   NumberValidator,
@@ -22,8 +24,8 @@ it('exports everything', () => {
   expect(BooleanValidator).toBeDefined();
   expect(bool).toBeDefined();
   expect(boolean).toBeDefined();
-  // expect(email).toBeDefined();
-  // expect(EmailValidator).toBeDefined();
+  expect(EmailValidator).toBeDefined();
+  expect(email).toBeDefined();
   expect(int).toBeDefined();
   expect(integer).toBeDefined();
   // expect(network).toBeDefined();

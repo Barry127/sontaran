@@ -1,5 +1,5 @@
 import { EmailValidator, email } from './EmailValidator';
-import { badEmailDomains as blacklist } from './badEmailDomains';
+import { badEmailDomains as blacklist } from '../_data/badEmailDomains';
 
 describe('StringValidator', () => {
   it('exports factory method', () => {
@@ -40,17 +40,25 @@ describe('StringValidator', () => {
     const validator = email();
 
     validValues.forEach((value) => {
-      it(`${value} is a valid email`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is a valid email`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is not a valid email`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not a valid email`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate('email');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('email.email');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('email');
     });
   });
 
@@ -64,31 +72,42 @@ describe('StringValidator', () => {
     ];
     const invalidPairs = [
       ['larry@gmail.com', 'hotmail.com'],
-      ['bill.hotmail.com', /gmail/],
+      ['bill@hotmail.com', /gmail/],
       ['some@mail.ru', 'mail.com']
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`${value} has domain ${argument}`, async () => {
-        const result = await email()
+      it(`${value} has domain ${argument}`, () => {
+        const result = email()
           .domain(argument as string | RegExp)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`${value} does not have domain ${argument}`, async () => {
-        const result = await email()
+      it(`${value} does not have domain ${argument}`, () => {
+        const result = email()
           .domain(argument as string | RegExp)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
     it('throws a type error when expectedDomain is not a string or RegExp', () => {
       const validator = email();
       expect(validator.domain.bind(validator, {} as any)).toThrow(TypeError);
+    });
+
+    it('sets correct error type and message', () => {
+      const result = email()
+        .label('myLabel')
+        .domain('hotmail.com')
+        .validate('email@gmail.com');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('email.domain');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('hotmail.com');
     });
   });
 
@@ -108,16 +127,16 @@ describe('StringValidator', () => {
     const validator = email().domainBlacklist(blacklist);
 
     validValues.forEach((value) => {
-      it(`${value} is a valid email`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is a valid email`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is on blacklist`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is on blacklist`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
@@ -126,6 +145,14 @@ describe('StringValidator', () => {
       expect(
         validator.domainBlacklist.bind(validator, 'yopmail.com' as any)
       ).toThrow(TypeError);
+    });
+
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate('email@yopmail.com');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('email.domainblacklist');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('yopmail.com');
     });
   });
 
@@ -158,26 +185,141 @@ describe('StringValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`${value} has local part ${argument}`, async () => {
-        const result = await email()
+      it(`${value} has local part ${argument}`, () => {
+        const result = email()
           .name(argument as string | RegExp)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`${value} does not have local part ${argument}`, async () => {
-        const result = await email()
+      it(`${value} does not have local part ${argument}`, () => {
+        const result = email()
           .name(argument as string | RegExp)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
     it('throws a type error when expectedName is not a string or RegExp', () => {
       const validator = email();
       expect(validator.name.bind(validator, {} as any)).toThrow(TypeError);
+    });
+
+    it('sets correct error type and message', () => {
+      const result = email()
+        .label('myLabel')
+        .name('johndoe')
+        .validate('janedoe@google.com');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('email.name');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('johndoe');
+    });
+  });
+
+  describe('tld', () => {
+    const validPairs = [
+      ['john@doe.com', '.com'],
+      ['john@doe.com', 'com'],
+      ['john@doe.cOm', 'com'],
+      ['john@doe.com', 'CoM'],
+      ['janedoe@google.com', ['com', 'co.uk', 'nl']],
+      ['my-check@you.co.uk', 'co.uk'],
+      ['bill@hotmail.co.uk', '.uk']
+    ];
+    const invalidPairs = [
+      ['john@doe.com', '.org'],
+      ['john@gmail.com', ['org', 'nl', 'co.uk']],
+      ['some@mail.ru', ['com']]
+    ];
+
+    validPairs.forEach(([value, argument]) => {
+      it(`${value} has tld ${argument}`, () => {
+        const result = email()
+          .tld(argument as string | string[])
+          .validate(value);
+        expect(result.valid).toBe(true);
+      });
+    });
+
+    invalidPairs.forEach(([value, argument]) => {
+      it(`${value} does not have tld ${argument}`, () => {
+        const result = email()
+          .tld(argument as string | string[])
+          .validate(value);
+        expect(result.valid).toBe(false);
+      });
+    });
+
+    it('throws a type error when tlds is not a string or array of string', () => {
+      const validator = email();
+      expect(validator.tld.bind(validator, {} as any)).toThrow(TypeError);
+    });
+
+    it('sets correct error type and message', () => {
+      const result = email()
+        .label('myLabel')
+        .tld(['nl', 'org'])
+        .validate('janedoe@google.com');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('email.tld');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('[nl,org]');
+    });
+  });
+
+  describe('tldBlacklist', () => {
+    const validPairs = [
+      ['john@doe.com', '.org'],
+      ['john@gmail.com', ['org', 'nl', 'co.uk']],
+      ['some@mail.ru', ['com']]
+    ];
+    const invalidPairs = [
+      ['john@doe.com', '.com'],
+      ['john@doe.com', 'com'],
+      ['john@doe.cOm', 'com'],
+      ['john@doe.com', 'CoM'],
+      ['janedoe@google.com', ['com', 'co.uk', 'nl']],
+      ['my-check@you.co.uk', 'co.uk'],
+      ['bill@hotmail.co.uk', '.uk']
+    ];
+
+    validPairs.forEach(([value, argument]) => {
+      it(`${value} does not have tld ${argument}`, () => {
+        const result = email()
+          .tldBlacklist(argument as string | string[])
+          .validate(value);
+        expect(result.valid).toBe(true);
+      });
+    });
+
+    invalidPairs.forEach(([value, argument]) => {
+      it(`${value} does have tld ${argument}`, () => {
+        const result = email()
+          .tldBlacklist(argument as string | string[])
+          .validate(value);
+        expect(result.valid).toBe(false);
+      });
+    });
+
+    it('throws a type error when tlds is not a string or array of string', () => {
+      const validator = email();
+      expect(validator.tldBlacklist.bind(validator, {} as any)).toThrow(
+        TypeError
+      );
+    });
+
+    it('sets correct error type and message', () => {
+      const result = email()
+        .label('myLabel')
+        .tldBlacklist(['nl', 'org'])
+        .validate('janedoe@domain.org');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('email.tldblacklist');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('org');
     });
   });
 });
