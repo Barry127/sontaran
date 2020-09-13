@@ -6,7 +6,7 @@ export class StringValidator extends BaseValidator<string> {
   constructor(options: Partial<ValidatorOptions> = {}) {
     super(options);
 
-    this.custom((value: any) => {
+    return this.custom((value: any) => {
       if (typeof value !== 'string') throw new ValidationError('string.string');
       return value;
     });
@@ -19,7 +19,7 @@ export class StringValidator extends BaseValidator<string> {
 
   /** Expect value to be a valid base64 encoded string */
   base64() {
-    this.custom((value: string) => {
+    return this.custom((value: string) => {
       if (!/^[A-Za-z0-9+/=]*$/.test(value))
         throw new ValidationError('string.base64');
 
@@ -38,8 +38,6 @@ export class StringValidator extends BaseValidator<string> {
 
       return value;
     });
-
-    return this;
   }
 
   /** Expect length of value to be between `minLength` and `maxLength`. Both inclusive */
@@ -53,12 +51,11 @@ export class StringValidator extends BaseValidator<string> {
 
   /** Expect value to contain `expectedValue` */
   contains(expectedValue: string) {
-    this.custom((value: string) => {
+    return this.custom((value: string) => {
       if (!value.includes(expectedValue))
         throw new ValidationError('string.contains', { expectedValue });
       return value;
     });
-    return this;
   }
 
   /** Expect value to be empty (spaces, tabs, new lines or nothing) */
@@ -68,12 +65,11 @@ export class StringValidator extends BaseValidator<string> {
 
   /** Expect value to end with `expectedEnd` */
   endsWith(expectedEnd: string) {
-    this.custom((value: string) => {
+    return this.custom((value: string) => {
       if (!value.endsWith(expectedEnd))
         throw new ValidationError('string.endswith', { expectedEnd });
       return value;
     });
-    return this;
   }
 
   /** Expect value to equal `expectedValue` but case insensitive */
@@ -83,14 +79,13 @@ export class StringValidator extends BaseValidator<string> {
         'StringValidator.equalsCaseInsensitive: expectedValue must be a string'
       );
 
-    this.custom((value: string) => {
+    return this.custom((value: string) => {
       if (value.toLocaleLowerCase() !== expectedValue.toLocaleLowerCase())
         throw new ValidationError('string.equalscaseinsensitive', {
           expectedValue
         });
       return value;
     });
-    return this;
   }
 
   /** Expect value to only contain extended ascii characters */
@@ -110,7 +105,7 @@ export class StringValidator extends BaseValidator<string> {
 
   /** Expect value to be valid JSON. Uses `JSON.parse` under the hood, so be careful with large values */
   isJson() {
-    this.custom((value: string) => {
+    return this.custom((value: string) => {
       try {
         const data = JSON.parse(value);
 
@@ -122,7 +117,6 @@ export class StringValidator extends BaseValidator<string> {
         throw new ValidationError('string.json');
       }
     });
-    return this;
   }
 
   /** Expect value to have exact length of `expectedLength` */
@@ -132,24 +126,22 @@ export class StringValidator extends BaseValidator<string> {
         'StringValidator.length: expectedlength must be a number'
       );
 
-    this.custom((value: string) => {
+    return this.custom((value: string) => {
       if (value.length !== expectedLength)
         throw new ValidationError('string.length', {
           expectedLength: `${expectedLength}`
         });
       return value;
     });
-    return this;
   }
 
   /** Expect value to be in all lowercase */
   lowercase() {
-    this.custom((value: string) => {
+    return this.custom((value: string) => {
       if (value !== value.toLocaleLowerCase())
         throw new ValidationError('string.lowercase');
       return value;
     });
-    return this;
   }
 
   /** Expect value to match RegExp `pattern` */
@@ -159,12 +151,11 @@ export class StringValidator extends BaseValidator<string> {
         'StringValidator.match: pattern must be an instance of RegExp'
       );
 
-    this.custom((value: string) => {
+    return this.custom((value: string) => {
       if (!pattern.test(value))
         throw new ValidationError(errorMessage, { pattern: `${pattern}` });
       return value;
     });
-    return this;
   }
 
   /** Expect length of value to be at most `maxLength` (inclusive) */
@@ -172,11 +163,10 @@ export class StringValidator extends BaseValidator<string> {
     if (typeof maxLength !== 'number')
       throw new TypeError('StringValidator.max: maxlength must be a number');
 
-    this.custom((value: string) => {
+    return this.custom((value: string) => {
       if (value.length <= maxLength) return value;
       throw new ValidationError('string.max', { maxLength: `${maxLength}` });
     });
-    return this;
   }
 
   /** Expect length of value to be at least `minLength` (inclusive) */
@@ -184,7 +174,7 @@ export class StringValidator extends BaseValidator<string> {
     if (typeof minLength !== 'number')
       throw new TypeError('StringValidator min: minlength must be a number');
 
-    this.custom((value: string) => {
+    return this.custom((value: string) => {
       if (value.length >= minLength) return value;
       throw new ValidationError('string.min', { minLength: `${minLength}` });
     });
@@ -193,7 +183,7 @@ export class StringValidator extends BaseValidator<string> {
 
   /** Expect value to not be empty (spaces, tabs, new lines or nothing) */
   notEmpty() {
-    this.custom((value: string) => {
+    return this.custom((value: string) => {
       if (/^[\s]*$/.test(value)) throw new ValidationError('string.notempty');
       return value;
     });
@@ -202,7 +192,7 @@ export class StringValidator extends BaseValidator<string> {
 
   /** Expect value to start with `expectedStart` */
   startsWith(expectedStart: string) {
-    this.custom((value: string) => {
+    return this.custom((value: string) => {
       if (!value.startsWith(expectedStart))
         throw new ValidationError('string.startswith', { expectedStart });
       return value;
@@ -212,13 +202,13 @@ export class StringValidator extends BaseValidator<string> {
 
   /** Expect value to be in all uppercase */
   uppercase() {
-    this.custom((value: string) => {
+    return this.custom((value: string) => {
       if (value !== value.toLocaleUpperCase())
         throw new ValidationError('string.uppercase');
       return value;
     });
-    return this;
   }
 }
 
-export const string = () => new StringValidator();
+export const string = (options: Partial<ValidatorOptions> = {}) =>
+  new StringValidator(options);

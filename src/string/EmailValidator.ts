@@ -1,9 +1,10 @@
 import { StringValidator } from './StringValidator';
 import { ValidationError } from '../errors/ValidationError';
+import { ValidatorOptions } from '../types';
 
 export class EmailValidator extends StringValidator {
-  constructor() {
-    super();
+  constructor(options: Partial<ValidatorOptions> = {}) {
+    super(options);
 
     /* Regexp from Philippe Verday his comment @ http://emailregex.com/ */
     this.match(
@@ -22,7 +23,7 @@ export class EmailValidator extends StringValidator {
         'EmailValidator.domain: expectedDomain must be a string or RegExp'
       );
 
-    this.custom((value: string) => {
+    return this.custom((value: string) => {
       const emailDomain = value.split('@')[1];
       if (
         typeof expectedDomain === 'string' &&
@@ -37,7 +38,6 @@ export class EmailValidator extends StringValidator {
 
       return value;
     });
-    return this;
   }
 
   /** Expect email domain not to be in `blacklist`. */
@@ -47,7 +47,7 @@ export class EmailValidator extends StringValidator {
         'EmailValidator.domainBlacklist: blacklist must be an Array'
       );
 
-    this.custom((value: string) => {
+    return this.custom((value: string) => {
       const emailDomain = value.split('@')[1];
       const subjects = emailDomain
         .split('.')
@@ -63,7 +63,6 @@ export class EmailValidator extends StringValidator {
 
       return value;
     });
-    return this;
   }
 
   /** Expect local part of email to equal or match `expectedName`. if `expectedName` is a string matching will be case-sensitive */
@@ -78,7 +77,7 @@ export class EmailValidator extends StringValidator {
         'EmailValidator.name: expectedName must be a string or RegExp'
       );
 
-    this.custom((value: string) => {
+    return this.custom((value: string) => {
       const localPart = value.split('@')[0];
       if (typeof expectedName === 'string' && localPart !== expectedName)
         throw new ValidationError('email.name', { expectedName });
@@ -90,7 +89,6 @@ export class EmailValidator extends StringValidator {
 
       return value;
     });
-    return this;
   }
 
   /** Expect email to have TLD in `tlds`  */
@@ -101,7 +99,7 @@ export class EmailValidator extends StringValidator {
         'EmailValidator.tld: tlds must by a string or array of string'
       );
 
-    this.custom((value: string) => {
+    return this.custom((value: string) => {
       const email = value.toLocaleLowerCase();
 
       for (let tld of tlds) {
@@ -110,7 +108,6 @@ export class EmailValidator extends StringValidator {
 
       throw new ValidationError('email.tld', { tlds: `${tlds}` });
     });
-    return this;
   }
 
   /** Expect email not to have TLD in `tlds` */
@@ -121,7 +118,7 @@ export class EmailValidator extends StringValidator {
         'EmailValidator.tldBlacklist: tlds must by a string or array of string'
       );
 
-    this.custom((value: string) => {
+    return this.custom((value: string) => {
       const email = value.toLocaleLowerCase();
 
       for (let tld of tlds) {
@@ -131,8 +128,8 @@ export class EmailValidator extends StringValidator {
 
       return value;
     });
-    return this;
   }
 }
 
-export const email = () => new EmailValidator();
+export const email = (options: Partial<ValidatorOptions> = {}) =>
+  new EmailValidator(options);

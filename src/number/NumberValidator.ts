@@ -28,11 +28,10 @@ export class NumberValidator extends BaseValidator<NumericValue> {
         'NumberValidator.greaterThan: gt must be a number or BigInt'
       );
 
-    this.custom((value: NumericValue) => {
+    return this.custom((value: NumericValue) => {
       if (value > gt) return value;
       throw new ValidationError('number.gt', { gt: `${gt}` });
     });
-    return this;
   }
 
   /** Expect value to be greater than `gt` */
@@ -42,25 +41,21 @@ export class NumberValidator extends BaseValidator<NumericValue> {
 
   /** Expect value to be a BigInt */
   isBigInt() {
-    this.custom((value: NumericValue) => {
+    return this.custom((value: NumericValue) => {
       if (typeof value !== 'bigint') throw new ValidationError('number.bigint');
 
       return value;
     });
-
-    return this;
   }
 
   /** Expect value to be an integer value (also includes BigInt) */
   isInt() {
-    this.custom((value: NumericValue) => {
+    return this.custom((value: NumericValue) => {
       if (typeof value === 'bigint') return value;
       if (!Number.isInteger(value)) throw new ValidationError('number.int');
 
       return value;
     });
-
-    return this;
   }
 
   /** Expect value to be an integer value (also includes BigInt) */
@@ -70,11 +65,10 @@ export class NumberValidator extends BaseValidator<NumericValue> {
 
   /** Expect value to be `NaN` */
   isNaN() {
-    this.custom((value: NumericValue) => {
+    return this.custom((value: NumericValue) => {
       if (!Number.isNaN(value)) throw new ValidationError('number.nan');
       return value;
     });
-    return this;
   }
 
   /** Expect value to be negative */
@@ -94,11 +88,10 @@ export class NumberValidator extends BaseValidator<NumericValue> {
         'NumberValidator.lessThan: lt must be a number or BigInt'
       );
 
-    this.custom((value: NumericValue) => {
+    return this.custom((value: NumericValue) => {
       if (value < lt) return value;
       throw new ValidationError('number.lt', { lt: `${lt}` });
     });
-    return this;
   }
 
   /** Expect value to be less than `lt` */
@@ -113,11 +106,10 @@ export class NumberValidator extends BaseValidator<NumericValue> {
         'NumberValidator.max: max must be a number or BigInt'
       );
 
-    this.custom((value: NumericValue) => {
+    return this.custom((value: NumericValue) => {
       if (value <= max) return value;
       throw new ValidationError('number.max', { max: `${max}` });
     });
-    return this;
   }
 
   /** Expect value to be at least `min` (inclusive) */
@@ -127,20 +119,18 @@ export class NumberValidator extends BaseValidator<NumericValue> {
         'NumberValidator.min: min must be a number or BigInt'
       );
 
-    this.custom((value: NumericValue) => {
+    return this.custom((value: NumericValue) => {
       if (value >= min) return value;
       throw new ValidationError('number.min', { min: `${min}` });
     });
-    return this;
   }
 
   /** Expect value to be a valid number */
   notNaN() {
-    this.custom((value: NumericValue) => {
+    return this.custom((value: NumericValue) => {
       if (Number.isNaN(value)) throw new ValidationError('number.notnan');
       return value;
     });
-    return this;
   }
 }
 
