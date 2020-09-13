@@ -1,38 +1,42 @@
-import { BaseValidator, ValidatorFunction } from '../BaseValidator';
+import { BaseValidator } from '../BaseValidator';
+import { ValidatorOptions } from '../types';
+import { ValidationError } from '../errors/ValidationError';
 
-export class StringValidator extends BaseValidator {
-  protected validators: ValidatorFunction<string>[] = [];
+export class StringValidator extends BaseValidator<string> {
+  constructor(options: Partial<ValidatorOptions> = {}) {
+    super(options);
 
-  constructor() {
-    super();
-
-    this.validators.push((value: any) => typeof value === 'string');
+    this.custom((value: any) => {
+      if (typeof value !== 'string') throw new ValidationError('string.string');
+      return value;
+    });
   }
 
   /** Expect value to only contain ascii characters */
   ascii() {
-    return this.match(/^[\x00-\x7F]*$/);
+    return this.match(/^[\x00-\x7F]*$/, 'string.ascii');
   }
 
   /** Expect value to be a valid base64 encoded string */
   base64() {
-    this.validators.push((value: string) => {
-      if (!/^[A-Za-z0-9+/=]*$/.test(value)) return false;
+    this.custom((value: string) => {
+      if (!/^[A-Za-z0-9+/=]*$/.test(value))
+        throw new ValidationError('string.base64');
 
       // base64 length must be a multiple of 4
-      if (value.length % 4 !== 0) return false;
+      if (value.length % 4 !== 0) throw new ValidationError('string.base64');
 
       const indexOfEqualSign = value.indexOf('=');
 
       // Equal sign can only occur at last 2 positions
       if (indexOfEqualSign > -1 && indexOfEqualSign < value.length - 2)
-        return false;
+        throw new ValidationError('string.base64');
 
       // Equal sign can only be second last if last position is also an equal sign
       if (indexOfEqualSign === value.length - 2 && !value.endsWith('='))
-        return false;
+        throw new ValidationError('string.base64');
 
-      return true;
+      return value;
     });
 
     return this;
@@ -49,55 +53,54 @@ export class StringValidator extends BaseValidator {
 
   /** Expect value to contain `expectedValue` */
   contains(expectedValue: string) {
-    this.validators.push((value: string) => value.includes(expectedValue));
+    this.custom((value: string) => {
+      if (!value.includes(expectedValue))
+        throw new ValidationError('string.contains', { expectedValue });
+      return value;
+    });
     return this;
   }
 
   /** Expect value to be empty (spaces, tabs, new lines or nothing) */
   empty() {
-    return this.match(/^[\s]*$/);
+    return this.match(/^[\s]*$/, 'string.empty');
   }
 
   /** Expect value to end with `expectedEnd` */
   endsWith(expectedEnd: string) {
-    this.validators.push((value: string) => value.endsWith(expectedEnd));
-    return this;
-  }
-
-  /** Expect value to equal one of `expectedValues` */
-  enum(expectedValues: string[]) {
-    if (!Array.isArray(expectedValues))
-      throw new TypeError(
-        'StringValidator enum: exectedValues must by an array'
-      );
-
-    this.validators.push((value: string) => expectedValues.includes(value));
-    return this;
-  }
-
-  /** Expect value to equal `expectedValue` */
-  equals(expectedValue: string) {
-    this.validators.push((value: string) => value === expectedValue);
+    this.custom((value: string) => {
+      if (!value.endsWith(expectedEnd))
+        throw new ValidationError('string.endswith', { expectedEnd });
+      return value;
+    });
     return this;
   }
 
   /** Expect value to equal `expectedValue` but case insensitive */
   equalsCaseInsensitive(expectedValue: string) {
-    this.validators.push(
-      (value: string) =>
-        value.toLocaleLowerCase() === expectedValue?.toLocaleLowerCase()
-    );
+    if (typeof expectedValue !== 'string')
+      throw new TypeError(
+        'StringValidator.equalsCaseInsensitive: expectedValue must be a string'
+      );
+
+    this.custom((value: string) => {
+      if (value.toLocaleLowerCase() !== expectedValue.toLocaleLowerCase())
+        throw new ValidationError('string.equalscaseinsensitive', {
+          expectedValue
+        });
+      return value;
+    });
     return this;
   }
 
   /** Expect value to only contain extended ascii characters */
   extendedAscii() {
-    return this.match(/^[\x00-\xFF]*$/);
+    return this.match(/^[\x00-\xFF]*$/, 'string.extendedascii');
   }
 
   /** Expect value to be a valid hex color */
   hexColor() {
-    return this.match(/^#([0-9A-F]{3}|[0-9A-F]{6})$/i);
+    return this.match(/^#([0-9A-F]{3}|[0-9A-F]{6})$/i, 'string.hexcolor');
   }
 
   /** Expect value to include `expectedValue` */
@@ -107,16 +110,16 @@ export class StringValidator extends BaseValidator {
 
   /** Expect value to be valid JSON. Uses `JSON.parse` under the hood, so be careful with large values */
   isJson() {
-    this.validators.push((value: string) => {
+    this.custom((value: string) => {
       try {
         const data = JSON.parse(value);
 
         // Valid JSON should always be an object or array.
-        if (typeof data !== 'object') return false;
+        if (typeof data !== 'object') throw new ValidationError('string.json');
 
-        return true;
+        return value;
       } catch {
-        return false;
+        throw new ValidationError('string.json');
       }
     });
     return this;
@@ -126,43 +129,53 @@ export class StringValidator extends BaseValidator {
   length(expectedLength: number) {
     if (typeof expectedLength !== 'number')
       throw new TypeError(
-        'StringValidator length: expectedlength must be a number'
+        'StringValidator.length: expectedlength must be a number'
       );
 
-    this.validators.push((value: string) => value.length === expectedLength);
+    this.custom((value: string) => {
+      if (value.length !== expectedLength)
+        throw new ValidationError('string.length', {
+          expectedLength: `${expectedLength}`
+        });
+      return value;
+    });
     return this;
   }
 
   /** Expect value to be in all lowercase */
   lowercase() {
-    this.validators.push(
-      (value: string) => value === value.toLocaleLowerCase()
-    );
+    this.custom((value: string) => {
+      if (value !== value.toLocaleLowerCase())
+        throw new ValidationError('string.lowercase');
+      return value;
+    });
     return this;
   }
 
-  /** Expect value to be in all lowercase */
-  lowerCase() {
-    return this.lowercase();
-  }
-
   /** Expect value to match RegExp `pattern` */
-  match(pattern: RegExp) {
+  match(pattern: RegExp, errorMessage: string = 'string.match') {
     if (!(pattern instanceof RegExp))
       throw new TypeError(
-        'StringValidator match: pattern must be an instance of RegExp'
+        'StringValidator.match: pattern must be an instance of RegExp'
       );
 
-    this.validators.push((value: string) => pattern.test(value));
+    this.custom((value: string) => {
+      if (!pattern.test(value))
+        throw new ValidationError(errorMessage, { pattern: `${pattern}` });
+      return value;
+    });
     return this;
   }
 
   /** Expect length of value to be at most `maxLength` (inclusive) */
   max(maxLength: number) {
     if (typeof maxLength !== 'number')
-      throw new TypeError('StringValidator max: maxlength must be a number');
+      throw new TypeError('StringValidator.max: maxlength must be a number');
 
-    this.validators.push((value: string) => value.length <= maxLength);
+    this.custom((value: string) => {
+      if (value.length <= maxLength) return value;
+      throw new ValidationError('string.max', { maxLength: `${maxLength}` });
+    });
     return this;
   }
 
@@ -171,38 +184,40 @@ export class StringValidator extends BaseValidator {
     if (typeof minLength !== 'number')
       throw new TypeError('StringValidator min: minlength must be a number');
 
-    this.validators.push((value: string) => value.length >= minLength);
+    this.custom((value: string) => {
+      if (value.length >= minLength) return value;
+      throw new ValidationError('string.min', { minLength: `${minLength}` });
+    });
     return this;
   }
 
   /** Expect value to not be empty (spaces, tabs, new lines or nothing) */
   notEmpty() {
-    this.validators.push((value: string) => !/^[\s]*$/.test(value));
+    this.custom((value: string) => {
+      if (/^[\s]*$/.test(value)) throw new ValidationError('string.notempty');
+      return value;
+    });
     return this;
-  }
-
-  /** Expect value to equal one of `expectedValues` */
-  oneOf(expectedValues: string[]) {
-    return this.enum(expectedValues);
   }
 
   /** Expect value to start with `expectedStart` */
   startsWith(expectedStart: string) {
-    this.validators.push((value: string) => value.startsWith(expectedStart));
+    this.custom((value: string) => {
+      if (!value.startsWith(expectedStart))
+        throw new ValidationError('string.startswith', { expectedStart });
+      return value;
+    });
     return this;
   }
 
   /** Expect value to be in all uppercase */
   uppercase() {
-    this.validators.push(
-      (value: string) => value === value.toLocaleUpperCase()
-    );
+    this.custom((value: string) => {
+      if (value !== value.toLocaleUpperCase())
+        throw new ValidationError('string.uppercase');
+      return value;
+    });
     return this;
-  }
-
-  /** Expect value to be in all uppercase */
-  upperCase() {
-    return this.uppercase();
   }
 }
 

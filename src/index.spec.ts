@@ -9,7 +9,9 @@ import DefaultExport, {
   integer,
   NumberValidator,
   number,
-  Sontaran
+  Sontaran,
+  StringValidator,
+  string
 } from '.';
 it('exports everything', () => {
   expect(any).toBeDefined();
@@ -29,8 +31,8 @@ it('exports everything', () => {
   expect(NumberValidator).toBeDefined();
   expect(number).toBeDefined();
   expect(Sontaran).toBeDefined();
-  // expect(StringValidator).toBeDefined();
-  // expect(string).toBeDefined();
+  expect(StringValidator).toBeDefined();
+  expect(string).toBeDefined();
 
   expect(Array.isArray(badEmailDomains)).toBe(true);
 });

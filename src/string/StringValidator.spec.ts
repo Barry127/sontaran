@@ -11,17 +11,25 @@ describe('StringValidator', () => {
     const validator = string();
 
     validValues.forEach((value) => {
-      it(`${value} is a valid string value`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is a valid string value`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is not a valid string value`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not a valid string value`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate(true);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('string.string');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('string');
     });
   });
 
@@ -35,17 +43,25 @@ describe('StringValidator', () => {
     const validator = string().ascii();
 
     validValues.forEach((value) => {
-      it(`${value} is a valid ascii string value`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is a valid ascii string value`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is not a valid ascii string value`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not a valid ascii string value`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate('😍');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('string.ascii');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('ascii');
     });
   });
 
@@ -64,17 +80,25 @@ describe('StringValidator', () => {
     const validator = string().base64();
 
     validValues.forEach((value) => {
-      it(`${value} is a valid base64 value`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is a valid base64 value`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is not a valid base64 value`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not a valid base64 value`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate('😍');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('string.base64');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('base64');
     });
   });
 
@@ -99,20 +123,20 @@ describe('StringValidator', () => {
     ];
 
     validPairs.forEach(([value, argument1, argument2]) => {
-      it(`${value} is between ${argument1} and ${argument2}`, async () => {
-        const result = await string()
+      it(`${value} is between ${argument1} and ${argument2}`, () => {
+        const result = string()
           .between(argument1 as number, argument2 as number)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invaldPairs.forEach(([value, argument1, argument2]) => {
-      it(`${value} is not between ${argument1} and ${argument2}`, async () => {
-        const result = await string()
+      it(`${value} is not between ${argument1} and ${argument2}`, () => {
+        const result = string()
           .between(argument1 as number, argument2 as number)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
@@ -128,6 +152,14 @@ describe('StringValidator', () => {
       expect(validator.between.bind(validator, 4, '6' as any)).toThrow(
         TypeError
       );
+    });
+
+    it('sets correct error type and message', () => {
+      const result = string().label('myLabel').between(2, 4).validate('hello');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('string.max');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('4');
     });
   });
 
@@ -145,21 +177,25 @@ describe('StringValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`${value} contains ${argument}`, async () => {
-        const result = await string()
-          .contains(argument)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} contains ${argument}`, () => {
+        const result = string().contains(argument).validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`${value} does not contains ${argument}`, async () => {
-        const result = await string()
-          .contains(argument)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} does not contains ${argument}`, () => {
+        const result = string().contains(argument).validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = string().label('myLabel').contains('hello').validate('b');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('string.contains');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('hello');
     });
   });
 
@@ -169,17 +205,25 @@ describe('StringValidator', () => {
     const validator = string().empty();
 
     validValues.forEach((value) => {
-      it(`${value} is empty`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is empty`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is not empty`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not empty`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate('😍');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('string.empty');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('empty');
     });
   });
 
@@ -196,90 +240,28 @@ describe('StringValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`${value} ends with ${argument}`, async () => {
-        const result = await string()
-          .endsWith(argument)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} ends with ${argument}`, () => {
+        const result = string().endsWith(argument).validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`${value} does not end with ${argument}`, async () => {
-        const result = await string()
-          .endsWith(argument)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
-      });
-    });
-  });
-
-  describe('enum', () => {
-    const validPairs = [
-      ['Hello', ['Hello', 'World']],
-      ['World', ['Hello', 'World']],
-      ['Bar', ['Foo', 'Bar', 'Baz']]
-    ];
-    const invalidPairs = [
-      ['2', [1, 2, 3]],
-      ['hello', ['Hello', 'World']],
-      ['Hello', ['Hellos']]
-    ];
-
-    validPairs.forEach(([value, argument]) => {
-      it(`${value} is in [${argument}]`, async () => {
-        const result = await string()
-          .enum(argument as string[])
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} does not end with ${argument}`, () => {
+        const result = string().endsWith(argument).validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
-    invalidPairs.forEach(([value, argument]) => {
-      it(`${value} is not in [${argument}]`, async () => {
-        const result = await string()
-          .enum(argument as string[])
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
-      });
-    });
-
-    it('throws a type error when expectedValues is not an array', () => {
-      const validator = string();
-      expect(validator.enum.bind(validator, {} as any)).toThrow(TypeError);
-    });
-  });
-
-  describe('equals', () => {
-    const validPairs = [
-      ['Hello World', 'Hello World'],
-      ['FooBar', 'FooBar'],
-      ['♠♣♥♦', '♠♣♥♦'],
-      ['Woohoo', `Woohoo`],
-      ['😍', '😍']
-    ];
-    const invalidPairs = [
-      ['Hello World', 'Hello world'],
-      ['Hello World', 'Hello  World'],
-      ['Fanta', 'SiSi']
-    ];
-
-    validPairs.forEach(([value, argument]) => {
-      it(`${value} is equal to ${argument}`, async () => {
-        const result = await string()
-          .equals(argument)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
-      });
-    });
-
-    invalidPairs.forEach(([value, argument]) => {
-      it(`${value} is not equal to ${argument}`, async () => {
-        const result = await string()
-          .equals(argument)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
-      });
+    it('sets correct error type and message', () => {
+      const result = string()
+        .label('myLabel')
+        .endsWith('hello')
+        .validate('abc');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('string.endswith');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('hello');
     });
   });
 
@@ -298,21 +280,36 @@ describe('StringValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`${value} is equal to ${argument}`, async () => {
-        const result = await string()
-          .equalsCaseInsensitive(argument)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is equal to ${argument}`, () => {
+        const result = string().equalsCaseInsensitive(argument).validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`${value} is not equal to ${argument}`, async () => {
-        const result = await string()
-          .equalsCaseInsensitive(argument)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not equal to ${argument}`, () => {
+        const result = string().equalsCaseInsensitive(argument).validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('throws a type error when length is not a number', () => {
+      const validator = string();
+      expect(validator.equalsCaseInsensitive.bind(validator, 3 as any)).toThrow(
+        TypeError
+      );
+    });
+
+    it('sets correct error type and message', () => {
+      const result = string()
+        .label('myLabel')
+        .equalsCaseInsensitive('bye')
+        .validate('hello');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('string.equalscaseinsensitive');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('bye');
+      expect(error.message).toContain('case insensitive');
     });
   });
 
@@ -332,17 +329,25 @@ describe('StringValidator', () => {
     const validator = string().extendedAscii();
 
     validValues.forEach((value) => {
-      it(`${value} is valid extended ascii`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is valid extended ascii`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is invalid extended ascii`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is invalid extended ascii`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate('♠♣♥♦');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('string.extendedascii');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('extended ascii');
     });
   });
 
@@ -360,17 +365,25 @@ describe('StringValidator', () => {
     const validator = string().hexColor();
 
     validValues.forEach((value) => {
-      it(`${value} is a valid hex color`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is a valid hex color`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is not a valid hex color`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not a valid hex color`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate('#EEFFGG');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('string.hexcolor');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('hex color');
     });
   });
 
@@ -407,17 +420,25 @@ describe('StringValidator', () => {
     const validator = string().isJson();
 
     validValues.forEach((value) => {
-      it(`${value} is valid JSON`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is valid JSON`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is invalid JSON`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is invalid JSON`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate('true');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('string.json');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('JSON');
     });
   });
 
@@ -435,26 +456,34 @@ describe('StringValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`${value} has length ${argument}`, async () => {
-        const result = await string()
+      it(`${value} has length ${argument}`, () => {
+        const result = string()
           .length(argument as number)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`${value} does not have length ${argument}`, async () => {
-        const result = await string()
+      it(`${value} does not have length ${argument}`, () => {
+        const result = string()
           .length(argument as number)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
     it('throws a type error when length is not a number', () => {
       const validator = string();
       expect(validator.length.bind(validator, '11' as any)).toThrow(TypeError);
+    });
+
+    it('sets correct error type and message', () => {
+      const result = string().label('myLabel').length(4).validate('hello');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('string.length');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('4');
     });
   });
 
@@ -470,30 +499,25 @@ describe('StringValidator', () => {
     const validator = string().lowercase();
 
     validValues.forEach((value) => {
-      it(`${value} is all lowercase`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is all lowercase`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is not all lowercase`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not all lowercase`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
     });
-  });
 
-  describe('lowerCase', () => {
-    it('calls lowercase', () => {
-      const validator = string();
-      validator.lowercase = jest.fn();
-
-      expect(validator.lowercase).not.toBeCalled();
-
-      validator.lowerCase();
-
-      expect(validator.lowercase).toBeCalled();
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate('Hello');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('string.lowercase');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('lowercase');
     });
   });
 
@@ -509,26 +533,118 @@ describe('StringValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`${value} matches ${argument}`, async () => {
-        const result = await string()
+      it(`${value} matches ${argument}`, () => {
+        const result = string()
           .match(argument as RegExp)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`${value} does not match ${argument}`, async () => {
-        const result = await string()
+      it(`${value} does not match ${argument}`, () => {
+        const result = string()
           .match(argument as RegExp)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
     it('throws a type error when pattern is not a RegExp', () => {
       const validator = string();
       expect(validator.match.bind(validator, {} as any)).toThrow(TypeError);
+    });
+
+    it('sets correct error type and message', () => {
+      const result = string().label('myLabel').match(/[A-Z]/).validate('2');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('string.match');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('/[A-Z]/');
+    });
+  });
+
+  describe('max', () => {
+    const validPairs = [
+      ['hello', 5],
+      ['Hello', 6]
+    ];
+    const invalidPairs = [
+      ['Hello', 4],
+      ['Hello World', NaN]
+    ];
+
+    validPairs.forEach(([value, argument]) => {
+      it(`${value} is not longer than ${argument}`, () => {
+        const result = string()
+          .max(argument as number)
+          .validate(value);
+        expect(result.valid).toBe(true);
+      });
+    });
+
+    invalidPairs.forEach(([value, argument]) => {
+      it(`${value} is longer than ${argument}`, () => {
+        const result = string()
+          .max(argument as number)
+          .validate(value);
+        expect(result.valid).toBe(false);
+      });
+    });
+
+    it('throws a type error when maxLength is not a number', () => {
+      const validator = string();
+      expect(validator.max.bind(validator, '3' as any)).toThrow(TypeError);
+    });
+
+    it('sets correct error type and message', () => {
+      const result = string().label('myLabel').max(4).validate('hello');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('string.max');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('4');
+    });
+  });
+
+  describe('min', () => {
+    const validPairs = [
+      ['hello', 4],
+      ['Hello', 5]
+    ];
+    const invalidPairs = [
+      ['Hello', 6],
+      ['Hello World', NaN]
+    ];
+
+    validPairs.forEach(([value, argument]) => {
+      it(`${value} is not shorter than ${argument}`, () => {
+        const result = string()
+          .min(argument as number)
+          .validate(value);
+        expect(result.valid).toBe(true);
+      });
+    });
+
+    invalidPairs.forEach(([value, argument]) => {
+      it(`${value} is shorter than ${argument}`, () => {
+        const result = string()
+          .min(argument as number)
+          .validate(value);
+        expect(result.valid).toBe(false);
+      });
+    });
+
+    it('throws a type error when minLength is not a number', () => {
+      const validator = string();
+      expect(validator.min.bind(validator, '3' as any)).toThrow(TypeError);
+    });
+
+    it('sets correct error type and message', () => {
+      const result = string().label('myLabel').min(6).validate('hello');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('string.min');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('6');
     });
   });
 
@@ -538,31 +654,25 @@ describe('StringValidator', () => {
     const validator = string().notEmpty();
 
     validValues.forEach((value) => {
-      it(`${value} is not empty`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is not empty`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is empty`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is empty`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
     });
-  });
 
-  describe('oneOf', () => {
-    it('calls enum with expectedValues', () => {
-      const expectedValues = ['a'];
-      const validator = string();
-      validator.enum = jest.fn();
-
-      expect(validator.enum).not.toBeCalled();
-
-      validator.oneOf(expectedValues);
-
-      expect(validator.enum).toBeCalledWith(expectedValues);
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate('   ');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('string.notempty');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('empty');
     });
   });
 
@@ -580,21 +690,28 @@ describe('StringValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`${value} starts with ${argument}`, async () => {
-        const result = await string()
-          .startsWith(argument)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} starts with ${argument}`, () => {
+        const result = string().startsWith(argument).validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`${value} does not starts ${argument}`, async () => {
-        const result = await string()
-          .startsWith(argument)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} does not starts ${argument}`, () => {
+        const result = string().startsWith(argument).validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = string()
+        .label('myLabel')
+        .startsWith('hello')
+        .validate('bye');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('string.startswith');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('hello');
     });
   });
 
@@ -610,30 +727,25 @@ describe('StringValidator', () => {
     const validator = string().uppercase();
 
     validValues.forEach((value) => {
-      it(`${value} is all uppercase`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is all uppercase`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is not all uppercase`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not all uppercase`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
     });
-  });
 
-  describe('upperCase', () => {
-    it('calls uppercase', () => {
-      const validator = string();
-      validator.uppercase = jest.fn();
-
-      expect(validator.uppercase).not.toBeCalled();
-
-      validator.upperCase();
-
-      expect(validator.uppercase).toBeCalled();
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate('hello');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('string.uppercase');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('uppercase');
     });
   });
 });
