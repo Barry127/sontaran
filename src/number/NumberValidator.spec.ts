@@ -29,17 +29,25 @@ describe('NumberValidator', () => {
     const validator = number();
 
     validValues.forEach((value) => {
-      it(`${value} is a valid number`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is a valid number`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is not a valid number`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not a valid number`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = number().label('myLabel').validate('true');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('number.number');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('number');
     });
   });
 
@@ -57,20 +65,20 @@ describe('NumberValidator', () => {
     ];
 
     validPairs.forEach(([value, argument1, argument2]) => {
-      it(`${value} is between ${argument1} and ${argument2}`, async () => {
-        const result = await number()
+      it(`${value} is between ${argument1} and ${argument2}`, () => {
+        const result = number()
           .between(argument1 as number, argument2 as number)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument1, argument2]) => {
-      it(`${value} is not between ${argument1} and ${argument2}`, async () => {
-        const result = await number()
+      it(`${value} is not between ${argument1} and ${argument2}`, () => {
+        const result = number()
           .between(argument1 as number, argument2 as number)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
@@ -87,43 +95,13 @@ describe('NumberValidator', () => {
         TypeError
       );
     });
-  });
 
-  describe('equals', () => {
-    const validPairs = [
-      [3, 3],
-      [-2, -2],
-      [3.33, 3.33],
-      [Math.PI, Math.PI],
-      [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY],
-      [0xc0, 192],
-      [BigInt(42), BigInt(42)]
-    ];
-    const invalidPairs = [
-      [4, 8],
-      [Math.PI, 3.14],
-      [-2, 4],
-      [3, -3],
-      [Number.NaN, Number.NaN],
-      [BigInt(42), 42]
-    ];
-
-    validPairs.forEach(([value, argument]) => {
-      it(`${value} is equal to ${argument}`, async () => {
-        const result = await number()
-          .equals(argument)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
-      });
-    });
-
-    invalidPairs.forEach(([value, argument]) => {
-      it(`${value} is not equal to ${argument}`, async () => {
-        const result = await number()
-          .equals(argument)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
-      });
+    it('sets correct error type and message', () => {
+      const result = number().label('myLabel').between(2, 4).validate(5);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('number.lt');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('4');
     });
   });
 
@@ -145,20 +123,16 @@ describe('NumberValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`${value} is greater than ${argument}`, async () => {
-        const result = await number()
-          .greaterThan(argument)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is greater than ${argument}`, () => {
+        const result = number().greaterThan(argument).validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`${value} is not greater than ${argument}`, async () => {
-        const result = await number()
-          .greaterThan(argument)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not greater than ${argument}`, () => {
+        const result = number().greaterThan(argument).validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
@@ -167,6 +141,14 @@ describe('NumberValidator', () => {
       expect(validator.greaterThan.bind(validator, '4' as any)).toThrow(
         TypeError
       );
+    });
+
+    it('sets correct error type and message', () => {
+      const result = number().label('myLabel').greaterThan(4).validate(3);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('number.gt');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('4');
     });
   });
 
@@ -190,17 +172,25 @@ describe('NumberValidator', () => {
     const validator = number().isBigInt();
 
     validValues.forEach((value) => {
-      it(`${value} is a BigInt`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is a BigInt`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is not a BigInt`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not a BigInt`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate(3);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('number.bigint');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('BigInt');
     });
   });
 
@@ -227,17 +217,25 @@ describe('NumberValidator', () => {
     const validator = number().isInt();
 
     validValues.forEach((value) => {
-      it(`${value} is an integer`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is an integer`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is not an integer`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not an integer`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate(3.14);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('number.int');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('integer');
     });
   });
 
@@ -260,17 +258,25 @@ describe('NumberValidator', () => {
     const validator = number().isNaN();
 
     validValues.forEach((value) => {
-      it(`${value} is NaN`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is NaN`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is not NaN`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not NaN`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate(3);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('number.nan');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('NaN');
     });
   });
 
@@ -295,17 +301,25 @@ describe('NumberValidator', () => {
     const validator = number().isNegative();
 
     validValues.forEach((value) => {
-      it(`${value} is negative`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is negative`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is not negative`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not negative`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate(3);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('number.lt');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('0');
     });
   });
 
@@ -334,17 +348,25 @@ describe('NumberValidator', () => {
     const validator = number().isPositive();
 
     validValues.forEach((value) => {
-      it(`${value} is positive`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is positive`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is not positive`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not positive`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate(-3);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('number.gt');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('0');
     });
   });
 
@@ -366,26 +388,30 @@ describe('NumberValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`${value} is less than ${argument}`, async () => {
-        const result = await number()
-          .lessThan(argument)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is less than ${argument}`, () => {
+        const result = number().lessThan(argument).validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`${value} is not less than ${argument}`, async () => {
-        const result = await number()
-          .lessThan(argument)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not less than ${argument}`, () => {
+        const result = number().lessThan(argument).validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
     it('throws a type error when lt is not a number or BigInt', () => {
       const validator = number();
       expect(validator.lessThan.bind(validator, '4' as any)).toThrow(TypeError);
+    });
+
+    it('sets correct error type and message', () => {
+      const result = number().label('myLabel').lessThan(2).validate(3);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('number.lt');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('2');
     });
   });
 
@@ -421,26 +447,30 @@ describe('NumberValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`${value} is not greater than ${argument}`, async () => {
-        const result = await number()
-          .max(argument)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is not greater than ${argument}`, () => {
+        const result = number().max(argument).validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`${value} is greater than ${argument}`, async () => {
-        const result = await number()
-          .max(argument)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is greater than ${argument}`, () => {
+        const result = number().max(argument).validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
     it('throws a type error when max is not a number or BigInt', () => {
       const validator = number();
-      expect(validator.min.bind(validator, '4' as any)).toThrow(TypeError);
+      expect(validator.max.bind(validator, '4' as any)).toThrow(TypeError);
+    });
+
+    it('sets correct error type and message', () => {
+      const result = number().label('myLabel').max(2).validate(3);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('number.max');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('2');
     });
   });
 
@@ -462,26 +492,30 @@ describe('NumberValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`${value} is not less than ${argument}`, async () => {
-        const result = await number()
-          .min(argument)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is not less than ${argument}`, () => {
+        const result = number().min(argument).validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`${value} is less than ${argument}`, async () => {
-        const result = await number()
-          .min(argument)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is less than ${argument}`, () => {
+        const result = number().min(argument).validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
     it('throws a type error when min is not a number or BigInt', () => {
       const validator = number();
       expect(validator.min.bind(validator, '4' as any)).toThrow(TypeError);
+    });
+
+    it('sets correct error type and message', () => {
+      const result = number().label('myLabel').min(4).validate(3);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('number.min');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('4');
     });
   });
 
@@ -492,17 +526,25 @@ describe('NumberValidator', () => {
     const validator = number().notNaN();
 
     validValues.forEach((value) => {
-      it(`${value} is not NaN`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is not NaN`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is NaN`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is NaN`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate(NaN);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('number.notnan');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('NaN');
     });
   });
 });

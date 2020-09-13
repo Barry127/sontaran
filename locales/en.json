@@ -5,5 +5,14 @@
   "base.forbidden": "{{label}} is not allowed to be defined",
   "boolean.boolean": "{{label}} must be of type boolean",
   "boolean.false": "{{label}} must be false",
-  "boolean.true": "{{label}} must be true"
+  "boolean.true": "{{label}} must be true",
+  "number.bigint": "{{label}} must be of type BigInt",
+  "number.gt": "{{label}} must be greater than {{gt}}",
+  "number.int": "{{label}} must be an integer value",
+  "number.lt": "{{label}} cannot be less than {{lt}}",
+  "number.max": "{{label}} cannot be greater than {{max}}",
+  "number.min": "{{label}} cannot be less than {{min}}",
+  "number.nan": "{{label}} must be NaN",
+  "number.notnan": "{{label}} cannot be NaN",
+  "number.number": "{{label}} must be of type number or BigInt"
 }

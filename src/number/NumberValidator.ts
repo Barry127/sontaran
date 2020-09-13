@@ -1,16 +1,19 @@
-import { BaseValidator, ValidatorFunction } from '../BaseValidator';
+import { BaseValidator } from '../BaseValidator';
+import { ValidationError } from '../errors/ValidationError';
+import { ValidatorOptions } from '../types';
 
 type NumericValue = number | BigInt;
 
-export class NumberValidator extends BaseValidator {
-  protected validators: ValidatorFunction<NumericValue>[] = [];
+export class NumberValidator extends BaseValidator<NumericValue> {
+  constructor(options: Partial<ValidatorOptions> = {}) {
+    super(options);
 
-  constructor() {
-    super();
+    this.custom((value: any) => {
+      if (typeof value !== 'number' && typeof value !== 'bigint')
+        throw new ValidationError('number.number');
 
-    this.validators.push(
-      (value: any) => typeof value === 'number' || typeof value === 'bigint'
-    );
+      return value;
+    });
   }
 
   /** Expect value to be between `min` and `max`. Both exclusive */
@@ -18,20 +21,17 @@ export class NumberValidator extends BaseValidator {
     return this.greaterThan(min).lessThan(max);
   }
 
-  /** Expect value to be exactly `expectedValue` */
-  equals(expectedValue: NumericValue) {
-    this.validators.push((value: NumericValue) => value === expectedValue);
-    return this;
-  }
-
   /** Expect value to be greater than `gt` */
   greaterThan(gt: NumericValue) {
     if (typeof gt !== 'number' && typeof gt !== 'bigint')
       throw new TypeError(
-        'NumberValidator greaterThan: gt must be a number or BigInt'
+        'NumberValidator.greaterThan: gt must be a number or BigInt'
       );
 
-    this.validators.push((value: NumericValue) => value > gt);
+    this.custom((value: NumericValue) => {
+      if (value > gt) return value;
+      throw new ValidationError('number.gt', { gt: `${gt}` });
+    });
     return this;
   }
 
@@ -42,16 +42,24 @@ export class NumberValidator extends BaseValidator {
 
   /** Expect value to be a BigInt */
   isBigInt() {
-    this.validators.push((value: NumericValue) => typeof value === 'bigint');
+    this.custom((value: NumericValue) => {
+      if (typeof value !== 'bigint') throw new ValidationError('number.bigint');
+
+      return value;
+    });
+
     return this;
   }
 
   /** Expect value to be an integer value (also includes BigInt) */
   isInt() {
-    this.validators.push((value: NumericValue) => {
-      if (typeof value === 'bigint') return true;
-      return Number.isInteger(value);
+    this.custom((value: NumericValue) => {
+      if (typeof value === 'bigint') return value;
+      if (!Number.isInteger(value)) throw new ValidationError('number.int');
+
+      return value;
     });
+
     return this;
   }
 
@@ -62,7 +70,10 @@ export class NumberValidator extends BaseValidator {
 
   /** Expect value to be `NaN` */
   isNaN() {
-    this.validators.push((value: NumericValue) => Number.isNaN(value));
+    this.custom((value: NumericValue) => {
+      if (!Number.isNaN(value)) throw new ValidationError('number.nan');
+      return value;
+    });
     return this;
   }
 
@@ -80,10 +91,13 @@ export class NumberValidator extends BaseValidator {
   lessThan(lt: NumericValue) {
     if (typeof lt !== 'number' && typeof lt !== 'bigint')
       throw new TypeError(
-        'NumberValidator lessThan: lt must be a number or BigInt'
+        'NumberValidator.lessThan: lt must be a number or BigInt'
       );
 
-    this.validators.push((value: NumericValue) => value < lt);
+    this.custom((value: NumericValue) => {
+      if (value < lt) return value;
+      throw new ValidationError('number.lt', { lt: `${lt}` });
+    });
     return this;
   }
 
@@ -96,10 +110,13 @@ export class NumberValidator extends BaseValidator {
   max(max: NumericValue) {
     if (typeof max !== 'number' && typeof max !== 'bigint')
       throw new TypeError(
-        'NumberValidator max: max must be a number or BigInt'
+        'NumberValidator.max: max must be a number or BigInt'
       );
 
-    this.validators.push((value: NumericValue) => value <= max);
+    this.custom((value: NumericValue) => {
+      if (value <= max) return value;
+      throw new ValidationError('number.max', { max: `${max}` });
+    });
     return this;
   }
 
@@ -107,22 +124,30 @@ export class NumberValidator extends BaseValidator {
   min(min: NumericValue) {
     if (typeof min !== 'number' && typeof min !== 'bigint')
       throw new TypeError(
-        'NumberValidator min: min must be a number or BigInt'
+        'NumberValidator.min: min must be a number or BigInt'
       );
 
-    this.validators.push((value: NumericValue) => value >= min);
+    this.custom((value: NumericValue) => {
+      if (value >= min) return value;
+      throw new ValidationError('number.min', { min: `${min}` });
+    });
     return this;
   }
 
   /** Expect value to be a valid number */
   notNaN() {
-    this.validators.push((value: NumericValue) => !Number.isNaN(value));
+    this.custom((value: NumericValue) => {
+      if (Number.isNaN(value)) throw new ValidationError('number.notnan');
+      return value;
+    });
     return this;
   }
 }
 
-export const number = () => new NumberValidator();
+export const number = (options: Partial<ValidatorOptions> = {}) =>
+  new NumberValidator(options);
 
-export const integer = () => new NumberValidator().isInt();
+export const integer = (options: Partial<ValidatorOptions> = {}) =>
+  new NumberValidator(options).isInt();
 
 export const int = integer;

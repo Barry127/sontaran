@@ -5,6 +5,10 @@ import DefaultExport, {
   badEmailDomains,
   bool,
   boolean,
+  int,
+  integer,
+  NumberValidator,
+  number,
   Sontaran
 } from '.';
 it('exports everything', () => {
@@ -18,12 +22,12 @@ it('exports everything', () => {
   expect(boolean).toBeDefined();
   // expect(email).toBeDefined();
   // expect(EmailValidator).toBeDefined();
-  // expect(int).toBeDefined();
-  // expect(integer).toBeDefined();
+  expect(int).toBeDefined();
+  expect(integer).toBeDefined();
   // expect(network).toBeDefined();
   // expect(NetworkValidator).toBeDefined();
-  // expect(number).toBeDefined();
-  // expect(NumberValidator).toBeDefined();
+  expect(NumberValidator).toBeDefined();
+  expect(number).toBeDefined();
   expect(Sontaran).toBeDefined();
   // expect(StringValidator).toBeDefined();
   // expect(string).toBeDefined();
