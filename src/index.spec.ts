@@ -9,7 +9,9 @@ import DefaultExport, {
   email,
   int,
   integer,
+  NetworkValidator,
   NumberValidator,
+  network,
   number,
   Sontaran,
   StringValidator,
@@ -28,9 +30,9 @@ it('exports everything', () => {
   expect(email).toBeDefined();
   expect(int).toBeDefined();
   expect(integer).toBeDefined();
-  // expect(network).toBeDefined();
-  // expect(NetworkValidator).toBeDefined();
+  expect(NetworkValidator).toBeDefined();
   expect(NumberValidator).toBeDefined();
+  expect(network).toBeDefined();
   expect(number).toBeDefined();
   expect(Sontaran).toBeDefined();
   expect(StringValidator).toBeDefined();

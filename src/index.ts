@@ -7,7 +7,7 @@ export * from './errors/ValidationError';
 export * from './boolean/BooleanValidator';
 export * from './number/NumberValidator';
 export * from './string/EmailValidator';
-// export * from './string/NetworkValidator';
+export * from './string/NetworkValidator';
 export * from './string/StringValidator';
 
 export { badEmailDomains } from './_data/badEmailDomains';
