@@ -178,7 +178,6 @@ export class StringValidator extends BaseValidator<string> {
       if (value.length >= minLength) return value;
       throw new ValidationError('string.min', { minLength: `${minLength}` });
     });
-    return this;
   }
 
   /** Expect value to not be empty (spaces, tabs, new lines or nothing) */
@@ -187,7 +186,6 @@ export class StringValidator extends BaseValidator<string> {
       if (/^[\s]*$/.test(value)) throw new ValidationError('string.notempty');
       return value;
     });
-    return this;
   }
 
   /** Expect value to start with `expectedStart` */
@@ -197,7 +195,6 @@ export class StringValidator extends BaseValidator<string> {
         throw new ValidationError('string.startswith', { expectedStart });
       return value;
     });
-    return this;
   }
 
   /** Expect value to be in all uppercase */
