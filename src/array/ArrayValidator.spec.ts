@@ -16,17 +16,25 @@ describe('ArrayValidator', () => {
     const validator = array();
 
     validValues.forEach((value) => {
-      it(`${value} is a valid array`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is a valid array`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidValues.forEach((value) => {
-      it(`${value} is not a valid array`, async () => {
-        const result = await validator.validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not a valid array`, () => {
+        const result = validator.validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = validator.label('myLabel').validate('true');
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('array.array');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('array');
     });
   });
 
@@ -45,20 +53,20 @@ describe('ArrayValidator', () => {
     ];
 
     validPairs.forEach(([value, argument1, argument2]) => {
-      it(`${value} is between ${argument1} and ${argument2}`, async () => {
-        const result = await array()
+      it(`${value} is between ${argument1} and ${argument2}`, () => {
+        const result = array()
           .between(argument1 as number, argument2 as number)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument1, argument2]) => {
-      it(`${value} is not between ${argument1} and ${argument2}`, async () => {
-        const result = await array()
+      it(`${value} is not between ${argument1} and ${argument2}`, () => {
+        const result = array()
           .between(argument1 as number, argument2 as number)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
@@ -74,6 +82,17 @@ describe('ArrayValidator', () => {
       expect(validator.between.bind(validator, 4, '6' as any)).toThrow(
         TypeError
       );
+    });
+
+    it('sets correct error type and message', () => {
+      const result = array()
+        .between(1, 3)
+        .label('myLabel')
+        .validate([0, 1, 2, 3]);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('array.max');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('3');
     });
   });
 
@@ -91,21 +110,25 @@ describe('ArrayValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`${value} contains ${argument}`, async () => {
-        const result = await array()
-          .contains(argument)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} contains ${argument}`, () => {
+        const result = array().contains(argument).validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`${value} does not contains ${argument}`, async () => {
-        const result = await array()
-          .contains(argument)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} does not contains ${argument}`, () => {
+        const result = array().contains(argument).validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = array().contains(2).label('myLabel').validate([0, 1]);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('array.contains');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('2');
     });
   });
 
@@ -121,20 +144,20 @@ describe('ArrayValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`${value} is valid`, async () => {
-        const result = await array()
+      it(`${value} is valid`, () => {
+        const result = array()
           .each(argument as BaseValidator)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`${value} is invalid`, async () => {
-        const result = await array()
+      it(`${value} is invalid`, () => {
+        const result = array()
           .each(argument as BaseValidator)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
@@ -145,30 +168,38 @@ describe('ArrayValidator', () => {
       );
     });
 
-    it('calls validate the length of value number of times', async () => {
-      const spy = jest.fn().mockReturnValue(null);
+    it('calls validate the length of value number of times', () => {
+      const spy = jest.fn().mockReturnValue({ valid: true });
       const validator = array();
       validator.validate = spy;
 
-      await array()
-        .each(validator)
-        .validate({ field: 'test', value: [1, 2, 3] });
+      array().each(validator).validate([1, 2, 3]);
 
       expect(spy).toBeCalledTimes(3);
     });
 
-    it('passes the value as argument to validator', async () => {
-      const spy = jest.fn().mockReturnValue(null);
+    it('passes the value as argument to validator', () => {
+      const spy = jest.fn().mockReturnValue({ valid: true });
       const validator = array();
       validator.validate = spy;
 
-      await array()
-        .each(validator)
-        .validate({ field: 'test', value: ['a', 'b', 'c'] });
+      array().each(validator).validate(['a', 'b', 'c']);
 
-      expect(spy.mock.calls[0][0]).toMatchObject({ value: 'a' });
-      expect(spy.mock.calls[1][0]).toMatchObject({ value: 'b' });
-      expect(spy.mock.calls[2][0]).toMatchObject({ value: 'c' });
+      expect(spy.mock.calls[0][0]).toBe('a');
+      expect(spy.mock.calls[1][0]).toBe('b');
+      expect(spy.mock.calls[2][0]).toBe('c');
+    });
+
+    it('sets correct error type and message', () => {
+      const result = array()
+        .each(number())
+        .label('myLabel')
+        .validate([0, '1', 2]);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('array.each');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('each');
+      expect(error.message).toContain('number');
     });
   });
 
@@ -206,26 +237,30 @@ describe('ArrayValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`${value} equals ${argument}`, async () => {
-        const result = await array()
-          .equals(argument)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} equals ${argument}`, () => {
+        const result = array().equals(argument).validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`${value} does not equals ${argument}`, async () => {
-        const result = await array()
-          .equals(argument)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} does not equals ${argument}`, () => {
+        const result = array().equals(argument).validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
     it('equals throws a TypeError when expectedValue is not an Array', () => {
       const validator = array();
       expect(validator.equals.bind(validator, {} as any)).toThrow(TypeError);
+    });
+
+    it('sets correct error type and message', () => {
+      const result = array().equals([1, 2]).label('myLabel').validate([0, 1]);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('array.equals');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('[1,2]');
     });
   });
 
@@ -277,20 +312,16 @@ describe('ArrayValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`${value} is a subset of ${argument}`, async () => {
-        const result = await array()
-          .isSubsetOf(argument)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is a subset of ${argument}`, () => {
+        const result = array().isSubsetOf(argument).validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`${value} is not a subset of ${argument}`, async () => {
-        const result = await array()
-          .isSubsetOf(argument)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not a subset of ${argument}`, () => {
+        const result = array().isSubsetOf(argument).validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
@@ -299,6 +330,17 @@ describe('ArrayValidator', () => {
       expect(validator.isSubsetOf.bind(validator, {} as any)).toThrow(
         TypeError
       );
+    });
+
+    it('sets correct error type and message', () => {
+      const result = array()
+        .isSubsetOf([0, 1, 2])
+        .label('myLabel')
+        .validate([4, 5]);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('array.subset');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('[0,1,2]');
     });
   });
 
@@ -336,20 +378,16 @@ describe('ArrayValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`${value} is a superset of ${argument}`, async () => {
-        const result = await array()
-          .isSupersetOf(argument)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+      it(`${value} is a superset of ${argument}`, () => {
+        const result = array().isSupersetOf(argument).validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`${value} is not a superset of ${argument}`, async () => {
-        const result = await array()
-          .isSupersetOf(argument)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+      it(`${value} is not a superset of ${argument}`, () => {
+        const result = array().isSupersetOf(argument).validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
@@ -358,6 +396,17 @@ describe('ArrayValidator', () => {
       expect(validator.isSupersetOf.bind(validator, {} as any)).toThrow(
         TypeError
       );
+    });
+
+    it('sets correct error type and message', () => {
+      const result = array()
+        .isSupersetOf([0, 1, 2])
+        .label('myLabel')
+        .validate([4, 5]);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('array.superset');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('[0,1,2]');
     });
   });
 
@@ -375,26 +424,34 @@ describe('ArrayValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`${value} has length ${argument}`, async () => {
-        const result = await array()
+      it(`${value} has length ${argument}`, () => {
+        const result = array()
           .length(argument as number)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`${value} has not length ${argument}`, async () => {
-        const result = await array()
+      it(`${value} has not length ${argument}`, () => {
+        const result = array()
           .length(argument as number)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
     it('length throws a TypeError when expectedLength is not an number', () => {
       const validator = array();
       expect(validator.length.bind(validator, '2' as any)).toThrow(TypeError);
+    });
+
+    it('sets correct error type and message', () => {
+      const result = array().length(5).label('myLabel').validate([0, 1, 2]);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('array.length');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('5');
     });
   });
 
@@ -412,26 +469,34 @@ describe('ArrayValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`length of ${value} is not greater than ${argument}`, async () => {
-        const result = await array()
+      it(`length of ${value} is not greater than ${argument}`, () => {
+        const result = array()
           .max(argument as number)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`length of ${value} is greater than ${argument}`, async () => {
-        const result = await array()
+      it(`length of ${value} is greater than ${argument}`, () => {
+        const result = array()
           .max(argument as number)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
     it('max throws a TypeError when maxLength is not an number', () => {
       const validator = array();
       expect(validator.max.bind(validator, '2' as any)).toThrow(TypeError);
+    });
+
+    it('sets correct error type and message', () => {
+      const result = array().max(2).label('myLabel').validate([0, 1, 2]);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('array.max');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('2');
     });
   });
 
@@ -449,26 +514,34 @@ describe('ArrayValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`length of ${value} is not less than ${argument}`, async () => {
-        const result = await array()
+      it(`length of ${value} is not less than ${argument}`, () => {
+        const result = array()
           .min(argument as number)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`length of ${value} is less than ${argument}`, async () => {
-        const result = await array()
+      it(`length of ${value} is less than ${argument}`, () => {
+        const result = array()
           .min(argument as number)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(false);
       });
     });
 
     it('min throws a TypeError when minLength is not an number', () => {
       const validator = array();
       expect(validator.min.bind(validator, '2' as any)).toThrow(TypeError);
+    });
+
+    it('sets correct error type and message', () => {
+      const result = array().min(4).label('myLabel').validate([0, 1, 2]);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('array.min');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('4');
     });
   });
 
@@ -495,21 +568,32 @@ describe('ArrayValidator', () => {
     ];
 
     validPairs.forEach(([value, argument]) => {
-      it(`${value} is an array of ${argument}`, async () => {
-        const result = await array()
+      it(`${value} is an array of ${argument}`, () => {
+        const result = array()
           .of(argument as any)
-          .validate({ field: 'test', value });
-        expect(result).toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
-      it(`${value} is not an array of ${argument}`, async () => {
-        const result = await array()
+      it(`${value} is not an array of ${argument}`, () => {
+        const result = array()
           .of(argument as any)
-          .validate({ field: 'test', value });
-        expect(result).not.toBeNull();
+          .validate(value);
+        expect(result.valid).toBe(false);
       });
+    });
+
+    it('sets correct error type and message', () => {
+      const result = array()
+        .of('string')
+        .label('myLabel')
+        .validate([0, '1', '2']);
+      const error = result.errors?.[0]!;
+      expect(error.type).toBe('array.of');
+      expect(error.message).toContain('myLabel');
+      expect(error.message).toContain('string');
     });
   });
 });

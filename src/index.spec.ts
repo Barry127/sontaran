@@ -1,5 +1,7 @@
 import DefaultExport, {
+  ArrayValidator,
   any,
+  array,
   BaseValidator,
   BooleanValidator,
   badEmailDomains,
@@ -20,8 +22,8 @@ import DefaultExport, {
 it('exports everything', () => {
   expect(any).toBeDefined();
   expect(DefaultExport).toBe(Sontaran);
-  // expect(ArrayValidator).toBeDefined();
-  // expect(array).toBeDefined();
+  expect(ArrayValidator).toBeDefined();
+  expect(array).toBeDefined();
   expect(BaseValidator).toBeDefined();
   expect(BooleanValidator).toBeDefined();
   expect(bool).toBeDefined();

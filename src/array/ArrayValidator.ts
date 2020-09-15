@@ -1,12 +1,15 @@
-import { BaseValidator, ValidatorFunction } from '../BaseValidator';
+import { BaseValidator } from '../BaseValidator';
+import { ValidatorOptions } from '../types';
+import { ValidationError } from '../errors/ValidationError';
 
-export class ArrayValidator extends BaseValidator {
-  protected validators: ValidatorFunction<any[]>[] = [];
+export class ArrayValidator extends BaseValidator<any[]> {
+  constructor(options: Partial<ValidatorOptions> = {}) {
+    super(options);
 
-  constructor() {
-    super();
-
-    this.validators.push((value: any) => Array.isArray(value));
+    this.custom((value: any) => {
+      if (!Array.isArray(value)) throw new ValidationError('array.array');
+      return value;
+    });
   }
 
   /** Expect length of value array to be between `minLength` and `maxLength`. Both inclusive */
@@ -20,48 +23,54 @@ export class ArrayValidator extends BaseValidator {
 
   /** Expect value array to contain `expectedValue` */
   contains(expectedValue: any) {
-    this.validators.push((value: any[]) => value.includes(expectedValue));
-    return this;
+    return this.custom((value: any[]) => {
+      if (!value.includes(expectedValue))
+        throw new ValidationError('array.contains', { expectedValue });
+      return value;
+    });
   }
 
   /** Expect every value in array to pass `validator` */
   each(validator: BaseValidator) {
     if (!(validator instanceof BaseValidator))
       throw new TypeError(
-        'ArrayValidator each: validator must be a Sontaran validator'
+        'ArrayValidator.each: validator must be a Sontaran validator'
       );
 
-    this.validators.push(async (value: any[]) => {
+    return this.custom((value: any[]) => {
       for (let element of value) {
-        const result = await validator.validate({
-          field: 'element',
-          value: element
-        });
-        if (result !== null) return false;
+        let result = validator.label('element').validate(element);
+        if (!result.valid)
+          throw new ValidationError('array.each', {
+            message: result.errors?.[0]?.message as string
+          });
       }
-
-      return true;
+      return value;
     });
-    return this;
   }
 
   /** Expect value array to (shallow) equal expectedValue */
   equals(expectedValue: any[]) {
     if (!Array.isArray(expectedValue))
       throw new TypeError(
-        'ArrayValidator equals: exectedValue must by an array'
+        'ArrayValidator.equals: exectedValue must by an array'
       );
 
-    this.validators.push((value: any[]) => {
-      if (value.length !== expectedValue.length) return false;
+    return this.custom((value: any[]) => {
+      if (value.length !== expectedValue.length)
+        throw new ValidationError('array.equals', {
+          expectedValue: `${expectedValue}`
+        });
 
       for (let i = 0; i < value.length; i++) {
-        if (value[i] !== expectedValue[i]) return false;
+        if (value[i] !== expectedValue[i])
+          throw new ValidationError('array.equals', {
+            expectedValue: `${expectedValue}`
+          });
       }
 
-      return true;
+      return value;
     });
-    return this;
   }
 
   /** Expect value array to include `expectedValue` */
@@ -72,60 +81,81 @@ export class ArrayValidator extends BaseValidator {
   /** Expect value array to be a subset of `superset`  */
   isSubsetOf(superset: any[]) {
     if (!Array.isArray(superset))
-      throw new TypeError('ArrayValidator equals: superset must by an array');
+      throw new TypeError(
+        'ArrayValidator.isSubsetOf: superset must by an array'
+      );
 
-    this.validators.push((value: any[]) => {
+    return this.custom((value: any[]) => {
       for (let element of value) {
-        if (!superset.includes(element)) return false;
+        if (!superset.includes(element))
+          throw new ValidationError('array.subset', {
+            superset: `${superset}`
+          });
       }
 
-      return true;
+      return value;
     });
-    return this;
   }
 
   /** Expect value array to be a superset of `subset`  */
   isSupersetOf(subset: any[]) {
     if (!Array.isArray(subset))
-      throw new TypeError('ArrayValidator equals: subset must by an array');
+      throw new TypeError(
+        'ArrayValidator.isSupersetOf: subset must by an array'
+      );
 
-    this.validators.push((value: any[]) => {
+    return this.custom((value: any[]) => {
       for (let element of subset) {
-        if (!value.includes(element)) return false;
+        if (!value.includes(element))
+          throw new ValidationError('array.superset', {
+            subset: `${subset}`
+          });
       }
 
-      return true;
+      return value;
     });
-    return this;
   }
 
   /** Expect value array to have exact length of `expectedLength` */
   length(expectedLength: number) {
     if (typeof expectedLength !== 'number')
       throw new TypeError(
-        'ArrayValidator length: expectedlength must be a number'
+        'ArrayValidator.length: expectedlength must be a number'
       );
 
-    this.validators.push((value: any[]) => value.length === expectedLength);
-    return this;
+    return this.custom((value: any[]) => {
+      if (value.length !== expectedLength)
+        throw new ValidationError('array.length', {
+          expectedLength: `${expectedLength}`
+        });
+      return value;
+    });
   }
 
   /** Expect length of value array to be at most `maxLength` (inclusive) */
   max(maxLength: number) {
     if (typeof maxLength !== 'number')
-      throw new TypeError('ArrayValidator max: maxlength must be a number');
+      throw new TypeError('ArrayValidator.max: maxlength must be a number');
 
-    this.validators.push((value: any[]) => value.length <= maxLength);
-    return this;
+    return this.custom((value: any[]) => {
+      if (value.length <= maxLength) return value;
+      throw new ValidationError('array.max', {
+        maxLength: `${maxLength}`
+      });
+    });
   }
 
   /** Expect length of value array to be at least `minLength` (inclusive) */
   min(minLength: number) {
     if (typeof minLength !== 'number')
-      throw new TypeError('StringValidator min: minlength must be a number');
+      throw new TypeError('ArrayValidator.min: minlength must be a number');
 
-    this.validators.push((value: any[]) => value.length >= minLength);
-    return this;
+    return this.custom((value: any[]) => {
+      if (value.length >= minLength) return value;
+      throw new ValidationError('array.min', {
+        minLength: `${minLength}`
+      });
+    });
   }
 
   /** expect all elements of value array to be of type `type` */
@@ -140,25 +170,25 @@ export class ArrayValidator extends BaseValidator {
       | 'string'
   ) {
     if (type?.toLowerCase() === 'array') {
-      this.validators.push((value: any[]) => {
+      return this.custom((value: any[]) => {
         for (let element of value) {
-          if (!Array.isArray(element)) return false;
+          if (!Array.isArray(element))
+            throw new ValidationError('array.of', { type });
         }
 
-        return true;
+        return value;
       });
     } else {
-      this.validators.push((value: any[]) => {
+      return this.custom((value: any[]) => {
         for (let element of value) {
-          if (typeof element !== type) return false;
+          if (typeof element !== type)
+            throw new ValidationError('array.of', { type });
         }
-
-        return true;
+        return value;
       });
     }
-
-    return this;
   }
 }
 
-export const array = () => new ArrayValidator();
+export const array = (options: Partial<ValidatorOptions> = {}) =>
+  new ArrayValidator(options);
