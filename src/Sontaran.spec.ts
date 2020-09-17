@@ -10,7 +10,7 @@ describe('Sontaran', () => {
 
   describe('options', () => {
     it('sets default options', () => {
-      const validator = new Sontaran();
+      const validator = any();
 
       //@ts-ignore
       expect(validator.options).toMatchObject({
@@ -32,7 +32,7 @@ describe('Sontaran', () => {
 
   describe('allow', () => {
     it('calls whitelist with one argument', () => {
-      const validator = new Sontaran();
+      const validator = any();
       validator.whitelist = jest.fn();
 
       expect(validator.whitelist).not.toHaveBeenCalled();
@@ -41,7 +41,7 @@ describe('Sontaran', () => {
     });
 
     it('calls whitelist with multiple arguments', () => {
-      const validator = new Sontaran();
+      const validator = any();
       validator.whitelist = jest.fn();
 
       expect(validator.whitelist).not.toHaveBeenCalled();
@@ -51,7 +51,7 @@ describe('Sontaran', () => {
   });
 
   describe('blacklist', () => {
-    const validator = new Sontaran().blacklist('one', 'two');
+    const validator = any().blacklist('one', 'two');
 
     it('validates when value is not in blacklist', () => {
       expect(validator.validate('three')).not.toHaveProperty('errors');
@@ -69,7 +69,7 @@ describe('Sontaran', () => {
     it('pushes validators with custom method', () => {
       const v1 = jest.fn().mockReturnValue(true);
       const v2 = jest.fn().mockReturnValue(true);
-      const validator = new Sontaran() as any;
+      const validator = any() as any;
 
       expect(validator.validators).toHaveLength(1);
 
@@ -84,21 +84,21 @@ describe('Sontaran', () => {
 
   describe('default', () => {
     it('has no default value by default', () => {
-      const validator = new Sontaran();
+      const validator = any();
       expect(validator.validate(undefined)).toMatchObject({
         value: undefined
       });
     });
 
     it('sets default when value is undefined', () => {
-      const validator = new Sontaran().default('default');
+      const validator = any().default('default');
       expect(validator.validate(undefined)).toMatchObject({
         value: 'default'
       });
     });
 
     it('does not set default when value is null or empty string', () => {
-      const validator = new Sontaran().default('default');
+      const validator = any().default('default');
       expect(validator.validate(null)).toMatchObject({
         value: null
       });
@@ -111,7 +111,7 @@ describe('Sontaran', () => {
       let i = 1;
       const counter = () => i++;
 
-      const validator = new Sontaran().default(counter);
+      const validator = any().default(counter);
       expect(validator.validate(undefined)).toMatchObject({
         value: 1
       });
@@ -123,7 +123,7 @@ describe('Sontaran', () => {
 
   describe('disallow', () => {
     it('calls blacklist with one argument', () => {
-      const validator = new Sontaran();
+      const validator = any();
       validator.blacklist = jest.fn();
 
       expect(validator.blacklist).not.toHaveBeenCalled();
@@ -132,7 +132,7 @@ describe('Sontaran', () => {
     });
 
     it('calls blacklist with multiple arguments', () => {
-      const validator = new Sontaran();
+      const validator = any();
       validator.blacklist = jest.fn();
 
       expect(validator.blacklist).not.toHaveBeenCalled();
@@ -157,23 +157,24 @@ describe('Sontaran', () => {
 
     validPairs.forEach(([value, argument]) => {
       it(`${value} is in [${argument}]`, () => {
-        const result = new Sontaran().enum(argument as any[]).validate(value);
+        const result = any()
+          .enum(argument as any[])
+          .validate(value);
         expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
       it(`${value} is in [${argument}]`, () => {
-        const result = new Sontaran().enum(argument as any[]).validate(value);
+        const result = any()
+          .enum(argument as any[])
+          .validate(value);
         expect(result.valid).toBe(false);
       });
     });
 
     it('sets correct error type and message', () => {
-      const result = new Sontaran()
-        .label('myLabel')
-        .enum([1, 2, 3])
-        .validate(4);
+      const result = any().label('myLabel').enum([1, 2, 3]).validate(4);
       const error = result.errors?.[0]!;
       expect(error.type).toBe('base.enum');
       expect(error.message).toContain('myLabel');
@@ -181,7 +182,7 @@ describe('Sontaran', () => {
     });
 
     it('throws a type error when expectedValues is not an array', () => {
-      const validator = new Sontaran();
+      const validator = any();
       expect(validator.enum.bind(validator, {} as any)).toThrow(TypeError);
     });
   });
@@ -224,20 +225,20 @@ describe('Sontaran', () => {
 
     validPairs.forEach(([value, argument]) => {
       it(`${value} equals [${argument}]`, () => {
-        const result = new Sontaran().equals(argument).validate(value);
+        const result = any().equals(argument).validate(value);
         expect(result.valid).toBe(true);
       });
     });
 
     invalidPairs.forEach(([value, argument]) => {
       it(`${value} is in [${argument}]`, () => {
-        const result = new Sontaran().equals(argument).validate(value);
+        const result = any().equals(argument).validate(value);
         expect(result.valid).toBe(false);
       });
     });
 
     it('sets correct error type and message', () => {
-      const result = new Sontaran().equals(1).label('myLabel').validate(2);
+      const result = any().equals(1).label('myLabel').validate(2);
       const error = result.errors?.[0]!;
       expect(error.type).toBe('base.equals');
       expect(error.message).toContain('myLabel');
@@ -273,7 +274,7 @@ describe('Sontaran', () => {
   });
 
   describe('forbidden', () => {
-    const validator = new Sontaran().forbidden();
+    const validator = any().forbidden();
 
     it('errors with base.forbidden when value is null', () => {
       expect(validator.validate(null).errors?.[0].type).toBe('base.forbidden');
@@ -294,19 +295,19 @@ describe('Sontaran', () => {
 
   describe('label', () => {
     it('has a default label', () => {
-      const validator = new Sontaran();
+      const validator = any();
       expect(validator).toHaveProperty('_label');
     });
 
     it('sets label', () => {
-      const validator = new Sontaran().label('my-label');
+      const validator = any().label('my-label');
       expect(validator).toHaveProperty('_label', 'my-label');
     });
   });
 
   describe('oneOf', () => {
     it('calls enum with argument', () => {
-      const validator = new Sontaran();
+      const validator = any();
       validator.enum = jest.fn();
 
       expect(validator.enum).not.toHaveBeenCalled();
@@ -320,7 +321,7 @@ describe('Sontaran', () => {
       const v1 = jest.fn().mockImplementation((v) => v);
       const v2 = jest.fn().mockImplementation((v) => v);
       const v3 = jest.fn().mockImplementation((v) => v);
-      const validator = new Sontaran();
+      const validator = any();
       validator.custom(v1).custom(v2).custom(v3);
 
       validator.validate('value');
@@ -334,7 +335,7 @@ describe('Sontaran', () => {
       const v1 = jest.fn().mockImplementation((v) => v);
       const v2 = jest.fn().mockImplementation((v) => v);
       const v3 = jest.fn().mockImplementation((v) => v);
-      const validator = new Sontaran();
+      const validator = any();
       validator.custom(v1).custom(v2).custom(v3);
 
       expect(validator.validate('value')).toEqual({
@@ -349,7 +350,7 @@ describe('Sontaran', () => {
         throw new ValidationError('test.error');
       });
       const v3 = jest.fn().mockImplementation((v) => v);
-      const validator = new Sontaran();
+      const validator = any();
       validator.custom(v1).custom(v2).custom(v3);
 
       expect(validator.validate('value')).toMatchObject({
@@ -364,7 +365,7 @@ describe('Sontaran', () => {
         throw new ValidationError('test.error');
       });
       const v3 = jest.fn().mockImplementation((v) => v);
-      const validator = new Sontaran();
+      const validator = any();
       validator.custom(v1).custom(v2).custom(v3);
 
       validator.validate('value');
@@ -398,7 +399,7 @@ describe('Sontaran', () => {
         throw new ValidationError('test.error');
       });
       const v3 = jest.fn().mockImplementation((v) => v);
-      const validator = new Sontaran();
+      const validator = any();
       validator.custom(v1).custom(v2).custom(v3).label('field');
 
       //@ts-ignore
@@ -409,13 +410,25 @@ describe('Sontaran', () => {
       });
     });
 
+    describe('optional', () => {
+      it('is required by default', () => {
+        const validator = any();
+        expect(validator).toHaveProperty('_required', true);
+      });
+
+      it('sets optional', () => {
+        const validator = any().optional();
+        expect(validator).toHaveProperty('_required', false);
+      });
+    });
+
     it('throws an error when a validator function returns a promise (is async)', () => {
       const v1 = jest.fn().mockImplementation((v) => Promise.resolve(v));
       const v2 = jest.fn().mockImplementation(() => {
         throw new ValidationError('test.error');
       });
       const v3 = jest.fn().mockImplementation((v) => v);
-      const validator = new Sontaran();
+      const validator = any();
       validator.custom(v1).custom(v2).custom(v3);
 
       expect(validator.validate.bind(validator, 'value')).toThrow();
@@ -425,7 +438,7 @@ describe('Sontaran', () => {
       const v1 = jest.fn().mockImplementation((v) => v);
       const v2 = jest.fn().mockImplementation((v) => v);
       const v3 = jest.fn().mockImplementation((v) => v);
-      const validator = new Sontaran();
+      const validator = any();
       validator.custom(v1).custom(v2).custom(v3);
 
       //@ts-ignore
@@ -440,7 +453,7 @@ describe('Sontaran', () => {
         throw new Error('test.error');
       });
       const v3 = jest.fn().mockImplementation((v) => v);
-      const validator = new Sontaran();
+      const validator = any();
       validator.custom(v1).custom(v2).custom(v3).label('field');
 
       expect(validator.validate.bind(validator, 'value')).toThrow();
@@ -452,7 +465,7 @@ describe('Sontaran', () => {
       const v1 = jest.fn().mockImplementation((v) => Promise.resolve(v));
       const v2 = jest.fn().mockImplementation((v) => Promise.resolve(v));
       const v3 = jest.fn().mockImplementation((v) => Promise.resolve(v));
-      const validator = new Sontaran();
+      const validator = any();
       validator.custom(v1).custom(v2).custom(v3);
 
       await validator.validateAsync('value');
@@ -466,7 +479,7 @@ describe('Sontaran', () => {
       const v1 = jest.fn().mockImplementation((v) => Promise.resolve(v));
       const v2 = jest.fn().mockImplementation((v) => Promise.resolve(v));
       const v3 = jest.fn().mockImplementation((v) => Promise.resolve(v));
-      const validator = new Sontaran();
+      const validator = any();
       validator.custom(v1).custom(v2).custom(v3);
 
       expect(await validator.validateAsync('value')).toEqual({
@@ -481,7 +494,7 @@ describe('Sontaran', () => {
         throw new ValidationError('test.error');
       });
       const v3 = jest.fn().mockImplementation((v) => Promise.resolve(v));
-      const validator = new Sontaran();
+      const validator = any();
       validator.custom(v1).custom(v2).custom(v3);
 
       expect(await validator.validateAsync('value')).toMatchObject({
@@ -496,7 +509,7 @@ describe('Sontaran', () => {
         throw new ValidationError('test.error');
       });
       const v3 = jest.fn().mockImplementation((v) => Promise.resolve(v));
-      const validator = new Sontaran();
+      const validator = any();
       validator.custom(v1).custom(v2).custom(v3);
 
       await validator.validateAsync('value');
@@ -530,7 +543,7 @@ describe('Sontaran', () => {
         throw new ValidationError('test.error');
       });
       const v3 = jest.fn().mockImplementation((v) => Promise.resolve(v));
-      const validator = new Sontaran();
+      const validator = any();
       validator.custom(v1).custom(v2).custom(v3).label('field');
 
       expect(
@@ -548,7 +561,7 @@ describe('Sontaran', () => {
         throw new Error('test.error');
       });
       const v3 = jest.fn().mockImplementation((v) => Promise.resolve(v));
-      const validator = new Sontaran();
+      const validator = any();
       validator.custom(v1).custom(v2).custom(v3).label('field');
 
       await expect(validator.validateAsync('value')).rejects.toThrow();
@@ -556,11 +569,13 @@ describe('Sontaran', () => {
   });
 
   describe('whitelist', () => {
-    const validator = new Sontaran().whitelist('one', 'two').custom((value) => {
-      if (value === 'one')
-        throw new ValidationError('This error is never thrown');
-      return value;
-    });
+    const validator = any()
+      .whitelist('one', 'two')
+      .custom((value) => {
+        if (value === 'one')
+          throw new ValidationError('This error is never thrown');
+        return value;
+      });
 
     it('always validates when value is in whitelist', async () => {
       expect(validator.validate('one')).not.toHaveProperty('errors');

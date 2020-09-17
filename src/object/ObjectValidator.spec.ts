@@ -500,4 +500,30 @@ describe('ObjectValidator', () => {
       expect(error.message).toContain('4');
     });
   });
+
+  describe('schema', () => {
+    it('has no schema by default', () => {
+      const validator = object();
+      expect(validator).not.toHaveProperty('_schema');
+    });
+
+    it('sets schema', () => {
+      const schema = {
+        key: object()
+      };
+      const validator = object();
+      expect(object).not.toHaveProperty('_schema');
+
+      validator.schema(schema);
+
+      expect(validator).toHaveProperty('_schema', schema);
+    });
+
+    it('schema throws a TypeError when schema is not a Validator Schema', () => {
+      const validator = object();
+      expect(validator.schema.bind(validator, { key: 1 } as any)).toThrow(
+        TypeError
+      );
+    });
+  });
 });

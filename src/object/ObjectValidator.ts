@@ -1,8 +1,14 @@
 import { BaseValidator } from '../BaseValidator';
-import { ValidatorOptions } from '../types';
+import {
+  ValidatorOptions,
+  Schema,
+  ValidationError as ValidationErrorType
+} from '../types';
 import { ValidationError } from '../errors/ValidationError';
 
 export class ObjectValidator extends BaseValidator<object> {
+  private _schema?: Schema;
+
   constructor(options: Partial<ValidatorOptions> = {}) {
     super(options);
 
@@ -153,6 +159,108 @@ export class ObjectValidator extends BaseValidator<object> {
       });
     });
   }
+
+  /** Validate object by schema of Sontaran Validators */
+  schema(schema: Schema) {
+    const validators = Object.values(schema);
+    for (let validator of validators) {
+      if (!(validator instanceof BaseValidator))
+        throw new TypeError(
+          'ObjectValidator.entries: schema must be a schema of Sontaran Validators'
+        );
+    }
+
+    this._schema = schema;
+    return this;
+  }
+
+  validate(value: any) {
+    if (!this._schema) return super.validate(value);
+
+    const baseResult = super.validate(value);
+    if (!baseResult.valid && this.options.abortEarly) return baseResult;
+
+    const schemeEntries = Object.entries(this._schema);
+    const errors: ValidationErrorType[] = [];
+
+    for (let [key, validator] of schemeEntries) {
+      // check for required fields
+      if (!Object.prototype.hasOwnProperty.call(value, key)) {
+        const err = new ValidationError('base.required');
+        if (isRequired(validator))
+          errors.push({
+            field: key,
+            message: err.format(key, this.options.locale),
+            type: err.message
+          });
+        continue;
+      }
+
+      // handle validator
+      const result = validator.label(key).validate(value[key]);
+      if (!result.valid) errors.push(...result.errors!);
+    }
+
+    // handle non expected fields
+    const invalidFields = Object.keys(value).filter(
+      (key) => !Object.keys(this._schema!).includes(key)
+    );
+
+    for (let invalidField of invalidFields) {
+      const err = new ValidationError('object.notinschema');
+      errors.push({
+        field: invalidField,
+        message: err.format(invalidField, this.options.locale),
+        type: err.message
+      });
+    }
+
+    return errors.length === 0 ? baseResult : { valid: false, value, errors };
+  }
+
+  async validateAsync(value: any) {
+    if (!this._schema) return super.validateAsync(value);
+
+    const baseResult = await super.validateAsync(value);
+    if (!baseResult.valid && this.options.abortEarly) return baseResult;
+
+    const schemeEntries = Object.entries(this._schema);
+    const errors: ValidationErrorType[] = [];
+
+    for (let [key, validator] of schemeEntries) {
+      // check for required fields
+      if (!Object.prototype.hasOwnProperty.call(value, key)) {
+        const err = new ValidationError('base.required');
+        if (isRequired(validator))
+          errors.push({
+            field: key,
+            message: err.format(key, this.options.locale),
+            type: err.message
+          });
+        continue;
+      }
+
+      // handle validator
+      const result = await validator.label(key).validateAsync(value[key]);
+      if (!result.valid) errors.push(...result.errors!);
+    }
+
+    // handle non expected fields
+    const invalidFields = Object.keys(value).filter(
+      (key) => !Object.keys(this._schema!).includes(key)
+    );
+
+    for (let invalidField of invalidFields) {
+      const err = new ValidationError('object.notinschema');
+      errors.push({
+        field: invalidField,
+        message: err.format(invalidField, this.options.locale),
+        type: err.message
+      });
+    }
+
+    return errors.length === 0 ? baseResult : { valid: false, value, errors };
+  }
 }
 
 export const object = (options: Partial<ValidatorOptions> = {}) =>
@@ -165,4 +273,8 @@ function objectToString(object: object): string {
       return `${key}:${value}`;
     })
     .join(',')}}`;
+}
+
+function isRequired(validator: any): boolean {
+  return validator._required !== false;
 }

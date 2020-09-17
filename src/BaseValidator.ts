@@ -28,6 +28,7 @@ export abstract class BaseValidator<T = any> {
   private whitelistValues: T[] = [];
   private defaultValue?: DefaultValue<T>;
   private _label: string = 'unnamed field';
+  protected _required: boolean = true;
 
   constructor(options: Partial<ValidatorOptions> = {}) {
     this.options = {
@@ -137,6 +138,12 @@ export abstract class BaseValidator<T = any> {
   /** Expect value to equal one of `expectedValues` */
   oneOf(expectedValues: T[]) {
     return this.enum(expectedValues);
+  }
+
+  /** Mark field as optional in object */
+  optional() {
+    this._required = false;
+    return this;
   }
 
   /** validate a value */
