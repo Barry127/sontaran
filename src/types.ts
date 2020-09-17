@@ -1,3 +1,6 @@
+import { BaseValidator } from './BaseValidator';
+import { BooleanValidator } from './boolean/BooleanValidator';
+
 /** Validator functions */
 export type AsyncValidatorFunction<T = any> = (value: T) => Promise<T>;
 export type SyncValidatorFunction<T = any> = (value: T) => T;
@@ -45,4 +48,8 @@ export interface ValidationError {
   field: string;
   message: string;
   type: string;
+}
+
+export interface Schema {
+  [key: string]: BaseValidator;
 }

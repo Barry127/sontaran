@@ -15,6 +15,8 @@ import DefaultExport, {
   NumberValidator,
   network,
   number,
+  ObjectValidator,
+  object,
   Sontaran,
   StringValidator,
   string
@@ -36,6 +38,8 @@ it('exports everything', () => {
   expect(NumberValidator).toBeDefined();
   expect(network).toBeDefined();
   expect(number).toBeDefined();
+  expect(ObjectValidator).toBeDefined();
+  expect(object).toBeDefined();
   expect(Sontaran).toBeDefined();
   expect(StringValidator).toBeDefined();
   expect(string).toBeDefined();
