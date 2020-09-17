@@ -12,7 +12,8 @@
     "postpublish": "yarn clear",
     "test": "jest --watch",
     "test:ci": "jest",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "test:coverage:ci": "jest --coverage --coverageReporters=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
@@ -35,6 +36,7 @@
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",
     "@types/jest": "^26.0.10",
+    "coveralls": "^3.1.0",
     "rimraf": "^3.0.2",
     "ts-jest": "^26.3.0"
   },
