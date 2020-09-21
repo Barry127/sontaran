@@ -1,5 +1,4 @@
 import { BaseValidator } from './BaseValidator';
-import { BooleanValidator } from './boolean/BooleanValidator';
 
 /** Validator functions */
 export type AsyncValidatorFunction<T = any> = (value: T) => Promise<T>;
