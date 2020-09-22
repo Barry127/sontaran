@@ -24,7 +24,7 @@ Creates an `ArrayValidator` instance.
 - `options` - [validator options](/types?id=validatoroptions) or part of validator options.
 
 ```js
-const schema = array(); // returns Sontaran instance
+const schema = array(); // returns ArrayValidator instance
 ```
 
 ## between
