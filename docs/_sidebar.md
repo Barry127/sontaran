@@ -16,6 +16,6 @@
 - [String](/string.md)
 
 - **Links**
-- [<i class="fab fa-github"></i>Github](https://github.com/Barry127/sontaran)
+- [<i class="fab fa-github"></i>GitHub](https://github.com/Barry127/sontaran)
 
 - [<i class="fab fa-npm"></i>NPM](https://www.npmjs.com/package/sontaran)
