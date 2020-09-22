@@ -1,4 +1,8 @@
+- **Introduction**
 - [Sontaran](/README.md)
+- [Installation](/installation.md)
+- [Getting Started](/gettingStarted.md)
+- [License](/license.md)
 
 - **API**
 - [Types](/types.md)
