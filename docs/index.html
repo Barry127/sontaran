@@ -42,6 +42,7 @@
   </head>
   <body>
     <div id="app"></div>
+    <script src="https://cdn.jsdelivr.net/npm/docsify-edit-on-github"></script>
     <script>
       window.$docsify = {
         name: 'Sontaran',
@@ -50,7 +51,14 @@
         loadSidebar: true,
         subMaxLevel: 3,
         auto2top: true,
-        search: 'auto'
+        search: 'auto',
+        plugins: [
+          EditOnGithubPlugin.create(
+            'https://github.com/Barry127/sontaran/blob/master/docs/',
+            null,
+            'Edit on GitHub'
+          )
+        ]
       };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
