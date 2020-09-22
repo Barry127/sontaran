@@ -8,6 +8,7 @@
     "clear": "rimraf coverage dist",
     "prebuild": "yarn clear",
     "build": "rollup --config",
+    "docs": "docsify serve docs",
     "prepublish": "yarn test:ci && yarn build",
     "postpublish": "yarn clear",
     "test": "jest --watch",
@@ -37,6 +38,7 @@
     "@rollup/plugin-json": "^4.1.0",
     "@types/jest": "^26.0.10",
     "coveralls": "^3.1.0",
+    "docsify-cli": "^4.4.1",
     "rimraf": "^3.0.2",
     "ts-jest": "^26.3.0"
   },
