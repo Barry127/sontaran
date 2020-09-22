@@ -184,20 +184,22 @@ export class ObjectValidator extends BaseValidator<object> {
     const errors: ValidationErrorType[] = [];
 
     for (let [key, validator] of schemeEntries) {
+      const label = getLabel(validator, key);
+
       // check for required fields
       if (!Object.prototype.hasOwnProperty.call(value, key)) {
         const err = new ValidationError('base.required');
         if (isRequired(validator))
           errors.push({
-            field: key,
-            message: err.format(key, this.options.locale),
+            field: label,
+            message: err.format(label, this.options.locale),
             type: err.message
           });
         continue;
       }
 
       // handle validator
-      const result = validator.label(key).validate(value[key]);
+      const result = validator.validate(value[key]);
       if (!result.valid) errors.push(...result.errors!);
     }
 
@@ -228,20 +230,22 @@ export class ObjectValidator extends BaseValidator<object> {
     const errors: ValidationErrorType[] = [];
 
     for (let [key, validator] of schemeEntries) {
+      const label = getLabel(validator, key);
+
       // check for required fields
       if (!Object.prototype.hasOwnProperty.call(value, key)) {
         const err = new ValidationError('base.required');
         if (isRequired(validator))
           errors.push({
-            field: key,
-            message: err.format(key, this.options.locale),
+            field: label,
+            message: err.format(label, this.options.locale),
             type: err.message
           });
         continue;
       }
 
       // handle validator
-      const result = await validator.label(key).validateAsync(value[key]);
+      const result = await validator.validateAsync(value[key]);
       if (!result.valid) errors.push(...result.errors!);
     }
 
@@ -277,4 +281,10 @@ function objectToString(object: object): string {
 
 function isRequired(validator: any): boolean {
   return validator._required !== false;
+}
+
+function getLabel(validator: any, key: string): string {
+  if (validator._label === 'unnamed field') validator.label(key);
+
+  return validator._label as string;
 }

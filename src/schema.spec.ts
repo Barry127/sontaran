@@ -13,7 +13,7 @@ const schema = {
     .min(3)
     .max(10)
     .match(/^[a-zA-Z0-9_\-]*$/),
-  password: string().min(6),
+  password: string().min(6).label('Password'),
   email: email(),
   age: number().min(18).optional()
 };
@@ -57,7 +57,7 @@ describe('schema validation', () => {
 
     const error = result.errors?.[0]!;
     expect(error.type).toBe('base.required');
-    expect(error.field).toBe('password');
+    expect(error.field).toBe('Password');
   });
 
   it('is invalid when an optional field has an invalid value', () => {
@@ -87,7 +87,7 @@ describe('schema validation', () => {
 
     const error = result.errors?.[0]!;
     expect(error.type).toBe('string.min');
-    expect(error.field).toBe('password');
+    expect(error.field).toBe('Password');
   });
 
   it('is invalid when more fields are invalid', () => {
@@ -105,7 +105,7 @@ describe('schema validation', () => {
     expect(e1.field).toBe('username');
 
     expect(e2.type).toBe('string.min');
-    expect(e2.field).toBe('password');
+    expect(e2.field).toBe('Password');
 
     expect(e3.type).toBe('email.email');
     expect(e3.field).toBe('email');
@@ -180,7 +180,7 @@ describe('async schema validation', () => {
 
     const error = result.errors?.[0]!;
     expect(error.type).toBe('base.required');
-    expect(error.field).toBe('password');
+    expect(error.field).toBe('Password');
   });
 
   it('is invalid when an optional field has an invalid value', async () => {
@@ -210,7 +210,7 @@ describe('async schema validation', () => {
 
     const error = result.errors?.[0]!;
     expect(error.type).toBe('string.min');
-    expect(error.field).toBe('password');
+    expect(error.field).toBe('Password');
   });
 
   it('is invalid when more fields are invalid', async () => {
@@ -228,7 +228,7 @@ describe('async schema validation', () => {
     expect(e1.field).toBe('username');
 
     expect(e2.type).toBe('string.min');
-    expect(e2.field).toBe('password');
+    expect(e2.field).toBe('Password');
 
     expect(e3.type).toBe('email.email');
     expect(e3.field).toBe('email');
