@@ -82,7 +82,7 @@ export abstract class BaseValidator<T = any> {
   enum(expectedValues: T[]) {
     if (!Array.isArray(expectedValues))
       throw new TypeError(
-        'Sontaran BaseValidator.enum: exectedValues must by an array'
+        'Sontaran BaseValidator.enum: expectedValues must by an array'
       );
 
     this.custom((value: any) => {
