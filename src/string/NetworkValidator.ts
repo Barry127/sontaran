@@ -27,7 +27,7 @@ export class NetworkValidator extends StringValidator {
     return this.match(/^([0-9a-f]{2}:){5}[0-9a-f]{2}$/i, 'network.mac');
   }
 
-  /** Expect email to have TLD in `tlds`  */
+  /** Expect value (url) to have TLD in `tlds`  */
   tld(tlds: string | string[]) {
     if (typeof tlds === 'string') tlds = [tlds];
     if (!Array.isArray(tlds))
@@ -49,7 +49,7 @@ export class NetworkValidator extends StringValidator {
     });
   }
 
-  /** Expect email not to have TLD in `tlds` */
+  /** Expect value (url) not to have TLD in `tlds` */
   tldBlacklist(tlds: string | string[]) {
     if (typeof tlds === 'string') tlds = [tlds];
     if (!Array.isArray(tlds))
