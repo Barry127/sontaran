@@ -51,20 +51,20 @@ When a schema is validated the `.validate` method returns a ValidationResult.
 interface ValidationResult<T> {
   valid: boolean;
   value: T;
-  errors?: ValidationError[];
+  errors?: ValidationErrorType[];
 }
 ```
 
-## ValidationError
+## ValidationErrorType
 
-when a validation fails the ValidationError indicates what validation fails.
+when a validation fails the ValidationErrorType indicates what validation fails.
 
 - Field is the name of the schema field that failed or the field name set with the `.label` method
 - Message is the full message taken from the LocaleDef or value for type if no def is found
 - Type key for the LocaleDef e.g. number.min
 
 ```ts
-interface ValidationError {
+interface ValidationErrorType {
   field: string;
   message: string;
   type: string;

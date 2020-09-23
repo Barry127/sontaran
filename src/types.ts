@@ -36,14 +36,14 @@ export interface ValidationValidResult<T = any> {
 export interface ValidationErrorResult {
   valid: boolean;
   value: any;
-  errors: ValidationError[];
+  errors: ValidationErrorType[];
 }
 
 export type ValidationResult<T> =
   | ValidationValidResult<T>
   | ValidationErrorResult;
 
-export interface ValidationError {
+export interface ValidationErrorType {
   field: string;
   message: string;
   type: string;
