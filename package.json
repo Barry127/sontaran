@@ -9,7 +9,7 @@
     "prebuild": "yarn clear",
     "build": "rollup --config",
     "docs": "docsify serve docs",
-    "prepublish": "yarn test:ci && yarn build",
+    "prepublishOnly": "yarn test:ci && yarn build",
     "postpublish": "yarn clear",
     "test": "jest --watch",
     "test:ci": "jest",
