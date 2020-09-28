@@ -1,21 +1,17 @@
 # Sontaran
 
-[![Code Climate](https://codeclimate.com/github/Barry127/sontaran/badges/gpa.svg)](https://codeclimate.com/github/Barry127/sontaran)
-[![Test Coverage](https://codeclimate.com/github/Barry127/sontaran/badges/coverage.svg)](https://codeclimate.com/github/Barry127/sontaran/coverage)
+[![Build Status](https://travis-ci.com/Barry127/sontaran.svg?branch=master)](https://travis-ci.com/Barry127/sontaran)
+[![Coverage Status](https://coveralls.io/repos/github/Barry127/sontaran/badge.svg?branch=master)](https://coveralls.io/github/Barry127/sontaran?branch=master)
 
-Sontaran is a javascript validator library. It comes with validation functions for:
+Sontaran is a javascript validator library. It has a lot validation options out of the box and all validators are extendable with custom validation functions.
 
-* Array
-* Boolean
-* Email
-* Network
-* Number
-* Object
-* String
+Some key features
 
-Sontaran takes a functional aproach in validations. All validators are composable to create useful validators.
-
-> Sontaran uses recent ES features. It is tested on stable Node and should run out of the box in evergreen browsers. If you need to support legacy browsers consider using a transpiler with polyfills.
+- Completely written in Typescript
+- CommonJS build for Node JS
+- Tree shakable ES build
+- Fluid, chainable api
+- Support for async validators with the `validateAsync` method
 
 ## Installation
 
@@ -35,208 +31,93 @@ npm run test
 
 ## Getting Started
 
-The `sontaran/validator` function composes the sontaran validators to a single validator function. The validators are run in order, if one returns false the following functions will not be run.
+The `object().schema()` function takes a schema of Sontaran validators as an argument.
 
-In this example the username:
+In this example:
 
-* Must be a string
-* Cannot be only empty characters (spaces, tabs, return, ...)
-* Must have a length between 3 and 10 characters
-* Must match the given RegExp (only contain alphanum characters and dash, underscore)
+**username**
 
-```javascript
-const validator = require('sontaran/validator');
+- Must be a string
+- Cannot be only empty characters (spaces, tabs, return, ...)
+- Must have a length between 3 and 10 characters
+- Must match the given RegExp (only contain alphanumeric characters and dash, underscore)
 
-const isString = require('sontaran/string/isString');
-const notEmpty = require('sontaran/string/notEmpty');
-const between = require('sontaran/string/between');
-const match = require('sontaran/string/match');
+**email**
 
-const validateUsername = validator(
-  isString(),
-  notEmpty(),
-  between(3, 10),
-  match(/^[a-zA-Z0-9_\-]*$/)
-);
+- Must be a valid email
 
-// Valid usernames (return true)
-validateUsername('Barry127');
-validateUsername('DoctorWho');
-validateUsername('JohnDoe');
-validateUsername('-_hi_-');
+**password**
 
-// invalid usernames (return false)
-validateUsername(123); // => not a string
-validateUsername(' \t\r'); => Empty characters
-validateUsername('aa'); => too short
-validateUsername('Hello-World'); // too long
-validateUsername('B@dInput'); // invalid character
-```
-
-`sontaran/validator` can take any function as argument that takes the value to validate as argument and returns a boolean as result.
+- Must be a string
+- Must have a length of at least 8 characters
 
 ```javascript
-const validator = require('sontaran/validator');
+import { object, string, email } from 'sontaran';
 
-const isEmail = require('sontaran/email/isEmail');
-const noThrowAway = require('sontaran/email/noThrowAway');
+const schema = object().schema({
+  username: string()
+    .notEmpty()
+    .between(3, 10)
+    .match(/^[a-zA-Z0-9_\-]*$/),
+  email: email(),
+  password: string().min(8)
+});
 
-// this validator is quite useless in this example
-// but for demonstration purpose it will serve just fine
-const myCustomValidator = value => value.indexOf('@') > -1;
+// Valid schema (return true)
+schema.validate({
+  username: 'sontaran',
+  email: 'email@domain.com',
+  password: 'mySuperSecretPassword'
+}); /** => {
+  valid: true,
+  value: {
+    username: 'sontaran',
+    email: 'email@domain.com',
+    password: 'mySuperSecretPassword
+  }
+}*/
 
-const validateEmail = validator(
-  isEmail(),
-  myCustomValidator,
-  noThrowAway()
-);
-
-// valid emails (return true)
-validateEmail('me@you.com');
-validateEmail('info@my.sub.domain.co.uk');
-validateEmail('email@domain.tld');
-
-// invalid emails (return false)
-validateEmail('hi'); // => not an email
-validateEmail('www.google.com'); // => not an email
-validateEmail('me@yopmail.com'); // => throw away email not allowed
+// invalid usernames
+let a = 123; // => not a string
+let b = ' \t\r'; // => Empty characters
+let c = 'aa'; // => too short
+let d = 'Hello-World'; // => too long
+let e = 'B@dInput'; // => invalid character
 ```
 
-Again we compose some validators using the `sontaran/validate` function.
-
-In this example the email:
-
-* Must be a valid email address
-* Must contain an @ sign (our custom validator)
-* Cannot be an email address from a throw away email service
-
-# Docs
-
-## validator
-
-`validator([functions])`
-
-validator is the heart of Sontaran. It combines all (validation) functions it gets as an argument and combines them to one validator.
-
-### Arguments
-
-|                           |                                      |
-|-------------------------: |------------------------------------- |
-| **[functions]** Function  | The validator functions to combine to one validation function |
-
-### Returns
-
-|                 |                                      |
-|---------------: |------------------------------------- |
-| **Function**    | A validator function that combines all validators given as arguments |
-
-### Example
+Sontarans `custom` can take any `ValidatorFunction` function as argument to validate and / or transform a value.
 
 ```javascript
-const validator = require('sontaran/validator');
-const isNumber = require('sontaran/number/isNumber');
-const isInteger = require('sontaran/number/isInteger');
-const min = require('sontaran/number/min');
+import { string, ValidationError } from 'sontaran';
 
-const ageValidator = validator(
-  isNumber(),
-  isInteger(),
-  min(18)
-);
+// value cannot be root and is transformed to lowercase
+const myCustomValidator = (value) => {
+  if (value.toLocaleLowercase() === 'root') {
+    throw new ValidationError('root is not allowed');
+  }
 
-ageValidator(21);
-// => true
+  return value.toLocaleLowercase();
+};
 
-ageValidator(18);
-// => true
+const schema = string().custom(myCustomValidator);
 
+// valid result transformed to lowercase
+const result = schema.label('username').validate('Admin');
+/* => {
+  valid: true,
+  value: 'admin'
+}*/
 
-ageValidator('21');
-// => false
-
-ageValidator(33.33);
-// => false
+// invalid result
+const result = schema.label('username').validate('Root');
+/* => {
+  valid: false,
+  value: 'Root',
+  errors: [{
+    field: 'username',
+    message: 'root is not allowed',
+    type: 'root is not allowed'
+  }]
+}
+*/
 ```
-
-> More docs can be found [here](https://barry127.github.io/sontaran/).
-
-## Function List
-
-* array
-  * between
-  * contains
-  * each
-  * equals
-  * isArray
-  * isSubset
-  * isSuperset
-  * length
-  * max
-  * min
-  * of
-* boolean
-  * equals
-  * isBoolean
-  * isFalse
-  * isTrue
-* email
-  * domain
-  * isEmail
-  * localPart => name
-  * name
-  * noThrowAway
-* network
-  * ip
-  * ipv4
-  * ipv6
-  * mac
-* number
-  * between
-  * equals
-  * greaterThan
-  * gt => greaterThan
-  * isInt => isInteger
-  * isInteger
-  * isNaN
-  * isNegative
-  * isNumber
-  * isPositive
-  * lessThan
-  * lt => lessThan
-  * max
-  * min
-  * notNaN
-* object
-  * contains
-  * equals
-  * hasKey => hasOwnProperty
-  * hasKeys => hasOwnProperties
-  * hasOwnProperty
-  * hasOwnProperties
-  * isObject
-  * isSubset
-  * isSuperset
-  * length
-  * max
-  * min
-* string
-  * ascii
-  * base64
-  * between
-  * contains
-  * empty
-  * endsWith
-  * enum => oneOf
-  * equals
-  * extendedAscii
-  * hexColor
-  * isJson
-  * isString
-  * length
-  * lowercase
-  * match
-  * max
-  * min
-  * notEmpty
-  * startsWith
-  * uppercase
