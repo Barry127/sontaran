@@ -1,5 +1,4 @@
-import { BaseValidator } from '../BaseValidator';
-import { ValidatorOptions } from '../types';
+import { BaseValidator, ValidatorOptions } from '../BaseValidator';
 import { ValidationError } from '../errors/ValidationError';
 
 export class BooleanValidator extends BaseValidator<boolean> {

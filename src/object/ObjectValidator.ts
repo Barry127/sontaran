@@ -1,5 +1,9 @@
-import { BaseValidator } from '../BaseValidator';
-import { ValidatorOptions, Schema, ValidationErrorType } from '../types';
+import {
+  BaseValidator,
+  ValidatorOptions,
+  Schema,
+  ValidationErrorType
+} from '../BaseValidator';
 import { ValidationError } from '../errors/ValidationError';
 
 export class ObjectValidator extends BaseValidator<object> {

@@ -1,6 +1,5 @@
-import { BaseValidator } from '../BaseValidator';
+import { BaseValidator, ValidatorOptions } from '../BaseValidator';
 import { ValidationError } from '../errors/ValidationError';
-import { ValidatorOptions } from '../types';
 
 type NumericValue = number | BigInt;
 

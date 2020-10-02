@@ -1,4 +1,4 @@
-import { LocaleDef } from '../types';
+import { LocaleDef } from '../BaseValidator';
 
 export class ValidationError extends Error {
   public context: ErrorContext;

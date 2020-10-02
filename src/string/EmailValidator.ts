@@ -1,6 +1,6 @@
 import { StringValidator } from './StringValidator';
 import { ValidationError } from '../errors/ValidationError';
-import { ValidatorOptions } from '../types';
+import { ValidatorOptions } from '../BaseValidator';
 
 export class EmailValidator extends StringValidator {
   constructor(options: Partial<ValidatorOptions> = {}) {

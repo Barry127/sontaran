@@ -1,5 +1,4 @@
-import { BaseValidator } from './BaseValidator';
-import { ValidatorOptions } from './types';
+import { BaseValidator, ValidatorOptions } from './BaseValidator';
 
 export class Sontaran extends BaseValidator {}
 
